@@ -31,7 +31,7 @@
   "license": "MIT",
   "peerDependencies": {
     "@ionic/react": "^8",
-    "ionicons": "^7",
+    "ionicons": "^7 || ^8",
     "react": "^19",
     "react-router-dom": "^6"
   }

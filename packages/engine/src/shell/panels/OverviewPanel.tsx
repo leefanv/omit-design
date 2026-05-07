@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useProjects, useProjectByHref } from "../registry";
+import { useProjects, useProjectByHref } from "../../registry";
 
 /** 右栏 Overview tab：当前项目说明 + 使用引导。无选中、无主题编辑时的默认状态。 */
 export function OverviewPanel() {

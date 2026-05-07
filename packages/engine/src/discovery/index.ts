@@ -1,2 +1,6 @@
 export type { DesignSource } from "./types";
-export { globDiscovery } from "./glob";
+export {
+  globDiscovery,
+  type DesignModule,
+  type GlobDiscoveryInput,
+} from "./glob";
