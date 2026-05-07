@@ -1,0 +1,209 @@
+.shell-sidebar {
+  width: 240px;
+  height: 100vh;
+  background: var(--shell-surface-subtle);
+  border-right: 1px solid var(--shell-border);
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: var(--shell-text-strong);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shell-sidebar--collapsed {
+  width: 36px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.shell-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+}
+
+.shell-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--shell-text);
+  text-decoration: none;
+}
+.shell-sidebar__brand:hover {
+  color: var(--shell-accent);
+}
+.shell-sidebar__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--shell-accent-gradient);
+  color: #fff;
+  border-radius: var(--shell-radius-md);
+  font-size: 11px;
+  transform: rotate(45deg);
+}
+
+.shell-sidebar__collapse-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--shell-text-faint);
+  font-size: 16px;
+  border-radius: var(--shell-radius-sm);
+  cursor: pointer;
+  line-height: 1;
+}
+.shell-sidebar__collapse-btn:hover {
+  background: var(--shell-surface-muted);
+  color: var(--shell-text-muted);
+}
+
+/* Sidebar 顶部品牌下面的 project-meta 行：当前项目元信息 + 切换项目链接 */
+.shell-sidebar__project-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  border-bottom: 1px solid var(--shell-border);
+}
+.shell-sidebar__switch {
+  font-size: 11px;
+  color: var(--shell-text-muted);
+  text-decoration: none;
+  padding: 2px 6px;
+  border-radius: var(--shell-radius-sm);
+}
+.shell-sidebar__switch:hover {
+  color: var(--shell-accent);
+  background: var(--shell-surface-muted);
+}
+
+.shell-sidebar__tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.shell-sidebar__group {
+  margin-bottom: 4px;
+}
+
+.shell-sidebar__group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  border-radius: var(--shell-radius-md);
+  color: var(--shell-text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+.shell-sidebar__group-head:hover {
+  background: var(--shell-surface-muted);
+}
+
+.shell-sidebar__caret {
+  display: inline-block;
+  width: 12px;
+  font-size: 10px;
+  color: var(--shell-text-faint);
+  transition: transform 0.15s ease;
+}
+.shell-sidebar__caret--open {
+  transform: rotate(90deg);
+}
+
+.shell-sidebar__group-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.shell-sidebar__group-label {
+  flex: 1;
+}
+
+.shell-sidebar__group-count {
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  background: var(--shell-surface-muted);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.shell-sidebar__entries {
+  list-style: none;
+  margin: 2px 0 6px;
+  padding: 0 0 0 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.shell-sidebar__entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: var(--shell-radius-md);
+  text-decoration: none;
+  color: var(--shell-text-muted);
+  border-left: 2px solid transparent;
+}
+.shell-sidebar__entry:hover {
+  background: var(--shell-surface-muted);
+}
+.shell-sidebar__entry.active {
+  background: var(--shell-accent-soft);
+  color: var(--shell-accent-hover);
+  border-left-color: var(--shell-accent);
+}
+
+.shell-sidebar__entry-name {
+  font-size: 13px;
+}
+.shell-sidebar__entry-pattern {
+  font-size: 10px;
+  color: var(--shell-text-faint);
+  font-family: var(--shell-font-mono);
+}
+.shell-sidebar__entry.active .shell-sidebar__entry-pattern {
+  color: var(--shell-accent);
+}
+
+.shell-sidebar__footer {
+  padding: 10px 12px;
+  border-top: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+}
+
+.shell-sidebar__footer-link {
+  display: block;
+  padding: 8px 10px;
+  border-radius: var(--shell-radius-md);
+  text-decoration: none;
+  color: var(--shell-text-muted);
+  font-size: 13px;
+}
+.shell-sidebar__footer-link:hover {
+  background: var(--shell-surface-muted);
+  color: var(--shell-accent);
+}

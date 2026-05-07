@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Omit Web to Figma</title>
+  <style>
+    :root {
+      --bg: #1e1e1e;
+      --surface: #2c2c2c;
+      --surface-2: #383838;
+      --text: #e6e6e6;
+      --text-dim: #a0a0a0;
+      --text-faint: #6e6e6e;
+      --accent: #18a0fb;
+      --border: #3a3a3a;
+      --border-soft: #2a2a2a;
+      --ok: #6acf81;
+      --warn: #f4b350;
+      --err: #f4666b;
+      --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 11px;
+      color: var(--text);
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ---------- 顶部工具条 ---------- */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-soft);
+      flex-shrink: 0;
+    }
+    .toolbar__title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .toolbar__sep {
+      flex: 1;
+    }
+    .toolbar__meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+    }
+
+    /* ---------- 主体 ---------- */
+    .main {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ---------- 拖放区 ---------- */
+    .drop {
+      position: relative;
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      padding: 22px 12px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--surface);
+      transition: border-color .12s, background .12s;
+    }
+    .drop:hover, .drop.dragover {
+      border-color: var(--accent);
+      background: rgba(24, 160, 251, 0.06);
+    }
+    .drop__hint {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .drop__hint b {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .drop__sub {
+      margin-top: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+    }
+    .drop input { display: none; }
+
+    /* ---------- 元数据表格 ---------- */
+    .meta {
+      display: none;
+      grid-template-columns: max-content 1fr;
+      gap: 4px 12px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: 3px;
+      font-size: 10px;
+    }
+    .meta.show { display: grid; }
+    .meta dt {
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .meta dd {
+      margin: 0;
+      font-family: var(--mono);
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ---------- 错误条 ---------- */
+    .error {
+      display: none;
+      padding: 6px 10px;
+      border-radius: 3px;
+      background: rgba(244, 102, 107, 0.08);
+      border-left: 2px solid var(--err);
+      color: var(--err);
+      font-size: 10px;
+      font-family: var(--mono);
+    }
+    .error.show { display: block; }
+
+    /* ---------- 日志 ---------- */
+    .log {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: none;
+      flex-direction: column;
+    }
+    .log.show { display: flex; }
+    .log__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-bottom: 0;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .log__clear {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--text-faint);
+      cursor: pointer;
+      font-size: 10px;
+      text-transform: none;
+      letter-spacing: 0;
+      padding: 0;
+    }
+    .log__clear:hover { color: var(--text); }
+    .log__body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 10px;
+      background: #181818;
+      border: 1px solid var(--border-soft);
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+    .log__line {
+      white-space: pre-wrap;
+    }
+    .log__line--ok { color: var(--ok); }
+    .log__line--warn { color: var(--warn); }
+    .log__line--err { color: var(--err); }
+    .log__line--meta { color: var(--text-faint); }
+
+    /* ---------- 底部 actions ---------- */
+    .footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border-soft);
+      flex-shrink: 0;
+    }
+    .footer__status {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-faint);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn:hover:not(:disabled) {
+      border-color: var(--text-faint);
+    }
+    .btn--primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .btn--primary:hover:not(:disabled) {
+      filter: brightness(1.08);
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span class="toolbar__title">Omit Web to Figma</span>
+    <span class="toolbar__sep"></span>
+    <span class="toolbar__meta" id="version">v0.1</span>
+  </div>
+
+  <div class="main">
+    <label class="drop" id="drop">
+      <div class="drop__hint">把 <b>.json</b> 拖到这里 / 点击选择文件</div>
+      <div class="drop__sub">capture-*.json · capture-bundle-*.json</div>
+      <input type="file" accept="application/json" id="file" />
+    </label>
+
+    <dl id="meta" class="meta">
+      <dt>frames</dt><dd id="meta-frames">—</dd>
+      <dt>nodes</dt><dd id="meta-nodes">—</dd>
+      <dt>text</dt><dd id="meta-text">—</dd>
+      <dt>image</dt><dd id="meta-image">—</dd>
+      <dt>route</dt><dd id="meta-route">—</dd>
+      <dt>captured</dt><dd id="meta-captured">—</dd>
+    </dl>
+
+    <div id="error" class="error"></div>
+
+    <div id="log" class="log">
+      <div class="log__head">
+        <span>log</span>
+        <button type="button" class="log__clear" id="log-clear">clear</button>
+      </div>
+      <div class="log__body" id="log-body"></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span class="footer__status" id="status">idle</span>
+    <button type="button" id="cancel" class="btn">关闭</button>
+    <button type="button" id="import" class="btn btn--primary" disabled>导入</button>
+  </div>
+
+  <script>
+    const drop = document.getElementById("drop");
+    const fileInput = document.getElementById("file");
+    const metaBox = document.getElementById("meta");
+    const errorBox = document.getElementById("error");
+    const importBtn = document.getElementById("import");
+    const cancelBtn = document.getElementById("cancel");
+    const logBox = document.getElementById("log");
+    const logBody = document.getElementById("log-body");
+    const logClear = document.getElementById("log-clear");
+    const statusBar = document.getElementById("status");
+
+    let payload = null;
+
+    function setStatus(text) {
+      statusBar.textContent = text;
+    }
+
+    function log(text, kind) {
+      logBox.classList.add("show");
+      const line = document.createElement("div");
+      line.className = "log__line" + (kind ? " log__line--" + kind : "");
+      const stamp = new Date().toTimeString().slice(0, 8);
+      line.textContent = stamp + "  " + text;
+      logBody.appendChild(line);
+      logBody.scrollTop = logBody.scrollHeight;
+    }
+
+    function showError(text) {
+      errorBox.textContent = "✕ " + text;
+      errorBox.classList.add("show");
+      setStatus("error");
+    }
+    function clearError() {
+      errorBox.classList.remove("show");
+    }
+
+    logClear.addEventListener("click", () => {
+      logBody.innerHTML = "";
+      logBox.classList.remove("show");
+    });
+
+    function setPayload(data) {
+      payload = data;
+      const arr = Array.isArray(data) ? data : [data];
+      const total = arr.length;
+      const totalNodes = arr.reduce((s, c) => s + (c.stats && c.stats.totalNodes || 0), 0);
+      const textNodes = arr.reduce((s, c) => s + (c.stats && c.stats.textNodes || 0), 0);
+      const imageNodes = arr.reduce((s, c) => s + (c.stats && c.stats.imageNodes || 0), 0);
+      document.getElementById("meta-frames").textContent = String(total);
+      document.getElementById("meta-nodes").textContent = String(totalNodes);
+      document.getElementById("meta-text").textContent = String(textNodes);
+      document.getElementById("meta-image").textContent = String(imageNodes);
+      document.getElementById("meta-route").textContent = arr[0].route || "—";
+      document.getElementById("meta-captured").textContent = (arr[0].capturedAt || "").replace("T", " ").replace(/\..*$/, "");
+      metaBox.classList.add("show");
+      importBtn.disabled = false;
+      setStatus("ready · " + total + " frame(s)");
+    }
+
+    function readFile(file) {
+      clearError();
+      setStatus("reading " + file.name + "…");
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          setPayload(data);
+          log("loaded " + file.name + " (" + Math.round(file.size / 1024) + " KB)", "meta");
+        } catch (err) {
+          showError("JSON parse failed: " + err.message);
+        }
+      };
+      reader.onerror = () => showError("read file failed");
+      reader.readAsText(file);
+    }
+
+    fileInput.addEventListener("change", (e) => {
+      const f = e.target.files[0];
+      if (f) readFile(f);
+    });
+
+    drop.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      drop.classList.add("dragover");
+    });
+    drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
+    drop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      drop.classList.remove("dragover");
+      const f = e.dataTransfer.files[0];
+      if (f) readFile(f);
+    });
+
+    cancelBtn.addEventListener("click", () => parent.postMessage({ pluginMessage: { type: "close" } }, "*"));
+
+    importBtn.addEventListener("click", () => {
+      if (!payload) return;
+      importBtn.disabled = true;
+      setStatus("importing…");
+      parent.postMessage({ pluginMessage: { type: "import", payload } }, "*");
+    });
+
+    window.onmessage = (e) => {
+      const msg = e.data.pluginMessage;
+      if (!msg) return;
+      if (msg.type === "log") log(msg.text);
+      if (msg.type === "done") {
+        log("done · " + msg.frames + " frame(s) created", "ok");
+        setStatus("done · " + msg.frames + " frame(s)");
+        importBtn.disabled = false;
+      }
+      if (msg.type === "error") {
+        log(msg.text, "err");
+        showError(msg.text);
+        importBtn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

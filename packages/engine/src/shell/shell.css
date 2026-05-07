@@ -1,0 +1,89 @@
+/*
+ * Shell — 工具链外壳的样式，独立于设计稿 token。
+ *
+ * 这里的 token 只服务于 shell（Studio 工作台、Figma 风格三栏外壳、
+ * 设备外框、Sidebar、RightPanel、主题编辑器 UI）。
+ *
+ * ❗ Shell 禁止引用 --ion-* / --pos-* —— 设计师改设计稿 token 时，
+ *    shell 外观必须保持稳定。反过来，业务设计稿也禁止引用 --shell-*。
+ */
+
+:root {
+  /* ===== 表面与背景 ===== */
+  --shell-bg: #fafafa;
+  --shell-canvas-bg: #e5e7eb;
+  --shell-canvas-gradient:
+    radial-gradient(ellipse 800px 600px at 50% 30%, #f9fafb 0%, #e5e7eb 60%, #d4d7dc 100%);
+  --shell-surface: #ffffff;
+  --shell-surface-subtle: #fafafa;
+  --shell-surface-muted: #f3f4f6;
+
+  /* ===== 边框 ===== */
+  --shell-border: #ececec;
+  --shell-border-subtle: #f3f4f6;
+  --shell-border-strong: #d1d5db;
+  --shell-border-hover: #d4d4d8;
+
+  /* ===== 文字 ===== */
+  --shell-text: #111111;
+  --shell-text-strong: #1f2937;
+  --shell-text-muted: #374151;
+  --shell-text-subtle: #6b7280;
+  --shell-text-faint: #9ca3af;
+
+  /* ===== Accent（工具链自己的强调色，独立于设计稿 primary） ===== */
+  --shell-accent: #4f46e5;
+  --shell-accent-rgb: 79, 70, 229;
+  --shell-accent-hover: #4338ca;
+  --shell-accent-soft: rgba(79, 70, 229, 0.1);
+  --shell-accent-gradient: linear-gradient(135deg, #4f46e5, #8b5cf6);
+
+  /* ===== 状态色（shell UI 内部用，如警告条等） ===== */
+  --shell-danger: #ef4444;
+  --shell-success: #10b981;
+
+  /* ===== 设备外框（shell 画的，不跟随设计稿主题） ===== */
+  --shell-device-frame: #1a1a1c;
+  --shell-device-frame-accent: #2c2c2e;
+
+  /* ===== 字体 ===== */
+  --shell-font:
+    -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --shell-font-mono: ui-monospace, SFMono-Regular, monospace;
+
+  /* ===== 间距 ===== */
+  --shell-space-1: 4px;
+  --shell-space-2: 8px;
+  --shell-space-3: 12px;
+  --shell-space-4: 16px;
+  --shell-space-5: 20px;
+  --shell-space-6: 24px;
+  --shell-space-8: 32px;
+
+  /* ===== 圆角 ===== */
+  --shell-radius-sm: 4px;
+  --shell-radius-md: 6px;
+  --shell-radius-lg: 8px;
+  --shell-radius-xl: 14px;
+
+  /* ===== 阴影 ===== */
+  --shell-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shell-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.04), 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+  --shell-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+  --shell-shadow-device:
+    0 0 0 2px #2c2c2e,
+    0 24px 48px -12px rgba(0, 0, 0, 0.35),
+    0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Reset ===== */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--shell-font);
+  background: var(--shell-canvas-bg);
+}

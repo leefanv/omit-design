@@ -1,0 +1,124 @@
+/* OmProductCard —— 商品行卡片 */
+
+.om-product {
+  display: flex;
+  gap: var(--om-spacing-md);
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-md);
+  padding: var(--om-spacing-md);
+  box-shadow: var(--om-shadow-sm);
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.om-product__image {
+  flex: 0 0 auto;
+  /* 80×80 固定缩略图尺寸（Figma 规格），= control-xl + spacing-xl */
+  width: calc(var(--om-control-height-xl) + var(--om-spacing-xl));
+  height: calc(var(--om-control-height-xl) + var(--om-spacing-xl));
+  border-radius: var(--om-radius-md);
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.om-product__emoji {
+  font-size: var(--om-icon-size-hero);
+  line-height: 1;
+}
+
+.om-product__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-sm);
+}
+
+.om-product__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-xs);
+}
+
+.om-product__name {
+  margin: 0;
+  font-size: var(--om-font-size-md);
+  color: var(--ion-color-dark);
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.om-product__sku {
+  margin: 0;
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
+
+.om-product__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--om-spacing-sm);
+}
+
+.om-product__price-group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--om-spacing-xs);
+  flex-wrap: wrap;
+}
+
+.om-product__price {
+  color: var(--ion-color-dark);
+  font-weight: 700;
+}
+
+.om-product__price-sign {
+  font-size: var(--om-font-size-sm);
+}
+
+.om-product__price-value {
+  font-size: var(--om-font-size-md);
+}
+
+.om-product__unit {
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
+
+.om-product__stock {
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+  opacity: 0.7;
+}
+
+.om-product__add {
+  appearance: none;
+  border: none;
+  background: var(--om-surface-primary-soft);
+  color: var(--ion-color-primary);
+  border-radius: var(--om-radius-md);
+  /* 36×36 的加购按钮（比 control-sm=40 小一号，刚好容在卡片右下角） */
+  width: calc(var(--om-control-height-sm) - var(--om-spacing-xs));
+  height: calc(var(--om-control-height-sm) - var(--om-spacing-xs));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.om-product__add:active {
+  background: rgba(var(--ion-color-primary-rgb), 0.24);
+}
+
+.om-product__add ion-icon {
+  font-size: var(--om-icon-size-md);
+}

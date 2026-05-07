@@ -1,0 +1,227 @@
+.export-dialog {
+  width: min(92vw, 640px);
+  max-height: 90vh;
+  padding: 0;
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  box-shadow: var(--shell-shadow-md);
+  font-family: inherit;
+}
+.export-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.export-dialog__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid var(--shell-border);
+  position: sticky;
+  top: 0;
+  background: var(--shell-surface);
+  z-index: 1;
+}
+.export-dialog__head h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+.export-dialog__hint {
+  font-size: 12px;
+  color: var(--shell-text-faint);
+  margin: 0;
+  line-height: 1.6;
+}
+.export-dialog__hint a {
+  color: var(--shell-accent);
+}
+
+.export-dialog__close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--shell-text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+.export-dialog__close:hover {
+  color: var(--shell-text);
+}
+
+.export-dialog__body {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  max-height: calc(90vh - 80px);
+}
+
+.export-dialog__section h3 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--shell-text-subtle);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.export-dialog__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.export-dialog__label select {
+  padding: 8px 12px;
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-lg);
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: normal;
+  font-family: inherit;
+}
+
+.export-dialog__check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--shell-text);
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.export-dialog__check input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--shell-accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.export-dialog__check-hint {
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  margin-left: 2px;
+}
+
+.export-dialog__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.export-dialog__btn {
+  appearance: none;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: var(--shell-radius-lg);
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.export-dialog__btn:hover:not(:disabled) {
+  border-color: var(--shell-accent);
+  color: var(--shell-accent);
+}
+.export-dialog__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.export-dialog__btn--primary {
+  background: var(--shell-accent);
+  color: #fff;
+  border-color: var(--shell-accent);
+}
+.export-dialog__btn--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+  color: #fff;
+  border-color: var(--shell-accent);
+}
+.export-dialog__btn--ghost {
+  font-size: 12px;
+  color: var(--shell-text-subtle);
+}
+
+.export-dialog__progress,
+.export-dialog__success,
+.export-dialog__error {
+  font-size: 12px;
+  padding: 10px 12px;
+  border-radius: var(--shell-radius-lg);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.export-dialog__progress {
+  background: var(--shell-surface-muted);
+  color: var(--shell-text-subtle);
+}
+.export-dialog__success {
+  background: rgba(34, 197, 94, 0.12);
+  color: #1b9d56;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.export-dialog__success code {
+  font-family: var(--shell-font-mono);
+}
+.export-dialog__error {
+  background: rgba(255, 69, 58, 0.12);
+  color: #d63029;
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+
+.export-dialog__plugin-files {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 14px 0;
+  flex-wrap: wrap;
+}
+
+.export-dialog__steps {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 12px;
+  color: var(--shell-text-subtle);
+  line-height: 1.8;
+}
+.export-dialog__steps code {
+  font-family: var(--shell-font-mono);
+  background: var(--shell-surface-muted);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Offscreen-but-rendered iframe — display:none / visibility:hidden may pause
+ * rendering inside the iframe document, which would break getBoundingClientRect.
+ * Position offscreen so layout still happens. */
+.export-dialog__capture-iframe {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  pointer-events: none;
+  border: 0;
+}

@@ -1,0 +1,9 @@
+/* Shell 样式统一入口：App.tsx 引这一份即可。 */
+@import "./shell.css";
+@import "./workspace.css";
+@import "./device-frame.css";
+@import "./device-toolbar.css";
+@import "./sidebar.css";
+@import "./right-panel.css";
+@import "./studio.css";
+@import "../capture/export-dialog.css";

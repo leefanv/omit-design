@@ -1,0 +1,25 @@
+{
+  "name": "omit-design-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "AI-collaborative design composition framework — write TSX, lint with hard rules, preview locally.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '*' build",
+    "lint": "eslint .",
+    "sync-skills": "node scripts/sync-skills.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.2.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.59.0"
+  },
+  "packageManager": "bun@1.1.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

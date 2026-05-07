@@ -1,0 +1,29 @@
+{
+  "name": "@omit-design/engine",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "omit-design runtime: registry, glob discovery, inspect overlay, theme editor, capture, shell. Pure UI library — no router boot, no module-level side effects.",
+  "exports": {
+    "./shell": "./src/shell/index.ts",
+    "./registry": "./src/registry/index.ts",
+    "./discovery": "./src/discovery/index.ts",
+    "./preset": "./src/preset/index.ts",
+    "./capture": "./src/capture/index.ts",
+    "./inspect/*": "./src/inspect/*",
+    "./theme-editor/*": "./src/theme-editor/*"
+  },
+  "sideEffects": false,
+  "files": [
+    "src"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "html-to-image": "^1.11",
+    "zustand": "^5"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19",
+    "react-router-dom": "^6"
+  }
+}

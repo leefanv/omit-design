@@ -1,0 +1,49 @@
+/* OmNumpad —— 3×4 数字键盘。 */
+
+.om-numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--om-spacing-sm);
+  width: 100%;
+}
+
+.om-numpad__key {
+  appearance: none;
+  border: none;
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-md);
+  height: var(--om-control-height-xl);
+  font-size: var(--om-font-size-xl);
+  font-weight: 500;
+  color: var(--ion-color-dark);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--om-shadow-sm);
+  min-height: var(--om-touch-comfortable);
+  transition: background 0.12s ease;
+}
+
+.om-numpad__key:active {
+  background: var(--ion-color-light);
+}
+
+.om-numpad__key--ghost {
+  background: transparent;
+  box-shadow: none;
+  color: var(--ion-color-medium-shade);
+  font-size: var(--om-font-size-md);
+}
+
+.om-numpad__key--clear {
+  background: var(--ion-color-light);
+  color: var(--ion-color-dark);
+  font-size: var(--om-font-size-md);
+  box-shadow: none;
+}
+
+.om-numpad__spacer {
+  display: block;
+  height: var(--om-control-height-xl);
+}

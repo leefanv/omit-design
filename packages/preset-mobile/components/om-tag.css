@@ -1,0 +1,51 @@
+/* OmTag —— chip / badge / 标签 */
+
+.om-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--om-spacing-xs);
+  border-radius: var(--om-radius-sm);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.om-tag--sm {
+  font-size: var(--om-font-size-xs);
+  padding: 2px var(--om-spacing-sm);
+  height: 20px;
+}
+
+.om-tag--md {
+  font-size: var(--om-font-size-sm);
+  padding: 4px var(--om-spacing-sm);
+  height: 24px;
+}
+
+/* 颜色通过 data-color 映射到对应 token 色。
+   solid：深色填充 + 反色文字；soft：浅色底 + token 色文字；outline：透明底 + 描边。 */
+.om-tag--solid[data-color="primary"] { background: var(--ion-color-primary); color: var(--ion-color-primary-contrast); }
+.om-tag--solid[data-color="success"] { background: var(--ion-color-success); color: var(--ion-color-success-contrast); }
+.om-tag--solid[data-color="warning"] { background: var(--ion-color-warning); color: var(--ion-color-warning-contrast); }
+.om-tag--solid[data-color="danger"]  { background: var(--ion-color-danger);  color: var(--ion-color-danger-contrast); }
+.om-tag--solid[data-color="tertiary"]{ background: var(--ion-color-tertiary); color: var(--ion-color-tertiary-contrast); }
+.om-tag--solid[data-color="medium"]  { background: var(--ion-color-medium);  color: var(--ion-color-medium-contrast); }
+
+.om-tag--soft[data-color="primary"]  { background: var(--om-surface-primary-soft); color: var(--ion-color-primary); }
+.om-tag--soft[data-color="success"]  { background: rgba(var(--ion-color-success-rgb),  0.12); color: var(--ion-color-success); }
+.om-tag--soft[data-color="warning"]  { background: rgba(var(--ion-color-warning-rgb),  0.12); color: var(--ion-color-warning); }
+.om-tag--soft[data-color="danger"]   { background: rgba(var(--ion-color-danger-rgb),   0.12); color: var(--ion-color-danger); }
+.om-tag--soft[data-color="tertiary"] { background: rgba(var(--ion-color-tertiary-rgb), 0.12); color: var(--ion-color-tertiary); }
+.om-tag--soft[data-color="medium"]   { background: var(--ion-color-light); color: var(--ion-color-medium-shade); }
+
+.om-tag--outline {
+  background: transparent;
+  border: 1px solid currentColor;
+}
+.om-tag--outline[data-color="primary"]  { color: var(--ion-color-primary); }
+.om-tag--outline[data-color="success"]  { color: var(--ion-color-success); }
+.om-tag--outline[data-color="warning"]  { color: var(--ion-color-warning); }
+.om-tag--outline[data-color="danger"]   { color: var(--ion-color-danger); }
+.om-tag--outline[data-color="tertiary"] { color: var(--ion-color-tertiary); }
+.om-tag--outline[data-color="medium"]   { color: var(--ion-color-medium-shade); }

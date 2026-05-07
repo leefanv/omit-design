@@ -1,0 +1,183 @@
+/*
+ * @omit-design/preset-mobile — Token source of truth
+ *
+ * 全局 token 的唯一权威来源。theme-editor 导出时会写回此文件。
+ * 业务页面与 Om* 组件**禁止**使用字面量颜色/间距,必须通过这里的 CSS 变量。
+ */
+
+:root {
+  /* ===== 字体（与 Figma 对齐：Roboto 优先 + MiSans + 系统栈回退） ===== */
+  --ion-font-family: "Roboto", "MiSans", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+
+  /* ===== Ionic 语义色（来自 Figma Schemes） ===== */
+  /* Schemes/Primary #0d8ce9 */
+  --ion-color-primary: #0d8ce9;
+  --ion-color-primary-rgb: 13, 140, 233;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0b7bcd;
+  --ion-color-primary-tint: #2598eb;
+
+  /* Palette/Teal/50 #00CFFF */
+  --ion-color-secondary: #00cfff;
+  --ion-color-secondary-rgb: 0, 207, 255;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #00b6e0;
+  --ion-color-secondary-tint: #1ad4ff;
+
+  /* Schemes/Tertiary #e56e35 */
+  --ion-color-tertiary: #e56e35;
+  --ion-color-tertiary-rgb: 229, 110, 53;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #ca612f;
+  --ion-color-tertiary-tint: #e87d49;
+
+  /* Schemes/success #22c55e */
+  --ion-color-success: #22c55e;
+  --ion-color-success-rgb: 34, 197, 94;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #1eae53;
+  --ion-color-success-tint: #38cb6e;
+
+  /* Warning — Figma 未单列 warning，沿用 tertiary 橙作警示色（失败弹窗也走这个） */
+  --ion-color-warning: #e56e35;
+  --ion-color-warning-rgb: 229, 110, 53;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #ca612f;
+  --ion-color-warning-tint: #e87d49;
+
+  /* Schemes/Error #da342e（用作表单内联错误） */
+  --ion-color-danger: #da342e;
+  --ion-color-danger-rgb: 218, 52, 46;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #c02e29;
+  --ion-color-danger-tint: #dd4943;
+
+  /* Neutral/Dark/Darkest #1F2024 */
+  --ion-color-dark: #1f2024;
+  --ion-color-dark-rgb: 31, 32, 36;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #1b1c1f;
+  --ion-color-dark-tint: #35363a;
+
+  /* Schemes/On Background #90909a */
+  --ion-color-medium: #90909a;
+  --ion-color-medium-rgb: 144, 144, 154;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #7f7f88;
+  --ion-color-medium-tint: #9b9ba4;
+
+  /* Schemes/Outline #dbd9e0（用作最浅背景/分割线 fill） */
+  --ion-color-light: #dbd9e0;
+  --ion-color-light-rgb: 219, 217, 224;
+  --ion-color-light-contrast: #000000;
+  --ion-color-light-contrast-rgb: 0, 0, 0;
+  --ion-color-light-shade: #c1bfc5;
+  --ion-color-light-tint: #dfddc5;
+
+  /* ===== Ionic 结构色 ===== */
+  /* Schemes/Surface Container Lowest #ffffff */
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  /* Schemes/On Surface Variant #22232b */
+  --ion-text-color: #22232b;
+  --ion-text-color-rgb: 34, 35, 43;
+  --ion-toolbar-background: #ffffff;
+  --ion-tab-bar-background: #ffffff;
+
+  /* ===== 品牌扩展色（Figma Palette） ===== */
+  --om-color-brand-blue-50: #0f62fe;
+  --om-color-brand-blue-80: #00147c;
+  --om-color-brand-blue-90: #020f47;
+  --om-color-brand-teal-50: #00cfff;
+  /* Schemes/Outline Variant #41424b — 次级分割线 */
+  --om-color-outline-variant: #41424b;
+
+  /* ===== 遮罩 ===== */
+  /* Figma Musk Color #000000cc */
+  --om-overlay-scrim: rgba(0, 0, 0, 0.8);
+
+  /* ===== 欢迎 / onboarding 渐变背景 ===== */
+  --om-gradient-onboarding-top: #f5f9ff;
+  --om-gradient-onboarding-mid: #e8f2ff;
+  --om-gradient-onboarding-bottom: #c8dfff;
+  --om-gradient-onboarding: linear-gradient(
+    180deg,
+    var(--om-gradient-onboarding-top) 0%,
+    var(--om-gradient-onboarding-mid) 50%,
+    var(--om-gradient-onboarding-bottom) 100%
+  );
+
+  /* ===== POS 自定义间距 ===== */
+  --om-spacing-xs: 4px;
+  --om-spacing-sm: 8px;
+  --om-spacing-md: 12px;
+  --om-spacing-lg: 16px;
+  --om-spacing-xl: 24px;
+  --om-spacing-2xl: 32px;
+
+  /* ===== 圆角（Figma Border/Radius） ===== */
+  --om-radius-sm: 4px; /* Extra-small */
+  --om-radius-md: 8px; /* Small */
+  --om-radius-lg: 12px;
+  --om-radius-xl: 16px; /* Large */
+  --om-radius-2xl: 28px; /* Extra-large */
+  --om-radius-full: 9999px;
+
+  /* ===== 字号（Figma Type scale） ===== */
+  --om-font-size-xs: 12px; /* body/small */
+  --om-font-size-sm: 14px;
+  --om-font-size-md: 16px; /* body/large */
+  --om-font-size-lg: 18px; /* label/xlage, title/large */
+  --om-font-size-xl: 22px; /* title/large-prominent */
+  --om-font-size-2xl: 28px; /* Welcome headline */
+  --om-font-size-3xl: 32px;
+
+  /* ===== 行高 ===== */
+  --om-line-height-tight: 1.25;
+  --om-line-height-normal: 1.5;
+  --om-line-height-relaxed: 1.75;
+
+  /* ===== 阴影 ===== */
+  --om-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --om-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --om-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+  /* ===== 触控规范（POS 设备一般 ≥48 提升精度，>= 44 是 Apple HIG 最低值） ===== */
+  --om-touch-min: 44px;
+  --om-touch-comfortable: 48px;
+
+  /* ===== Icon 尺寸（给 IonIcon / 装饰性占位图用）=====
+     md 与默认 body 字号对齐；sm/lg/xl 对应 chip / toolbar / hero 等上下文。 */
+  --om-icon-size-sm: 16px;
+  --om-icon-size-md: 20px;
+  --om-icon-size-lg: 24px;
+  --om-icon-size-xl: 32px;
+  /* 画报级占位（空态圆圈、商品缺图 emoji） */
+  --om-icon-size-hero: 44px;
+
+  /* ===== 交互控件高度 =====
+     40/48 覆盖图标按钮 / 胶囊搜索框；52/56 是 POS 主 CTA 按钮高度（≥ 触控舒适值）。 */
+  --om-control-height-sm: 40px;
+  --om-control-height-md: 48px;
+  --om-control-height-lg: 52px;
+  --om-control-height-xl: 56px;
+
+  /* ===== 主色 / 白色之上的半透明遮罩（如蓝卡上的玻璃态徽章） ===== */
+  --om-overlay-on-primary-weak: rgba(255, 255, 255, 0.18);
+  --om-overlay-on-primary-mid: rgba(255, 255, 255, 0.2);
+  --om-overlay-on-primary-strong: rgba(255, 255, 255, 0.25);
+
+  /* 基于 primary-rgb 的软底（图标 chip / 加购按钮背景） */
+  --om-surface-primary-soft: rgba(var(--ion-color-primary-rgb), 0.12);
+  --om-surface-primary-softer: rgba(var(--ion-color-primary-rgb), 0.08);
+  --om-surface-primary-softest: rgba(var(--ion-color-primary-rgb), 0.04);
+}

@@ -1,0 +1,43 @@
+/*
+ * OmPage padding utility —— 通过 IonContent 的 --padding-* 变量生效。
+ * 属于设计系统（业务设计稿侧），使用 --om-spacing-* token。
+ */
+
+/* 移动端设计稿里不需要显示滚动条（真机上看不到），Ionic 在桌面浏览器里默认会展示 */
+ion-content::part(scroll) {
+  scrollbar-width: none;
+}
+ion-content::part(scroll)::-webkit-scrollbar {
+  display: none;
+}
+
+.om-page-pad-none {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+.om-page-pad-sm {
+  --padding-start: var(--om-spacing-sm);
+  --padding-end: var(--om-spacing-sm);
+  --padding-top: var(--om-spacing-sm);
+  --padding-bottom: var(--om-spacing-sm);
+}
+.om-page-pad-md {
+  --padding-start: var(--om-spacing-md);
+  --padding-end: var(--om-spacing-md);
+  --padding-top: var(--om-spacing-md);
+  --padding-bottom: var(--om-spacing-md);
+}
+.om-page-pad-lg {
+  --padding-start: var(--om-spacing-lg);
+  --padding-end: var(--om-spacing-lg);
+  --padding-top: var(--om-spacing-lg);
+  --padding-bottom: var(--om-spacing-lg);
+}
+.om-page-pad-xl {
+  --padding-start: var(--om-spacing-xl);
+  --padding-end: var(--om-spacing-xl);
+  --padding-top: var(--om-spacing-xl);
+  --padding-bottom: var(--om-spacing-xl);
+}

@@ -1,0 +1,91 @@
+/*
+ * 设备外框（让网页看起来像装在手机里）。
+ * 这是 shell 的一部分，样式独立于设计稿 token。
+ * 内部 .shell-device-content 下挂载的才是设计稿。
+ */
+
+.shell-device-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--shell-space-4);
+  min-height: 100vh;
+  padding: var(--shell-space-8);
+  background: var(--shell-canvas-gradient);
+  position: relative;
+}
+
+/* 尺寸由 DeviceToolbar 通过 inline style 驱动（width/height）。
+ * 这里只定义默认外观（壳体、圆角、阴影），以及一个兜底尺寸。 */
+.shell-device-screen {
+  position: relative;
+  width: 390px;
+  height: 844px;
+  background: var(--ion-background-color); /* 设备内背景跟随设计稿主题（合理，这是屏幕内容） */
+  border-radius: 50px;
+  border: 10px solid var(--shell-device-frame);
+  overflow: hidden;
+  box-shadow: var(--shell-shadow-device);
+  flex-shrink: 0;
+}
+
+/* Desktop project：显示器风格外框 —— 小圆角、无 notch / 无状态栏。
+ * 背景跟随 Ui* 主题（var(--ui-color-background)），不再绑 Ionic token。 */
+.shell-device-screen--desktop {
+  border-radius: 8px;
+  border-width: 4px;
+  background: var(--ui-color-background, #fff);
+}
+
+/* iOS 灵动岛 */
+.shell-device-notch {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 36px;
+  background: #000;
+  border-radius: 20px;
+  z-index: 99;
+  pointer-events: none;
+}
+
+/* 状态栏：模拟 iOS 设备顶部栏 —— 颜色跟随屏幕内设计稿 text color */
+.shell-device-statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--ion-text-color);
+  pointer-events: none;
+}
+.shell-device-statusbar__time {
+  font-variant-numeric: tabular-nums;
+}
+.shell-device-statusbar__icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.shell-device-content {
+  position: absolute;
+  inset: 0;
+}
+
+/* 给状态栏让出 safe area（Ionic 里的 IonHeader 会读这个） */
+ion-app {
+  --ion-safe-area-top: 54px;
+}

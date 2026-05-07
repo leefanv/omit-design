@@ -1,0 +1,15 @@
+/* Figma 风格三栏外壳：左 Sidebar + 中设备画布 + 右 RightPanel */
+.shell-workspace {
+  display: flex;
+  min-height: 100vh;
+  background: var(--shell-surface-subtle);
+}
+
+/* Embed 模式：iframe 用，去掉所有 chrome，children 撑满 */
+.shell-embed {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ion-background-color);
+  position: relative;
+}

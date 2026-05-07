@@ -1,0 +1,107 @@
+/* OmCouponCard —— 优惠券 / 奖励卡（会员详情 & 奖励确认两处复用） */
+
+.om-coupon {
+  display: flex;
+  gap: var(--om-spacing-md);
+  padding: var(--om-spacing-md);
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-md);
+  border: 1px solid transparent;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+button.om-coupon {
+  cursor: pointer;
+}
+
+.om-coupon--selected {
+  border-color: var(--ion-color-primary);
+  background: var(--om-surface-primary-softest);
+}
+
+.om-coupon__badge {
+  flex: 0 0 auto;
+  width: 72px;
+  min-height: var(--om-control-height-md);
+  text-align: center;
+  border-radius: var(--om-radius-sm);
+  padding: var(--om-spacing-sm);
+  background: var(--ion-color-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--om-spacing-xs);
+}
+
+.om-coupon--selected .om-coupon__badge {
+  background: var(--om-surface-primary-soft);
+}
+
+.om-coupon__badge-value {
+  display: block;
+  font-size: var(--om-font-size-lg);
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  line-height: 1;
+}
+
+.om-coupon--selected .om-coupon__badge-value {
+  color: var(--ion-color-primary);
+}
+
+.om-coupon__badge-unit {
+  display: block;
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
+
+.om-coupon__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-xs);
+}
+
+.om-coupon__title {
+  margin: 0;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-dark);
+  font-weight: 500;
+}
+
+.om-coupon__condition,
+.om-coupon__expire {
+  margin: 0;
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
+
+.om-coupon__radio {
+  flex: 0 0 auto;
+  width: var(--om-spacing-xl);
+  height: var(--om-spacing-xl);
+  border-radius: var(--om-radius-full);
+  border: 1px solid var(--ion-color-light-shade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+}
+
+.om-coupon--selected .om-coupon__radio {
+  background: var(--ion-color-primary);
+  border-color: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+
+.om-coupon__radio ion-icon {
+  font-size: var(--om-icon-size-sm);
+}

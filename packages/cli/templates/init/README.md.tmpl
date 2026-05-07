@@ -1,0 +1,53 @@
+# {{PROJECT_NAME}}
+
+omit-design 项目。设计稿是真实可点击的 React 页面。
+
+## 启动
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+```
+
+打开 `/designs/main/welcome` 看 demo;`/workspace` 看项目目录。
+
+## 三件事
+
+### 加新页
+
+```
+design/orders/detail.tsx     # 第一行: // @pattern: detail-view
+                              # 自动注册路由 /designs/orders/detail
+```
+
+或跟 Claude 说"加一张订单详情设计稿",会自动从 [PATTERNS.md](./node_modules/@omit-design/preset-mobile/PATTERNS.md) 选 pattern + 复制 template。
+
+### 加 mock
+
+```
+mock/orders.ts:
+  export const orderDetail = { ... };
+
+design/orders/detail.tsx:
+  import { orderDetail } from "../mock/orders";
+```
+
+### 改主题
+
+打开 `/workspace/app/theme-editor`,调色 → 应用(localStorage) → 发布(下载 `theme.css`,覆盖到 `preset/theme.css` 并 git commit)。
+
+## 合规检查
+
+```bash
+npm run lint
+```
+
+AI 友好结构化输出(rule / file:line / sample / hint)。三条硬规则:
+
+1. 文件头 `// @pattern: <name>`
+2. import 来源白名单
+3. 禁止颜色 / px 字面量,走 token
+
+## 设计哲学
+
+详见 [CLAUDE.md](./CLAUDE.md)。

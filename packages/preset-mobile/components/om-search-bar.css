@@ -1,0 +1,39 @@
+/* OmSearchBar —— 圆角胶囊搜索输入 */
+
+.om-search-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-sm);
+  background: var(--ion-background-color);
+  border: 1px solid var(--ion-color-light);
+  border-radius: var(--om-radius-full);
+  padding: 0 var(--om-spacing-md);
+  height: var(--om-control-height-sm);
+  width: 100%;
+}
+
+.om-search-bar__icon {
+  font-size: var(--om-font-size-md);
+  color: var(--ion-color-medium);
+  flex: 0 0 auto;
+}
+
+.om-search-bar__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-dark);
+}
+
+.om-search-bar__input::placeholder {
+  color: var(--ion-color-medium);
+}
+
+.om-search-bar__trailing {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}

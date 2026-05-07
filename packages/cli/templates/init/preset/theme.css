@@ -1,0 +1,11 @@
+/*
+ * 项目级 token override(可选,可空)。
+ * 在 :root 里覆盖 @omit-design/preset-mobile 的默认 token,
+ * 例如:
+ *
+ *   :root {
+ *     --om-color-primary: #ff6b00;
+ *   }
+ *
+ * 主题编辑器(/workspace/:projectId/theme-editor)发布时会下载这个文件的新版本。
+ */

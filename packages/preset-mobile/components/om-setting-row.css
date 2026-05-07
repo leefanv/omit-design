@@ -1,0 +1,82 @@
+/* OmSettingRow —— 设置行，toggle/navigate/value 三种形态共享布局 */
+
+.om-setting-row {
+  appearance: none;
+  text-decoration: none;
+  border: none;
+  background: var(--ion-background-color);
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-md);
+  padding: var(--om-spacing-lg);
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  min-height: var(--om-control-height-xl);
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.om-setting-row:last-child {
+  border-bottom: none;
+}
+
+.om-setting-row--interactive {
+  cursor: pointer;
+}
+
+.om-setting-row--interactive:active {
+  background: var(--om-surface-primary-softest);
+}
+
+.om-setting-row__icon {
+  width: var(--om-control-height-sm);
+  height: var(--om-control-height-sm);
+  border-radius: var(--om-radius-md);
+  background: var(--om-surface-primary-soft);
+  color: var(--ion-color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.om-setting-row__icon ion-icon {
+  font-size: var(--om-icon-size-md);
+}
+
+.om-setting-row__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-xs);
+}
+
+.om-setting-row__label {
+  font-size: var(--om-font-size-md);
+  color: var(--ion-color-dark);
+}
+
+.om-setting-row__desc {
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+.om-setting-row__right {
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-sm);
+  flex: 0 0 auto;
+  color: var(--ion-color-medium-shade);
+}
+
+.om-setting-row__value {
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-medium-shade);
+}
+
+.om-setting-row__chevron {
+  font-size: var(--om-icon-size-sm);
+  color: var(--ion-color-medium);
+}

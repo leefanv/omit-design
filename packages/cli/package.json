@@ -1,0 +1,32 @@
+{
+  "name": "@omit-design/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "omit-design CLI: init / dev / lint.",
+  "bin": {
+    "omit-design": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node ./scripts/copy-templates.mjs",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "citty": "^0.1",
+    "fs-extra": "^11"
+  },
+  "peerDependencies": {
+    "eslint": ">=10",
+    "vite": ">=6"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11",
+    "@types/node": "^22",
+    "typescript": "^5.7"
+  }
+}

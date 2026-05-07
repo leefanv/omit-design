@@ -1,0 +1,55 @@
+/* OmEmptyState —— 空态面板 */
+
+.om-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--om-spacing-lg);
+  padding: var(--om-spacing-xl) var(--om-spacing-lg);
+  text-align: center;
+}
+
+.om-empty__icon {
+  /* 64×64 = 两倍 spacing-2xl，画报级占位大小 */
+  width: calc(var(--om-spacing-2xl) * 2);
+  height: calc(var(--om-spacing-2xl) * 2);
+  border-radius: var(--om-radius-full);
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.om-empty__icon ion-icon {
+  font-size: var(--om-icon-size-xl);
+}
+
+.om-empty__title {
+  margin: 0;
+  font-size: var(--om-font-size-md);
+  font-weight: 500;
+  color: var(--ion-color-dark);
+}
+
+.om-empty__desc {
+  margin: 0;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-medium);
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.om-empty__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--om-spacing-sm);
+  width: 100%;
+  max-width: 240px;
+  margin-top: var(--om-spacing-sm);
+}
+
+.om-empty__actions ion-button {
+  width: 100%;
+}

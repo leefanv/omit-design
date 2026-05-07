@@ -1,0 +1,190 @@
+.shell-right-panel {
+  width: 360px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  background: var(--shell-surface);
+  border-left: 1px solid var(--shell-border);
+  font-family: var(--shell-font);
+  font-size: 13px;
+  color: var(--shell-text);
+}
+
+/* ===== 一级 tabs（顶部） ===== */
+.shell-right-panel__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.shell-right-panel__tab {
+  flex: 1;
+  padding: 12px 8px;
+  border: none;
+  background: transparent;
+  color: var(--shell-text-subtle);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.shell-right-panel__tab:hover {
+  color: var(--shell-text);
+}
+.shell-right-panel__tab.active {
+  color: var(--shell-accent);
+  border-bottom-color: var(--shell-accent);
+  font-weight: 500;
+}
+.shell-right-panel__tab-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.shell-right-panel__tab-label {
+  font-size: 11px;
+}
+
+.shell-right-panel__content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ===== Overview tab 内容 ===== */
+.shell-overview {
+  padding: 20px 16px;
+  color: var(--shell-text);
+}
+.shell-overview section {
+  margin-bottom: 24px;
+}
+.shell-overview h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.shell-overview h4 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--shell-text-subtle);
+  letter-spacing: 0.05em;
+}
+.shell-overview p {
+  margin: 0;
+  color: var(--shell-text-muted);
+  line-height: 1.55;
+}
+.shell-overview p.muted {
+  color: var(--shell-text-subtle);
+}
+.shell-overview p.small {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.shell-overview__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.shell-overview__list--ordered {
+  list-style: decimal inside;
+  padding-left: 0;
+}
+.shell-overview__list--ordered li {
+  display: list-item;
+  padding-left: 4px;
+}
+.shell-overview__list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--shell-surface-subtle);
+  border: 1px solid var(--shell-border-subtle);
+  border-radius: var(--shell-radius-lg);
+  color: var(--shell-text-muted);
+  line-height: 1.5;
+}
+.shell-overview__list strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--shell-text);
+}
+.shell-overview__list span {
+  font-size: 12px;
+  color: var(--shell-text-subtle);
+}
+.shell-overview__list kbd {
+  display: inline-block;
+  font-family: var(--shell-font-mono);
+  font-size: 11px;
+  background: var(--shell-surface);
+  border: 1px solid var(--shell-border-strong);
+  border-bottom-width: 2px;
+  border-radius: var(--shell-radius-sm);
+  padding: 1px 6px;
+  margin-right: 8px;
+  color: var(--shell-text-muted);
+  align-self: flex-start;
+}
+.shell-overview__list code {
+  font-family: var(--shell-font-mono);
+  font-size: 11px;
+  background: var(--shell-surface-muted);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--shell-danger);
+}
+.shell-overview__link {
+  display: inline-block;
+  color: var(--shell-text-subtle);
+  text-decoration: none;
+  font-size: 12px;
+}
+.shell-overview__link:hover {
+  color: var(--shell-accent);
+}
+
+/* ===== Inspect tab 通用 segment（pill） ===== */
+.shell-segment {
+  display: flex;
+  background: var(--shell-surface-muted);
+  border-radius: var(--shell-radius-lg);
+  padding: 2px;
+  gap: 2px;
+}
+.shell-segment__btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: var(--shell-radius-md);
+  font-size: 12px;
+  color: var(--shell-text-subtle);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.shell-segment__btn:hover:not(.active) {
+  color: var(--shell-text);
+}
+.shell-segment__btn.active {
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  font-weight: 500;
+  box-shadow: var(--shell-shadow-sm);
+}

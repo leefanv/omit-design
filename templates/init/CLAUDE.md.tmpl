@@ -1,0 +1,69 @@
+# {{PROJECT_NAME}} (omit-design 项目)
+
+AI 助手在本仓库工作的强制约定。
+
+## 项目是什么
+
+omit-design 项目 — 设计稿是真实可点击的 React 页面,不是图片。`design/` 下每个 `.tsx` 文件 = 一张稿子,自动注册到 `/designs/<group>/<name>` 路由。
+
+技术栈:Vite + React 19 + TypeScript + Ionic React 8 + zustand + `@omit-design/preset-mobile`。
+
+## 仓库结构
+
+```
+{{PROJECT_DIR}}/
+├── app/             Vite 入口 + 路由(基本不改)
+├── design/          ★ 业务设计稿(开发主战场)
+├── mock/            ★ mock 数据(开发主战场)
+├── preset/          (可选)项目级 token override / 私有组件
+├── .claude/skills/  Claude 加载的 skill(自动)
+├── eslint.config.js 三条硬规则(仅对 design/ 生效)
+├── vite.config.ts
+├── tsconfig.json
+└── package.json
+```
+
+## 核心约束(违反 = 直接拒绝)
+
+1. **业务页面(`design/**/*.tsx`)只能 import**:
+   - `@omit-design/preset-mobile`(Om* 组件白名单)
+   - `react` / `react-router` / `react-router-dom`
+   - `ionicons/icons`(图标常量)
+   - `@ionic/react`:仅 `IonList` / `IonBackButton` / `IonIcon`
+   - 项目内相对路径(如 `../mock/foo`)
+
+2. **业务页面禁止字面量**:颜色(`#hex` / `rgb` / 命名色)、像素长度。走 token(`var(--om-*)` / `var(--ion-*)`) 或 Om* 组件的 props。
+
+3. **每个业务页面文件第一行**:`// @pattern: <name>`,name 必须存在于 `node_modules/@omit-design/preset-mobile/PATTERNS.md`(8 个 pattern:list-view / detail-view / form-view / sheet-action / dialog-view / welcome-view / dashboard / tab-view)。
+
+4. **新增页面 / 模式**:优先走对应 skill:
+   - 新页面 → `.claude/skills/new-design`
+   - 新模式 → `.claude/skills/add-pattern`
+   - 审查 → `.claude/skills/audit-design`
+
+## 开发命令
+
+```bash
+npm run dev          # 启动 vite,默认 http://localhost:5173
+npm run lint         # 合规检查(AI 友好结构化输出)
+npm run build        # 生产构建
+```
+
+访问入口:
+- `/workspace` — 项目工作台
+- `/designs/main/welcome` — 默认欢迎稿(scaffold 自带)
+- `/workspace/app/theme-editor` — 主题编辑器
+
+## 不要做的事
+
+- ❌ 在业务页面写 `#FF6B00` 这种字面量
+- ❌ 从 `@ionic/react` 直接 import `IonButton` 等视觉组件(走 Om* 封装)
+- ❌ 接真实 API
+- ❌ 不读 PATTERNS.md 就"自创"模式
+- ❌ 在 `design/` 外写 mock 数据
+
+## 何时问用户
+
+- PRD 缺关键信息(pattern / 字段 / 主操作)
+- 白名单缺组件(提议加封装而不是绕过)
+- 要新增 pattern(全局影响)

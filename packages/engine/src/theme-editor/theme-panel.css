@@ -1,0 +1,189 @@
+.theme-panel {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-left: 1px solid #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  color: #111;
+  overflow-y: auto;
+}
+
+.theme-panel--embedded {
+  height: 100%;
+  width: 100%;
+}
+
+/* 设计稿页面右栏：成为 shell grid 的一列，整体布局稳定 */
+.theme-panel--aside {
+  height: 100vh;
+  width: 100%;
+  position: sticky;
+  top: 0;
+}
+
+.theme-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+.theme-panel__header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.theme-panel__close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.theme-panel__status {
+  padding: 8px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* Preset 切换瞬间的占位（switchPreset 还没 settle） */
+.theme-panel__loading {
+  padding: 16px;
+  font-size: 12px;
+  color: #6b7280;
+}
+.status-pill {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.status-pill--draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-pill--applied {
+  background: #dbeafe;
+  color: #1e40af;
+}
+.status-pill--clean {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.theme-panel__section {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.theme-panel__section h4 {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.token-grid {
+  display: grid;
+  gap: 6px;
+}
+
+.token-row {
+  display: grid;
+  grid-template-columns: 80px 28px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border-left: 2px solid transparent;
+}
+.token-row--dirty {
+  background: #fffbeb;
+  border-left-color: #f59e0b;
+}
+.token-row__name {
+  font-family: monospace;
+  font-size: 12px;
+  color: #374151;
+}
+.token-row__color {
+  width: 28px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+}
+.token-row__hex {
+  font-family: monospace;
+  font-size: 12px;
+  padding: 4px 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+.theme-panel__footer {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  position: sticky;
+  bottom: 0;
+}
+.theme-panel__reset {
+  padding: 8px 16px 16px;
+  text-align: center;
+}
+
+.btn {
+  flex: 1;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn--ghost {
+  background: #fff;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+.btn--primary {
+  background: #111827;
+  color: #fff;
+}
+.btn--success {
+  background: var(--shell-success);
+  color: #fff;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.btn-link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: none;
+}

@@ -1,0 +1,68 @@
+/* OmMenuCard —— 工作台宫格卡 */
+
+.om-menu {
+  appearance: none;
+  text-decoration: none;
+  border: none;
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-lg);
+  padding: var(--om-spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--om-spacing-md);
+  box-shadow: var(--om-shadow-sm);
+  min-height: calc(var(--om-control-height-xl) * 2);
+  cursor: pointer;
+  color: var(--ion-color-dark);
+  position: relative;
+  text-align: left;
+}
+
+.om-menu:active {
+  background: var(--om-surface-primary-softest);
+}
+
+.om-menu--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.om-menu__icon {
+  width: var(--om-control-height-md);
+  height: var(--om-control-height-md);
+  border-radius: var(--om-radius-md);
+  background: var(--om-surface-primary-soft);
+  color: var(--ion-color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.om-menu__icon ion-icon {
+  font-size: var(--om-icon-size-lg);
+}
+
+.om-menu__label {
+  font-size: var(--om-font-size-md);
+  color: var(--ion-color-dark);
+  font-weight: 500;
+}
+
+.om-menu__badge {
+  position: absolute;
+  top: var(--om-spacing-sm);
+  right: var(--om-spacing-sm);
+  min-width: var(--om-spacing-lg);
+  height: var(--om-spacing-lg);
+  padding: 0 var(--om-spacing-xs);
+  border-radius: var(--om-radius-full);
+  background: var(--ion-color-danger);
+  color: var(--ion-color-danger-contrast);
+  font-size: var(--om-font-size-xs);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}

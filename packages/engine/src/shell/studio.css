@@ -1,0 +1,559 @@
+.shell-studio {
+  /* Ionic 的 structure.css 把 body 锁成 position: fixed; overflow: hidden，
+   * 整页滚动必须由页面根容器自己承担（#root 已是 height: 100%）。 */
+  height: 100%;
+  overflow-y: auto;
+  background: var(--shell-surface-subtle);
+  color: var(--shell-text);
+  scroll-behavior: smooth;
+}
+
+.shell-studio__header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 32px;
+  background: var(--shell-surface);
+  border-bottom: 1px solid var(--shell-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(20px);
+}
+.shell-studio__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.shell-studio__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--shell-accent-gradient);
+  color: #fff;
+  border-radius: var(--shell-radius-lg);
+  font-size: 14px;
+  transform: rotate(45deg);
+}
+.shell-studio__header h1 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.shell-studio__tag {
+  font-size: 12px;
+  color: var(--shell-text-faint);
+  padding-left: 12px;
+  border-left: 1px solid var(--shell-canvas-bg);
+  margin-left: 4px;
+}
+
+/* ---------- 搜索框 ---------- */
+
+.shell-studio__search {
+  flex: 1 1 auto;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--shell-surface-muted);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+  padding: 0 14px;
+  height: 36px;
+  transition: border-color 0.15s;
+}
+.shell-studio__search:focus-within {
+  border-color: var(--shell-accent);
+  background: var(--shell-surface);
+}
+
+.shell-studio__search-icon {
+  font-size: 13px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.shell-studio__search input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--shell-text);
+  min-width: 0;
+}
+.shell-studio__search input::placeholder {
+  color: var(--shell-text-faint);
+}
+
+.shell-studio__search-clear {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--shell-text-faint);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.shell-studio__search-clear:hover {
+  color: var(--shell-accent);
+}
+
+.shell-studio__search-kbd {
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  font-family: var(--shell-font-mono);
+  background: var(--shell-surface);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--shell-border);
+  white-space: nowrap;
+}
+
+/* ---------- 头部右侧动作按钮（导出到 Figma 等） ---------- */
+
+.shell-studio__action {
+  appearance: none;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--shell-radius-xl);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.shell-studio__action:hover {
+  border-color: var(--shell-accent);
+  color: var(--shell-accent);
+}
+
+/* ---------- 两栏布局：左 ToC + 右 主区 ---------- */
+
+.shell-studio__layout {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  padding: 32px;
+}
+
+/* ToC —— sticky 左栏 */
+.shell-studio__toc {
+  position: sticky;
+  top: 85px;   /* header 高度 + 留白 */
+  align-self: start;
+  background: var(--shell-surface);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+  padding: 12px;
+  max-height: calc(100vh - 105px);
+  overflow-y: auto;
+}
+
+.shell-studio__toc-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 6px 10px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--shell-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--shell-border);
+  margin-bottom: 8px;
+}
+
+.shell-studio__toc-count {
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  background: var(--shell-surface-muted);
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-family: var(--shell-font-mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.shell-studio__toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shell-studio__toc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--shell-radius-lg);
+  font-size: 13px;
+  color: var(--shell-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.shell-studio__toc-item:hover {
+  background: var(--shell-surface-muted);
+  color: var(--shell-text);
+}
+.shell-studio__toc-item--active {
+  background: var(--shell-surface-muted);
+  color: var(--shell-accent);
+  font-weight: 600;
+}
+.shell-studio__toc-item--muted {
+  opacity: 0.35;
+}
+
+.shell-studio__toc-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.shell-studio__toc-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell-studio__toc-badge {
+  font-size: 11px;
+  color: var(--shell-text-faint);
+  font-family: var(--shell-font-mono);
+}
+
+/* ---------- 主区（原来的 .shell-studio__main 语义保留） ---------- */
+
+.shell-studio__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.shell-studio__empty {
+  padding: 60px 32px;
+  text-align: center;
+  color: var(--shell-text-faint);
+  font-size: 13px;
+  background: var(--shell-surface);
+  border: 1px dashed var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+}
+
+.shell-studio__group {
+  scroll-margin-top: 85px;  /* 滚到分组时避开 sticky header */
+}
+.shell-studio__group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--shell-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.shell-studio__group-icon {
+  font-size: 16px;
+}
+.shell-studio__group-count {
+  font-size: 11px;
+  background: var(--shell-surface-muted);
+  color: var(--shell-text-faint);
+  padding: 1px 6px;
+  border-radius: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.shell-studio__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.shell-studio__card a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--shell-surface);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.shell-studio__card a:hover {
+  transform: translateY(-2px);
+  border-color: var(--shell-border-hover);
+  box-shadow: var(--shell-shadow-md);
+}
+
+/* iframe 预览卡 */
+.shell-studio__thumb {
+  position: relative;
+  aspect-ratio: 390 / 600;
+  background: var(--ion-background-color);
+  border-bottom: 1px solid var(--shell-border);
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+/* desktop 设计稿是 1280×800 横屏，用 16/10 卡片更合理 */
+.shell-studio__thumb--desktop {
+  aspect-ratio: 16 / 10;
+}
+
+/* desktop 卡片占两列宽（让 16/10 thumb 有足够 footprint 显示内容） */
+.shell-studio__card--desktop {
+  grid-column: span 2;
+}
+
+.shell-studio__thumb iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 390px;
+  height: 844px;
+  border: 0;
+  transform: scale(calc(100cqw / 390px));
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+/* 来源角标（右上浮层） */
+.shell-studio__source {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px);
+  z-index: 1;
+}
+.shell-studio__source--prd {
+  background: rgba(229, 110, 53, 0.92); /* 来自 tertiary token 的 RGB */
+  color: #fff;
+}
+
+.shell-studio__meta {
+  padding: 14px 16px 16px;
+}
+.shell-studio__meta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.shell-studio__meta strong {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+}
+.shell-studio__pattern {
+  font-size: 11px;
+  background: var(--shell-surface-muted);
+  color: var(--shell-text-subtle);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--shell-font-mono);
+  flex-shrink: 0;
+}
+.shell-studio__meta p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--shell-text-subtle);
+  line-height: 1.55;
+}
+
+/* ─────────────────────────────────────────────
+   Projects home — /workspace
+   ───────────────────────────────────────────── */
+
+.shell-projects {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px;
+}
+
+.shell-projects__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--shell-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.shell-projects__count {
+  font-size: 11px;
+  background: var(--shell-surface-muted);
+  color: var(--shell-text-faint);
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-family: var(--shell-font-mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.shell-projects__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+/* Project card */
+.shell-project-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--shell-surface);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-xl);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.shell-project-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--shell-border-hover);
+  box-shadow: var(--shell-shadow-md);
+}
+
+.shell-project-card__cover {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--shell-surface-muted);
+  border-bottom: 1px solid var(--shell-border);
+  overflow: hidden;
+  container-type: inline-size;
+}
+
+/* mobile preview：等比缩放 390px 宽的 frame */
+.shell-project-card__cover iframe {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) scale(calc(100cqw / 390px));
+  transform-origin: top center;
+  width: 390px;
+  height: 844px;
+  border: 0;
+  pointer-events: none;
+}
+
+/* desktop preview：等比缩放 1280px 宽的 frame */
+.shell-project-card__iframe--desktop {
+  left: 0 !important;
+  transform: scale(calc(100cqw / 1280px)) !important;
+  transform-origin: top left !important;
+  width: 1280px !important;
+  height: 800px !important;
+}
+
+.shell-project-card__device-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shell-project-card__info {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.shell-project-card__icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.shell-project-card__text {
+  min-width: 0;
+}
+
+.shell-project-card__name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  margin-bottom: 4px;
+}
+
+.shell-project-card__desc {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--shell-text-subtle);
+  line-height: 1.5;
+}
+
+.shell-project-card__meta {
+  font-size: 12px;
+  color: var(--shell-text-faint);
+  font-family: var(--shell-font-mono);
+}
+
+/* project detail header 里的返回按钮 */
+.shell-studio__back {
+  display: flex;
+  text-decoration: none;
+}
+.shell-studio__back:hover .shell-studio__logo {
+  opacity: 0.7;
+}
+
+.shell-studio__project-icon {
+  font-size: 20px;
+}
+
+/* 小屏：隐藏 ToC（<1024px） */
+@media (max-width: 1024px) {
+  .shell-studio__layout {
+    grid-template-columns: 1fr;
+    padding: 24px;
+  }
+  .shell-studio__toc {
+    display: none;
+  }
+}

@@ -1,0 +1,137 @@
+import { defineCommand } from "citty";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+
+const SEVERITY: Record<string, string> = {
+  "omit-design/require-pattern-header": "🔴",
+  "omit-design/whitelist-ds-import": "🔴",
+  "omit-design/no-design-literal": "🟡",
+};
+
+const HINT: Record<string, string> = {
+  "omit-design/require-pattern-header":
+    "第一行加 `// @pattern: <name>`(name 须存在于 @omit-design/preset-mobile/PATTERNS.md)",
+  "omit-design/whitelist-ds-import":
+    "改用 @omit-design/preset-mobile / 白名单 Ionic 容器(IonList / IonBackButton / IonIcon)",
+  "omit-design/no-design-literal":
+    "走 token:var(--om-*) / var(--ion-*),或通过 Om* 组件 props",
+};
+
+interface ESLintMessage {
+  ruleId: string | null;
+  severity: number;
+  message: string;
+  line?: number;
+  column?: number;
+}
+interface ESLintResult {
+  filePath: string;
+  errorCount: number;
+  warningCount: number;
+  messages: ESLintMessage[];
+}
+
+export default defineCommand({
+  meta: {
+    name: "lint",
+    description: "Run omit-design compliance check on design/**/*.tsx with AI-friendly output.",
+  },
+  args: {
+    json: {
+      type: "boolean",
+      description: "Emit raw ESLint JSON instead of the markdown summary.",
+      default: false,
+    },
+    glob: {
+      type: "string",
+      description: "Override the glob (default: design/**/*.tsx).",
+      default: "design/**/*.tsx",
+    },
+  },
+  async run({ args }) {
+    const cwd = process.cwd();
+    const eslintBin = path.join(cwd, "node_modules", ".bin", "eslint");
+
+    const child = spawnSync(eslintBin, ["--format", "json", args.glob], {
+      cwd,
+      encoding: "utf8",
+    });
+
+    let results: ESLintResult[];
+    try {
+      results = JSON.parse(child.stdout) as ESLintResult[];
+    } catch {
+      process.stderr.write(child.stderr || "ESLint 输出解析失败\n");
+      process.stderr.write(child.stdout || "");
+      process.exit(2);
+      return;
+    }
+
+    if (args.json) {
+      process.stdout.write(JSON.stringify(results, null, 2) + "\n");
+      process.exit(hasViolations(results) ? 1 : 0);
+      return;
+    }
+
+    renderMarkdown(results, cwd);
+    process.exit(hasViolations(results) ? 1 : 0);
+  },
+});
+
+function hasViolations(results: ESLintResult[]): boolean {
+  return results.some((r) => r.errorCount > 0 || r.warningCount > 0);
+}
+
+function extractSample(msg: string | undefined): string {
+  if (!msg) return "";
+  const m = msg.match(/'([^']+)'/);
+  return m ? `\`${m[1]}\`` : "";
+}
+
+function renderMarkdown(results: ESLintResult[], cwd: string): void {
+  const filesWithIssues = results.filter(
+    (r) => r.errorCount > 0 || r.warningCount > 0
+  );
+  const totalFiles = results.length;
+  const okFiles = totalFiles - filesWithIssues.length;
+
+  if (filesWithIssues.length === 0) {
+    process.stdout.write(`✓ 合规检查通过(${totalFiles} 个文件,0 违规)\n`);
+    return;
+  }
+
+  process.stdout.write(`# omit-design 合规检查\n\n`);
+
+  const tally = { red: 0, yellow: 0, green: 0 };
+
+  for (const file of filesWithIssues) {
+    const rel = path.relative(cwd, file.filePath);
+    process.stdout.write(`## ${rel}\n\n`);
+    for (const m of file.messages) {
+      const ruleId = m.ruleId ?? "(unknown)";
+      const emoji = SEVERITY[ruleId] ?? (m.severity === 2 ? "🔴" : "🟡");
+      if (emoji === "🔴") tally.red++;
+      else if (emoji === "🟡") tally.yellow++;
+      else tally.green++;
+
+      const loc =
+        m.line != null
+          ? `:${m.line}${m.column != null ? `:${m.column}` : ""}`
+          : "";
+      const hint = HINT[ruleId] ?? "";
+      const sample = extractSample(m.message);
+      const sampleStr = sample ? ` — ${sample}` : "";
+      const hintStr = hint ? ` → ${hint}` : "";
+      process.stdout.write(
+        `${emoji} [${ruleId}] ${rel}${loc}${sampleStr}${hintStr}\n`
+      );
+    }
+    process.stdout.write(`\n`);
+  }
+
+  process.stdout.write(`---\n\n`);
+  process.stdout.write(`**合规**: ${okFiles}/${totalFiles} 文件\n`);
+  process.stdout.write(
+    `**违规**: 🔴 ${tally.red} · 🟡 ${tally.yellow} · 🟢 ${tally.green}\n`
+  );
+}

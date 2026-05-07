@@ -1,0 +1,73 @@
+/* OmSheet —— 底部抽屉 */
+
+.om-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.om-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--om-overlay-scrim);
+}
+
+.om-sheet__panel {
+  position: relative;
+  background: var(--ion-background-color);
+  border-top-left-radius: var(--om-radius-xl);
+  border-top-right-radius: var(--om-radius-xl);
+  box-shadow: var(--om-shadow-lg);
+  max-height: 85%;
+  display: flex;
+  flex-direction: column;
+  animation: pos-sheet-in 0.2s ease-out;
+}
+
+.om-sheet__panel--tall {
+  min-height: 70%;
+}
+
+@keyframes pos-sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.om-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--om-spacing-lg);
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.om-sheet__title {
+  font-size: var(--om-font-size-md);
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.om-sheet__close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: var(--om-control-height-sm);
+  height: var(--om-control-height-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ion-color-medium);
+  cursor: pointer;
+}
+
+.om-sheet__close ion-icon {
+  font-size: var(--om-icon-size-md);
+}
+
+.om-sheet__body {
+  overflow-y: auto;
+  padding: var(--om-spacing-lg);
+}

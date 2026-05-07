@@ -1,0 +1,81 @@
+/* OmDialog —— 独立一张稿的对话框形态：全屏 scrim + 居中卡片。
+   不使用 IonModal —— 作为 dialog-view pattern，本身就是一个页面的主体。 */
+
+.om-dialog {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--om-spacing-xl);
+  z-index: 10;
+}
+
+.om-dialog__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--om-overlay-scrim);
+}
+
+.om-dialog__card {
+  position: relative;
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-xl);
+  padding: var(--om-spacing-xl) var(--om-spacing-lg) var(--om-spacing-lg);
+  width: 100%;
+  max-width: 334px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--om-spacing-lg);
+  text-align: center;
+  box-shadow: var(--om-shadow-lg);
+}
+
+.om-dialog__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  line-height: 1;
+}
+.om-dialog__icon ion-icon {
+  font-size: 64px;
+}
+
+.om-dialog__title {
+  margin: 0;
+  font-size: var(--om-font-size-lg);
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.om-dialog__subtitle {
+  margin: 0;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-medium);
+}
+
+.om-dialog__actions {
+  width: 100%;
+  margin-top: var(--om-spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-sm);
+}
+.om-dialog__actions--two {
+  flex-direction: row;
+}
+.om-dialog__actions--two ion-button {
+  flex: 1 1 0;
+}
+.om-dialog__actions ion-button {
+  --border-radius: var(--om-radius-md);
+  height: var(--om-control-height-xl);
+  font-size: var(--om-font-size-lg);
+  font-weight: 600;
+}
+.om-dialog__body {
+  width: 100%;
+}

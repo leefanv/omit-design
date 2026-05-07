@@ -1,0 +1,106 @@
+/*
+ * DeviceToolbar — 类 Chrome DevTools 响应式模式的控制条。
+ * 出现在设备壳上方，提供机型预设 + 宽高输入 + 旋转。
+ * shell 专属样式，禁止引用 --ion-* / --pos-*。
+ */
+
+.shell-device-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--shell-space-3);
+  padding: 6px 12px;
+  background: var(--shell-surface);
+  border: 1px solid var(--shell-border);
+  border-radius: var(--shell-radius-lg);
+  box-shadow: var(--shell-shadow-sm);
+  font-family: var(--shell-font);
+  color: var(--shell-text-muted);
+  font-size: 12px;
+  user-select: none;
+}
+
+.shell-device-toolbar__preset {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface-subtle);
+  color: var(--shell-text-muted);
+  font: inherit;
+  padding: 4px 22px 4px 8px;
+  border-radius: var(--shell-radius-md);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+.shell-device-toolbar__preset:hover {
+  border-color: var(--shell-border-hover);
+}
+.shell-device-toolbar__preset:focus-visible {
+  outline: none;
+  border-color: var(--shell-accent);
+  box-shadow: 0 0 0 2px var(--shell-accent-soft);
+}
+
+.shell-device-toolbar__dims {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.shell-device-toolbar__input {
+  width: 56px;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface-subtle);
+  color: var(--shell-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 6px;
+  border-radius: var(--shell-radius-md);
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.shell-device-toolbar__input::-webkit-outer-spin-button,
+.shell-device-toolbar__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.shell-device-toolbar__input:hover {
+  border-color: var(--shell-border-hover);
+}
+.shell-device-toolbar__input:focus-visible {
+  outline: none;
+  border-color: var(--shell-accent);
+  box-shadow: 0 0 0 2px var(--shell-accent-soft);
+}
+
+.shell-device-toolbar__x {
+  color: var(--shell-text-faint);
+  font-size: 11px;
+}
+
+.shell-device-toolbar__rotate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface-subtle);
+  color: var(--shell-text-muted);
+  border-radius: var(--shell-radius-md);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.shell-device-toolbar__rotate:hover {
+  border-color: var(--shell-border-hover);
+  color: var(--shell-accent);
+  background: var(--shell-accent-soft);
+}
+.shell-device-toolbar__rotate:focus-visible {
+  outline: none;
+  border-color: var(--shell-accent);
+  box-shadow: 0 0 0 2px var(--shell-accent-soft);
+}

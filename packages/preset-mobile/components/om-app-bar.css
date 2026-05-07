@@ -1,0 +1,83 @@
+/* OmAppBar —— POS 应用 header（非表单页的 header）。
+   与 OmHeader（标准标题栏）区分：OmAppBar 是信息密度更高的 app shell 级 header。 */
+
+.om-app-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-md);
+  padding: var(--om-spacing-sm) var(--om-spacing-lg);
+  background: var(--ion-background-color);
+  min-height: var(--om-control-height-xl);
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.om-app-bar--store .om-app-bar__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-xs);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.om-app-bar__info-primary {
+  margin: 0;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-dark);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.om-app-bar__info-secondary {
+  margin: 0;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-dark);
+  font-weight: 500;
+}
+
+.om-app-bar__divider {
+  width: 1px;
+  height: var(--om-spacing-2xl);
+  background: var(--ion-color-light);
+}
+
+.om-app-bar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-sm);
+}
+
+/* brand 变体（商户中心） */
+.om-app-bar--brand {
+  justify-content: space-between;
+}
+
+.om-app-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--om-spacing-sm);
+}
+
+.om-app-bar__brand-icon {
+  font-size: var(--om-icon-size-lg);
+}
+
+.om-app-bar__brand-title {
+  font-size: var(--om-font-size-md);
+  font-weight: 500;
+  color: var(--ion-color-dark);
+}
+
+.om-app-bar__avatar {
+  width: var(--om-spacing-2xl);
+  height: var(--om-spacing-2xl);
+  border-radius: var(--om-radius-full);
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-medium);
+}

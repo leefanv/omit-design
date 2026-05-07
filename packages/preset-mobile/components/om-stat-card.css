@@ -1,0 +1,40 @@
+/* OmStatCard —— 工作台数字指标卡 */
+
+.om-stat {
+  background: var(--ion-background-color);
+  border-radius: var(--om-radius-lg);
+  padding: var(--om-spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--om-spacing-xs);
+  box-shadow: var(--om-shadow-sm);
+}
+
+.om-stat__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--om-spacing-sm);
+}
+
+.om-stat__label {
+  font-size: var(--om-font-size-sm);
+  color: var(--ion-color-medium-shade);
+}
+
+.om-stat__meta {
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
+
+.om-stat__value {
+  font-size: var(--om-font-size-2xl);
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  line-height: 1.15;
+}
+
+.om-stat__caption {
+  font-size: var(--om-font-size-xs);
+  color: var(--ion-color-medium);
+}
