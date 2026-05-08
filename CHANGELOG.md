@@ -5,6 +5,19 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3-cli] - 2026-05-08
+
+CLI patch release. Adds one new command, no breaking changes.
+
+### Added
+
+- **@omit-design/cli** — `omit-design upgrade`: one-shot upgrade for all
+  `@omit-design/*` dependencies. Reads `package.json`, queries npm registry
+  for `latest` versions, rewrites the version ranges to `^X.Y.Z`, then runs
+  the project's package manager (`bun` / `pnpm` / `yarn` / `npm`, auto-detected
+  from lockfile). Flags: `--dry-run` (preview), `--check` (CI: exit 1 if any
+  out-of-date), `--no-install` (rewrite ranges only).
+
 ## [0.2.0] - 2026-05-08
 
 Minor release. Project-detail page redesigned as a Figma-style canvas with

@@ -4,7 +4,7 @@ import { defineCommand, runMain } from "citty";
 const main = defineCommand({
   meta: {
     name: "omit-design",
-    version: "0.1.2",
+    version: "0.1.3",
     description: [
       "AI-collaborative design composition framework — write TSX, lint with hard rules, preview locally.",
       "",
@@ -21,6 +21,7 @@ const main = defineCommand({
     lint: () => import("./commands/lint.js").then((m) => m.default),
     skills: () => import("./commands/skills.js").then((m) => m.default),
     "new-page": () => import("./commands/new-page.js").then((m) => m.default),
+    upgrade: () => import("./commands/upgrade.js").then((m) => m.default),
   },
 });
 
