@@ -81,11 +81,22 @@
 
 ### P2:浏览器实测 + 修复运行时 bug
 
-- [ ] 用 Playwright / 手动浏览器加载 `/designs/main/welcome`,确认 React 不抛运行时错
-- [ ] 进 `/workspace` → 进项目 → 看缩略图(以前 cloud 缓存路径已剥,只剩 capture 流程,需要测)
-- [ ] 进 `/workspace/app/theme-editor` 改 token,确认实时生效 + 发布下载 `theme.css`
-- [ ] 开 Inspect overlay,hover Om* 元素,看组件名 + token 显示
-- [ ] Figma 插件流程:导出 JSON → Figma 拖入 → Frame 生成
+#### 实测通过(2026-05-08,Claude Preview MCP)
+
+- [x] **`/designs/main/welcome` 渲染**:welcome 设计稿正常显示(9:41 + 标题 + 按钮),0 console error
+- [x] **`/workspace` → ProjectsHome**:1 项目卡片 + grid 布局 + MOBILE 标签 + iframe 缩略图
+- [x] **`/workspace/app` → ProjectDetail**:分组目录 + 1 张稿(主页·欢迎 @welcome-view)+ 缩略图
+- [x] **`/workspace/app/theme-editor` 渲染**:左侧组件目录 + 右侧 颜色/间距 token 表(primary/secondary/...);`--ion-color-primary` / `--om-spacing-md` 正确注入 :root
+- [x] **Inspect overlay**:点 OmButton 自动选中,Properties 面板显示 `color=primary` `radius=md` + COMPUTED 尺寸/字体 + EXPORT @1x/@2x/@3x
+- [x] **Figma 导出 dialog**:dialog 弹出,捕获稿件下拉、捕获并下载 JSON、捕获全部 bundle、Tokens.json、下载插件 .zip 全部按钮齐
+- [ ] (人工)theme token 改值 → apply → 设计稿实时变色:自动化未跑,留人工
+- [ ] (人工)Figma 插件 import JSON → Frame 生成:需 Figma 桌面版,留人工
+
+#### 实测暴露并修复的 bug
+
+1. **shell/styles.css 永远不被 import** —— `packages/engine/src/shell/index.ts` 只 export 组件,从不 import 自己的 styles.css(包含 shell.css / workspace.css / device-frame.css / device-toolbar.css / sidebar.css / right-panel.css / studio.css / capture/export-dialog.css)。脚手架 main.tsx 也只 import preset-mobile,所以 shell 完全无样式(链接默认蓝下划线 + 无 grid)。
+   - **修复**:`shell/index.ts` 顶部加 `import "./styles.css";`,同时把 `engine/package.json` 的 `sideEffects: false` 改成 `["**/*.css"]`(防止 prod build 摇掉 CSS)
+   - 修后视觉验证 ✓:工作台 banner 紫色 logo + 项目卡 grid + 设备框 iPhone 14 + inspect 右侧面板布局齐
 
 ### P3:补强
 
@@ -114,3 +125,5 @@
 |---|---|
 | `570c583` | feat: initial omit-design repo (CLI + engine + preset-mobile + skills) |
 | `73992f1` | fix(integration): pass tsc + npm run lint + npm run dev end-to-end |
+| `327b95e` | docs: add PROGRESS.md tracking v0.1 status + remaining work |
+| `3192f59` | feat(release-prep): v0.1.0 publish readiness + smoke-test bug fixes |

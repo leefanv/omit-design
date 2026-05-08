@@ -12,7 +12,9 @@
     "./inspect/*": "./src/inspect/*",
     "./theme-editor/*": "./src/theme-editor/*"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "files": [
     "src",
     "README.md"
