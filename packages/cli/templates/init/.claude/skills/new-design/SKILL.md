@@ -3,45 +3,45 @@ name: new-design
 description: Generate a new design page in an omit-design project (under design/) from a PRD or "add a page" request. Picks a pattern from preset-mobile, copies its template, fills in fields, registers via auto-discovery. Use when the user wants to scaffold a new design page.
 ---
 
-# new-design — 从 PRD 生成设计稿
+# new-design — generate a design page from a PRD
 
-## 何时触发
+## When to trigger
 
-- 用户提供一份 PRD
-- 用户说"做个 XX 页面的稿子"/"加一个 XX 设计稿"
+- The user provides a PRD.
+- The user says "make a design for the X page" / "add a design for X".
 
-## 决策树(读到这里就停下,先确认 pattern + 白名单)
+## Decision tree (stop here — confirm pattern + whitelist before going further)
 
 <HARD-GATE>
-**写第一行业务代码前**,必须先确认两件事:
+**Before writing the first line of business code**, you must confirm two things:
 
-1. **PRD 已指定 pattern**,且该 pattern 名出现在 `node_modules/@omit-design/preset-mobile/PATTERNS.md`(8 个:list-view / detail-view / form-view / sheet-action / dialog-view / welcome-view / dashboard / tab-view)。
-   PRD 没指定 → **停下来**,问用户或推荐一个,**不要自作主张**选。
+1. **The PRD specifies a pattern**, and that pattern name appears in `node_modules/@omit-design/preset-mobile/PATTERNS.md` (the 8 patterns: list-view / detail-view / form-view / sheet-action / dialog-view / welcome-view / dashboard / tab-view).
+   If the PRD doesn't specify one → **stop**, ask the user or recommend one. **Do NOT** pick on your own initiative.
 
-2. **PRD 用得到的所有组件都在白名单里**(`@omit-design/preset-mobile` 的 21 个 Om* 组件)。
-   缺组件 → **停下来**告知用户,提议先用 `add-pattern` 或单独加一个白名单组件。
-   **绝不**绕过白名单从 `@ionic/react` 直接 import 视觉组件。
+2. **All components the PRD needs are on the whitelist** (the 21 Om* components in `@omit-design/preset-mobile`).
+   If a component is missing → **stop** and tell the user; propose either using `add-pattern` first or adding a single whitelisted component.
+   **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
 </HARD-GATE>
 
-## 执行流程
+## Execution flow
 
-详见 [references/checklist.md](references/checklist.md) — 7 步完整清单(读 PRD / 读 PATTERNS / 检查白名单 / 准备 mock / **复制 template** / 自检 / 验证)。
+See [references/checklist.md](references/checklist.md) for the full 7-step checklist (read PRD / read PATTERNS / check whitelist / prepare mock / **copy template** / self-check / verify).
 
-**核心**:第 5 步「写页面」实际是「**复制 `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` 后替换占位符**」,而不是从零写。模板缺失才回退到参考 PATTERNS.md 的"骨架"描述改写,绝不凭空构造 import 与组件结构。
+**The core point**: step 5, "write the page," really means "**copy `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` and replace placeholders**" — not write from scratch. Only when the template is missing do you fall back to rewriting from the "skeleton" description in PATTERNS.md; never invent imports or component structure out of thin air.
 
-## 输出
+## Output
 
-完成后告知用户:
+When done, tell the user:
 
-- 新文件路径
-- 所选 pattern 与原因(以及是否复用了 template)
-- mock 数据放在哪里
-- 访问 URL(`/designs/<group>/<file>`)
+- The new file path.
+- The chosen pattern and why (and whether a template was reused).
+- Where the mock data lives.
+- The access URL (`/designs/<group>/<file>`).
 
-## 反例
+## Counter-examples
 
-- ❌ 用户没给 pattern → 自己选了一个不告知
-- ❌ 白名单没有组件 → 直接 `import { Foo } from "@ionic/react"`
-- ❌ 写 `<div style={{ padding: 16 }}>`
-- ❌ mock 数据塞进 design/ 而不是 mock/
-- ❌ template 存在但绕过它从零写骨架
+- The user didn't specify a pattern → you picked one without telling them.
+- A component isn't on the whitelist → you imported it directly from `@ionic/react`.
+- Writing `<div style={{ padding: 16 }}>`.
+- Stuffing mock data into `design/` instead of `mock/`.
+- A template exists but you wrote the skeleton from scratch anyway.

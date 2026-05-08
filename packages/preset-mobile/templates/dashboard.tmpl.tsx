@@ -5,9 +5,9 @@
 //   3. 给 TILES 加合适 ionicons + href
 
 export const meta = {
-  name: "TODO 工作台",
+  name: "TODO Dashboard",
   pattern: "dashboard",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -41,13 +41,13 @@ interface Tile {
 
 // TODO: 替换为真实 mock import
 const STATS: Stat[] = [
-  { label: "今日营收", value: "¥0.00", caption: "含已结金额" },
-  { label: "客单量", value: "0", caption: "单数" },
+  { label: "Today's revenue", value: "$0.00", caption: "Includes settled amount" },
+  { label: "Order count", value: "0", caption: "orders" },
 ];
 
 const TILES: Tile[] = [
   { id: "pos", icon: cashOutline, label: "POS", href: "/designs/TODO" },
-  { id: "orders", icon: receiptOutline, label: "订单", href: "/designs/TODO" },
+  { id: "orders", icon: receiptOutline, label: "Orders", href: "/designs/TODO" },
 ];
 
 export function TodoDashboardPage() {
@@ -56,7 +56,7 @@ export function TodoDashboardPage() {
       padding="lg"
       header={
         <OmHeader
-          title="TODO 工作台"
+          title="TODO Dashboard"
           start={<IonBackButton defaultHref="/designs/TODO-from" />}
         />
       }

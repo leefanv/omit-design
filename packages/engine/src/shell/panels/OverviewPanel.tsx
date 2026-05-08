@@ -15,44 +15,44 @@ export function OverviewPanel() {
       </section>
 
       <section>
-        <h4>右侧三个 tab</h4>
+        <h4>Right-panel tabs</h4>
         <ul className="shell-overview__list">
           <li>
-            <strong>⊕ 概览</strong>
-            <span>当前页面 — 项目说明 + 操作引导</span>
+            <strong>⊕ Overview</strong>
+            <span>This page — project description and onboarding tips.</span>
           </li>
           <li>
-            <strong>📐 标注</strong>
-            <span>切到此 tab 自动启用 Inspect。在画布上 hover/点击元素，查看 token、计算样式、Web/Android 等价代码</span>
+            <strong>📐 Inspect</strong>
+            <span>Switching to this tab enables Inspect automatically. Hover/click an element on the canvas to see tokens, computed styles, and Web/Android-equivalent code.</span>
           </li>
           <li>
-            <strong>🎨 主题</strong>
-            <span>实时改 token，"应用"写入 localStorage 全局生效；"发布"导出 CSS 让你 commit 到仓库（仅移动端 preset 当前可用，桌面端等 M2 manifest）</span>
+            <strong>🎨 Theme</strong>
+            <span>Edit tokens live; "Apply" writes to localStorage and takes effect globally; "Publish" exports CSS for you to commit (mobile preset only for now; desktop pending M2 manifest).</span>
           </li>
         </ul>
       </section>
 
       <section>
-        <h4>键盘</h4>
+        <h4>Keyboard</h4>
         <ul className="shell-overview__list">
-          <li><kbd>← →</kbd><span>选中后跳兄弟元素</span></li>
-          <li><kbd>↑ ↓</kbd><span>跳父元素 / 第一个子元素</span></li>
-          <li><kbd>Esc</kbd><span>取消选中</span></li>
+          <li><kbd>← →</kbd><span>Jump to sibling element after selection</span></li>
+          <li><kbd>↑ ↓</kbd><span>Jump to parent / first child</span></li>
+          <li><kbd>Esc</kbd><span>Clear selection</span></li>
         </ul>
       </section>
 
       <section>
-        <h4>添加新设计稿</h4>
+        <h4>Add a new design</h4>
         <ol className="shell-overview__list shell-overview__list--ordered">
-          <li>编辑 <code>{project.id}/registry.ts</code> 加一条 entry</li>
-          <li>编辑 <code>src/App.tsx</code> 在 <code>DesignsRoot</code> 加 <code>&lt;Route&gt;</code></li>
-          <li>新建 page 文件，第一行写 <code>// @pattern: xxx</code></li>
+          <li>Edit <code>{project.id}/registry.ts</code> and add an entry</li>
+          <li>Edit <code>src/App.tsx</code> and add a <code>&lt;Route&gt;</code> inside <code>DesignsRoot</code></li>
+          <li>Create a new page file with <code>// @pattern: xxx</code> on the first line</li>
         </ol>
-        <p className="muted small">或让 AI 跑 <code>.claude/skills/new-design</code> 自动化以上步骤。</p>
+        <p className="muted small">Or have AI run <code>.claude/skills/new-design</code> to automate the above.</p>
       </section>
 
       <section>
-        <Link to="/workspace" className="shell-overview__link">← 返回 Workspace</Link>
+        <Link to="/workspace" className="shell-overview__link">← Back to Workspace</Link>
       </section>
     </div>
   );

@@ -74,7 +74,7 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
         className="shell-device-toolbar__preset"
         value={presetValue}
         onChange={applyPreset}
-        aria-label="设备预设"
+        aria-label="Device preset"
       >
         {presets.map((p) => (
           <option key={p.label} value={p.label}>
@@ -82,7 +82,7 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
           </option>
         ))}
         <option value="__custom" disabled>
-          自定义
+          Custom
         </option>
       </select>
 
@@ -96,7 +96,7 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
           onChange={(e) => setDraftW(e.target.value)}
           onBlur={(e) => commitDim("width", e.target.value)}
           onKeyDown={onDimKeyDown}
-          aria-label="宽度 (px)"
+          aria-label="Width (px)"
         />
         <span className="shell-device-toolbar__x">×</span>
         <input
@@ -108,7 +108,7 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
           onChange={(e) => setDraftH(e.target.value)}
           onBlur={(e) => commitDim("height", e.target.value)}
           onKeyDown={onDimKeyDown}
-          aria-label="高度 (px)"
+          aria-label="Height (px)"
         />
       </div>
 
@@ -116,8 +116,8 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
         type="button"
         className="shell-device-toolbar__rotate"
         onClick={rotate}
-        aria-label="旋转方向"
-        title="旋转方向"
+        aria-label="Rotate orientation"
+        title="Rotate orientation"
       >
         ⤾
       </button>

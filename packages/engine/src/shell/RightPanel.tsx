@@ -45,8 +45,8 @@ export function RightPanel() {
           type="button"
           className="shell-right-panel__close"
           onClick={() => setTool("move")}
-          aria-label="关闭面板"
-          title="关闭面板"
+          aria-label="Close panel"
+          title="Close panel"
         >
           ×
         </button>

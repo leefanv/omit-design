@@ -1,55 +1,55 @@
-# new-design 执行清单(完整流程)
+# new-design execution checklist (full flow)
 
-主 SKILL.md 已涵盖 HARD-GATE 与触发条件。本文件展开每一步细节。
+The main `SKILL.md` covers the HARD-GATE and trigger conditions. This file expands every step in detail.
 
-## 1. 读 PRD,识别 5 件事
+## 1. Read the PRD; identify 5 things
 
-- 页面名 + 路由(`/designs/<groupId>/<filename>`)
-- **选定的 pattern**(必须出现在 `node_modules/@omit-design/preset-mobile/PATTERNS.md`)
-- 关键字段
-- 关键状态(空/加载/错误/成功)
-- 主操作(放底部 / 顶部 / 内联)
+- Page name + route (`/designs/<groupId>/<filename>`).
+- **Chosen pattern** (must appear in `node_modules/@omit-design/preset-mobile/PATTERNS.md`).
+- Key fields.
+- Key states (empty / loading / error / success).
+- Primary action (placed at the bottom / top / inline).
 
-## 2. 读 preset 的 PATTERNS.md
+## 2. Read the preset's PATTERNS.md
 
-`node_modules/@omit-design/preset-mobile/PATTERNS.md` — 8 个 pattern,每个有「用途」「骨架」「Template」「何时不用」。
+`node_modules/@omit-design/preset-mobile/PATTERNS.md` — 8 patterns; each has "Purpose", "Skeleton", "Template", and "When not to use".
 
-## 3. 检查组件白名单
+## 3. Check the component whitelist
 
-打开 `node_modules/@omit-design/preset-mobile/components/index.ts`,确认 PRD 用得到的所有组件都已导出。
+Open `node_modules/@omit-design/preset-mobile/components/index.ts` and confirm every component the PRD needs is exported.
 
-缺组件 → **停下来告知用户**,提议先用 `add-pattern` 或单独加一个白名单组件。**绝不**绕过白名单从 `@ionic/react` 直接 import 视觉组件。
+If a component is missing → **stop and tell the user**. Propose either using `add-pattern` first or adding a single whitelisted component. **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
 
-## 4. 准备 mock 数据
+## 4. Prepare mock data
 
-- 在 `mock/` 下加文件或扩展现有文件(项目根目录的 `mock/`)
-- 字段类型与 PRD 对齐
-- 至少 3-5 条样例覆盖不同状态
-- 业务稿用相对路径 import,如 `import { items } from "../mock/orders"`
+- Add a file under `mock/` or extend an existing one (the project-root `mock/`).
+- Field types should match the PRD.
+- At least 3–5 entries covering different states.
+- Business pages import via relative paths, e.g. `import { items } from "../mock/orders"`.
 
-## 5. 复制 template 后替换占位符
+## 5. Copy the template, then replace placeholders
 
-优先走 template 路径:
+Prefer the template path:
 
-1. Read `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx`
-2. 复制到目标位置 `design/[<groupId>/]<filename>.tsx`
-3. 替换 `TODO` 占位符与示例字段为业务内容
+1. Read `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx`.
+2. Copy to the target location `design/[<groupId>/]<filename>.tsx`.
+3. Replace `TODO` placeholders and example fields with business content.
 
-模板缺失时回退:
-- 参考 PATTERNS.md 的「骨架」描述改写
-- 不能凭空构造 import 与组件结构
+Fallback when the template is missing:
+- Rewrite from the "Skeleton" description in PATTERNS.md.
+- Do not invent imports or component structure out of thin air.
 
-约束:
-- **第一行**:`// @pattern: <pattern-name>`
-- **import 只能**来自:`@omit-design/preset-mobile`、`react`、`react-router(-dom)`、`ionicons/icons`、白名单 Ionic 容器(`IonList` / `IonBackButton` / `IonIcon`)、相对路径
-- **禁止**字面量颜色 / 间距 / 字号(走 `var(--om-*)` 或 Om* 组件 props)
+Constraints:
+- **First line**: `// @pattern: <pattern-name>`.
+- **Imports may only** come from: `@omit-design/preset-mobile`, `react`, `react-router(-dom)`, `ionicons/icons`, the whitelisted Ionic containers (`IonList` / `IonBackButton` / `IonIcon`), or relative paths.
+- **No** literal colors / spacings / font sizes — use `var(--om-*)` or Om* component props.
 
-## 6. 自动注册(无需手改路由)
+## 6. Auto-registration (no manual route changes)
 
-omit-design 用 `import.meta.glob` 自动发现 `design/**/*.tsx`,加文件即生效。Group 来自路径第一段(如 `design/orders/detail.tsx` → group=orders)。
+omit-design uses `import.meta.glob` to auto-discover `design/**/*.tsx`; adding a file is enough. The group comes from the first path segment (e.g. `design/orders/detail.tsx` → group=orders).
 
-## 7. 自检
+## 7. Self-check
 
-- 跑 `npm run lint`,必须通过(0 违规)
-- 在 dev server 上访问新路由 `/designs/<group>/<file>`
-- 描述视觉给用户(或截图)
+- Run `npm run lint`; it must pass (0 violations).
+- Visit the new route on the dev server: `/designs/<group>/<file>`.
+- Describe the visual to the user (or attach a screenshot).

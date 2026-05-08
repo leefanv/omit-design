@@ -25,17 +25,17 @@ export function InspectInspector() {
     <div className="inspect-inspector-content">
       <header className="inspect-section inspect-section--mode">
         <p className="inspect-mode-hint">
-          {mode === "inspect" && "在画布上 hover 元素查看高亮，点击选中查看详情"}
-          {mode === "measure" && "点击一个元素作为起点，hover 另一个元素查看距离"}
-          {mode === "a11y" && "扫描可点击元素的触控区与图片缺失 alt"}
+          {mode === "inspect" && "Hover an element on the canvas to highlight it; click to select and see details."}
+          {mode === "measure" && "Click an element to set the start point, then hover another element to see the distance."}
+          {mode === "a11y" && "Scans clickable elements for touch target size and images for missing alt."}
         </p>
       </header>
 
       {!selected && mode !== "a11y" && (
         <div className="inspect-empty">
           <div className="inspect-empty__icon">📐</div>
-          <p>未选中任何元素</p>
-          <p className="muted">在画布上点击元素，或用方向键导航</p>
+          <p>No element selected</p>
+          <p className="muted">Click an element on the canvas, or use the arrow keys to navigate.</p>
         </div>
       )}
 
@@ -44,7 +44,7 @@ export function InspectInspector() {
           <div className="inspect-section inspect-section--head">
             <div className="inspect-component">
               <span className="inspect-component__name">{selected.component}</span>
-              <button className="inspect-clear" onClick={() => setSelected(null)} title="取消选中">×</button>
+              <button className="inspect-clear" onClick={() => setSelected(null)} title="Clear selection">×</button>
             </div>
             <div className="shell-segment">
               <button
@@ -76,7 +76,7 @@ export function InspectInspector() {
               checked={showBoxModel}
               onChange={(e) => setShowBoxModel(e.target.checked)}
             />
-            <span>盒模型 overlay（选中元素四周分色显示 padding/border/margin）</span>
+            <span>Box model overlay (color-codes padding/border/margin around the selected element)</span>
           </label>
         </div>
       )}
@@ -92,7 +92,7 @@ function PropsTab() {
       <section className="inspect-section">
         <h4>Tokens</h4>
         {Object.entries(selected.tokens).length === 0 ? (
-          <p className="muted">（该元素未声明 token）</p>
+          <p className="muted">(no tokens declared on this element)</p>
         ) : (
           <dl className="inspect-dl">
             {Object.entries(selected.tokens).map(([k, v]) => (
@@ -161,7 +161,7 @@ function CodeTab({ codeTarget, setCodeTarget }: CodeTabProps) {
       </div>
       <pre className="code-block">{code}</pre>
       <button className="copy-btn" onClick={() => navigator.clipboard.writeText(code)}>
-        复制
+        Copy
       </button>
     </section>
   );
@@ -180,7 +180,7 @@ function ExportSection({ selected }: { selected: InspectTarget }) {
     try {
       await exportElementAsPng(selected.el, scale, selected.component);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "导出失败");
+      setError(e instanceof Error ? e.message : "Export failed");
     } finally {
       setBusy(null);
     }
@@ -191,17 +191,17 @@ function ExportSection({ selected }: { selected: InspectTarget }) {
       <h4>Export</h4>
       {asset && (
         <div className="inspect-export-row">
-          <span className="inspect-export-label">原始资源</span>
+          <span className="inspect-export-label">Original asset</span>
           <button
             className="copy-btn"
             onClick={() => downloadUrl(asset.url, asset.filename)}
           >
-            下载 {asset.filename}
+            Download {asset.filename}
           </button>
         </div>
       )}
       <div className="inspect-export-row">
-        <span className="inspect-export-label">PNG 截图</span>
+        <span className="inspect-export-label">PNG screenshot</span>
         <div className="inspect-export-scales">
           {SCALES.map((s) => (
             <button

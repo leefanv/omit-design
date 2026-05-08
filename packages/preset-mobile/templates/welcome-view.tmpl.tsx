@@ -6,9 +6,9 @@
 //   4. tagline / version 走 mock 或常量
 
 export const meta = {
-  name: "TODO 欢迎页",
+  name: "TODO Welcome page",
   pattern: "welcome-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -23,14 +23,14 @@ export function TodoWelcomePage() {
       {/* TODO: 替换为品牌 logo 组件 */}
       <div>
         <h1>Welcome</h1>
-        <p>TODO 欢迎语</p>
+        <p>TODO welcome message</p>
       </div>
 
       <OmButton
         expand="block"
         onClick={() => navigate("/designs/TODO-next")}
       >
-        开始
+        Get started
       </OmButton>
     </OmPage>
   );

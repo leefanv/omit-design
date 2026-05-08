@@ -1,39 +1,39 @@
-# Audit 检查项细节
+# Audit check item details
 
-主 SKILL.md 只列检查项标题。本文件展开每项的具体规则与例外。
+The main `SKILL.md` only lists check titles. This file expands the concrete rule and exceptions for each item.
 
-## 1. 首行 pattern 标注
+## 1. First-line pattern annotation
 
-文件第一行必须是 `// @pattern: <name>`,name 必须出现在 `node_modules/@omit-design/preset-mobile/PATTERNS.md`。
+The first line of the file must be `// @pattern: <name>`, where `name` must appear in `node_modules/@omit-design/preset-mobile/PATTERNS.md`.
 
-由 ESLint `omit-design/require-pattern-header` 实施。kebab-case 文件名(如 `order-list.tsx`)是 page 稿,受检;PascalCase 文件名(如 `MemberShell.tsx`)是 shell/组件,免检。
+Enforced by the ESLint rule `omit-design/require-pattern-header`. Files with kebab-case names (e.g. `order-list.tsx`) are page designs and are checked; files with PascalCase names (e.g. `MemberShell.tsx`) are shells / components and are exempt.
 
-## 2. import 白名单
+## 2. Import whitelist
 
-业务稿 `.tsx`(`design/**/*.tsx`)只能 import:
+Business `.tsx` files (`design/**/*.tsx`) may only import:
 
-- `@omit-design/preset-mobile` 及其子路径
-- React 系:`react`、`react-dom`、`react-router`、`react-router-dom`
-- 图标常量:`ionicons/icons`
-- `@ionic/react` 的 named import 仅:`IonList`、`IonBackButton`、`IonIcon`
-- 同目录 / 父目录相对路径(用于 import `mock/` 数据 / 项目内 shell)
+- `@omit-design/preset-mobile` and its subpaths.
+- React family: `react`, `react-dom`, `react-router`, `react-router-dom`.
+- Icon constants: `ionicons/icons`.
+- Named imports from `@ionic/react`, restricted to: `IonList`, `IonBackButton`, `IonIcon`.
+- Same-directory / parent-directory relative paths (used for importing `mock/` data or in-project shells).
 
-由 ESLint `omit-design/whitelist-ds-import` 实施。
+Enforced by the ESLint rule `omit-design/whitelist-ds-import`.
 
-发现页面用了上面例外之外的 `@ionic/react` 视觉组件 → 提示用户:要么去 `@omit-design/preset-mobile` 加 Om* 封装(走上游 PR),要么扩大白名单(慎重)。
+If a page uses `@ionic/react` visual components beyond the exceptions above → tell the user: either add an Om* wrapper in `@omit-design/preset-mobile` (upstream PR), or expand the whitelist (with caution).
 
-## 3. 无颜色字面量
+## 3. No color literals
 
-禁止 `#hex`、`rgb()`、`rgba()`、`hsl()`、`hsla()`、命名色出现在 `style=` 字面量或 `className` 字符串里。允许:`var(...)` / `inherit` / `currentColor` / `transparent` / `0` / `auto` / `none` / 百分比。
+Forbidden: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, named colors appearing in `style=` literals or in `className` strings. Allowed: `var(...)` / `inherit` / `currentColor` / `transparent` / `0` / `auto` / `none` / percentages.
 
-由 ESLint `omit-design/no-design-literal` 实施(包括对模板字符串里 CSS 文本的宽松搜索)。
+Enforced by the ESLint rule `omit-design/no-design-literal` (including a lenient search of CSS text inside template strings).
 
-## 4. 无间距/字号字面量
+## 4. No spacing / font-size literals
 
-禁止形如 `padding: 16` `marginTop: '12px'` `fontSize: 14` 出现在 `style={{...}}`。改用 token(`var(--om-spacing-*)` 等)或组件 props(`<OmPage padding="lg">`)。
+Forbidden: things like `padding: 16`, `marginTop: '12px'`, `fontSize: 14` appearing in `style={{...}}`. Use tokens (`var(--om-spacing-*)`, etc.) or component props (`<OmPage padding="lg">`) instead.
 
-由 ESLint `omit-design/no-design-literal` 实施(`px` 后缀正则)。
+Enforced by the ESLint rule `omit-design/no-design-literal` (regex on the `px` suffix).
 
-## 5. 白名单组件存在
+## 5. Whitelisted components exist
 
-每个 `<OmXxx />` 都必须在 `@omit-design/preset-mobile/components/index.ts` 导出列表中。**audit 流程**额外做这一项检查(ESLint 不直接检查 JSX 标签解析),违规级别 🟢 — 提示加 Om* 封装(走上游 PR)。
+Every `<OmXxx />` must appear in the export list of `@omit-design/preset-mobile/components/index.ts`. **The audit flow** performs this extra check (ESLint does not directly verify JSX tag resolution); severity is hint — prompt the user to add an Om* wrapper (upstream PR).

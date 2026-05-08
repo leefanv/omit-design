@@ -5,9 +5,9 @@
 //   3. dismissHref 改成来源页路径
 
 export const meta = {
-  name: "TODO 操作菜单",
+  name: "TODO Action menu",
   pattern: "sheet-action",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -24,15 +24,15 @@ interface MenuItem {
 }
 
 const ITEMS: MenuItem[] = [
-  { label: "TODO 项一", icon: ellipsisHorizontalOutline, href: "/designs/TODO" },
-  { label: "TODO 项二", icon: ellipsisHorizontalOutline, href: "/designs/TODO" },
+  { label: "TODO Item one", icon: ellipsisHorizontalOutline, href: "/designs/TODO" },
+  { label: "TODO Item two", icon: ellipsisHorizontalOutline, href: "/designs/TODO" },
 ];
 
 export function TodoSheetActionPage() {
   const navigate = useNavigate();
   return (
     <OmPage padding="none">
-      <OmSheet title="TODO 标题" dismissHref="/designs/TODO-from">
+      <OmSheet title="TODO Title" dismissHref="/designs/TODO-from">
         <div>
           {ITEMS.map((it) => (
             <button

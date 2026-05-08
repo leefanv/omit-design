@@ -5,6 +5,34 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [i18n English-default] - 2026-05-08
+
+All UI strings, error messages, and Claude Code skills translated to
+English. The repo's default UX language is English; per-language
+overrides are now opt-in (Chinese variants of READMEs cross-link to
+English defaults).
+
+### Changed
+- **@omit-design/engine** — every user-facing string in the shell, inspect
+  overlay, theme editor, capture dialog, and right panel rendered in
+  English. ~110 string literals across 21 source files.
+- **@omit-design/preset-mobile** — default `confirmText` / `cancelText` /
+  placeholders / aria-labels in `Om*` components rendered in English; all
+  8 pattern templates updated (placeholder copy, sample names, button
+  labels).
+- **Skills** (`skills/**/SKILL.md` and reference docs) translated to
+  English. HARD-GATE blocks, decision trees, glossary entries all
+  preserved structurally; 8 skill files total. The cli's `templates/init/`
+  bundles the new English skills via `scripts/sync-skills.mjs`.
+- **examples/playground** demo translated (project description, group
+  labels, page meta names + descriptions, mock data for orders /
+  products / members / settings, button labels in form pages).
+
+### Bumped
+- `@omit-design/engine` 0.2.1 → **0.2.2**
+- `@omit-design/preset-mobile` 0.2.1 → **0.2.2**
+- `@omit-design/cli` 0.1.5 → **0.1.6** (rebundles English templates)
+
 ## [docs] - 2026-05-08
 
 Documentation overhaul for OSS readiness. No code changes; bumps every package

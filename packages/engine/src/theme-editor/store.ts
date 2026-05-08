@@ -126,7 +126,7 @@ function buildCssText(baseline: ThemeBaseline, values: ThemeValues): string {
   const spacingPrefix = baseline.tokenPrefixes.spacing;
   const lines = [
     `/* Exported from Theme Editor — preset: ${baseline.presetName} */`,
-    "/* 覆盖到对应 preset 的 variables.css 后 git commit。 */",
+    "/* Overwrite the matching preset's variables.css and git commit. */",
     "",
     ":root {",
   ];
@@ -217,12 +217,12 @@ export const useThemeStore = create<ThemeState>()(
         if (!a) return false;
         const ok = window.confirm(
           [
-            `确认发布 "${a.baseline.presetName}" 主题？`,
+            `Publish the "${a.baseline.presetName}" theme?`,
             "",
-            "将下载 variables.css。请用它覆盖该 preset 的 theme/variables.css，",
-            "然后 git commit。",
+            "This downloads variables.css. Use it to overwrite the preset's theme/variables.css,",
+            "then git commit.",
             "",
-            "（这一步会让所有研发与设计师在下次拉代码后看到新主题。）",
+            "(After this, every engineer and designer will see the new theme on next pull.)",
           ].join("\n")
         );
         if (!ok) return false;

@@ -65,12 +65,12 @@ export function globDiscovery(input: GlobDiscoveryInput): DesignSource {
     if (/^[A-Z]/.test(filename)) continue; // shell 文件,跳过
 
     if (!mod.default) {
-      console.warn(`[engine/glob] ${path} 缺 default export,跳过`);
+      console.warn(`[engine/glob] ${path} missing default export, skipping`);
       continue;
     }
     if (!mod.meta) {
       console.warn(
-        `[engine/glob] ${path} 缺 meta export,跳过 — 加上 \`export const meta = { name, pattern }\``,
+        `[engine/glob] ${path} missing meta export, skipping — add \`export const meta = { name, pattern }\``,
       );
       continue;
     }
@@ -96,7 +96,7 @@ export function globDiscovery(input: GlobDiscoveryInput): DesignSource {
   for (const orphan of Object.keys(byGroup)) {
     if (!project.groups.some((g) => g.id === orphan)) {
       console.warn(
-        `[engine/glob] group "${orphan}" 出现在 design/ 下但 config 没声明,跳过`,
+        `[engine/glob] group "${orphan}" appears under design/ but is not declared in config, skipping`,
       );
     }
   }

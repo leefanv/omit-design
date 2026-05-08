@@ -8,10 +8,10 @@ interface ToolDef {
 }
 
 const DEFAULT_TOOLS: ToolDef[] = [
-  { id: "move", icon: "↖", label: "选择", shortcut: "V" },
-  { id: "hand", icon: "✋", label: "拖拽画布", shortcut: "H" },
-  { id: "inspect", icon: "📐", label: "查看标注", shortcut: "I" },
-  { id: "comment", icon: "💬", label: "评论", shortcut: "C" },
+  { id: "move", icon: "↖", label: "Select", shortcut: "V" },
+  { id: "hand", icon: "✋", label: "Pan canvas", shortcut: "H" },
+  { id: "inspect", icon: "📐", label: "Inspect", shortcut: "I" },
+  { id: "comment", icon: "💬", label: "Comment", shortcut: "C" },
 ];
 
 interface Props {
@@ -29,7 +29,7 @@ export function ToolRail({ tools = DEFAULT_TOOLS, userInitial }: Props) {
   const setTool = useCanvasStore((s) => s.setTool);
 
   return (
-    <aside className="canvas-tool-rail" data-no-inspect role="toolbar" aria-label="画布工具">
+    <aside className="canvas-tool-rail" data-no-inspect role="toolbar" aria-label="Canvas tools">
       <div className="canvas-tool-rail__logo" aria-hidden>◆</div>
       <div className="canvas-tool-rail__group">
         {tools.map((t) => {
@@ -55,7 +55,7 @@ export function ToolRail({ tools = DEFAULT_TOOLS, userInitial }: Props) {
         })}
       </div>
       {userInitial && (
-        <div className="canvas-tool-rail__user" title="账户">
+        <div className="canvas-tool-rail__user" title="Account">
           {userInitial}
         </div>
       )}

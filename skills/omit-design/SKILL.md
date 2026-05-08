@@ -5,43 +5,43 @@ description: AI-collaborative design composition with omit-design. Use when the 
 
 # omit-design
 
-设计稿是真实可点击的 React 页面,不是图片。`design/` 下每个 `.tsx` = 一张稿子,自动注册到 `/designs/<group>/<name>` 路由。
+Designs are real, clickable React pages — not images. Every `.tsx` under `design/` is one design page, auto-registered to the route `/designs/<group>/<name>`.
 
-## 三层约束(底层契约,不要绕)
+## Three-layer constraint system (the underlying contract — do not bypass)
 
-1. **Skills** — `.claude/skills/<name>/SKILL.md` 提供领域知识。HARD-GATE 包关键决策点,违反 = 拒绝输出
-2. **ESLint plugin** — `@omit-design/eslint-plugin` 三条硬规则:
-   - `no-design-literal`:禁止 hex / px / rgb 字面量,走 token
-   - `whitelist-ds-import`:`design/` 下只能 import `@omit-design/preset-mobile` + 白名单 Ionic 容器
-   - `require-pattern-header`:文件第一行必须 `// @pattern: <name>`
-3. **Templates** — `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` 可复制骨架
+1. **Skills** — `.claude/skills/<name>/SKILL.md` provides domain knowledge. HARD-GATE blocks wrap critical decision points; violating one means the output is rejected.
+2. **ESLint plugin** — `@omit-design/eslint-plugin` ships three hard rules:
+   - `no-design-literal`: forbids hex / px / rgb literals; use tokens instead.
+   - `whitelist-ds-import`: under `design/`, you may only import `@omit-design/preset-mobile` plus the whitelisted Ionic containers.
+   - `require-pattern-header`: the first line of the file must be `// @pattern: <name>`.
+3. **Templates** — `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` ships copy-paste skeletons.
 
-`npm run lint` 是单一合规命令(等价 `omit-design lint`),输出 AI 友好的结构化摘要。
+`npm run lint` is the single compliance command (equivalent to `omit-design lint`); it produces an AI-friendly structured summary.
 
-## 何时触发哪个 skill
+## Which skill to trigger
 
-| 用户说什么 | Skill |
+| What the user says | Skill |
 |---|---|
-| "做个 XX 页"、"加一张订单详情" / 给了 PRD | [new-design](../new-design/SKILL.md) |
-| "加一种 wizard 模式" / 现有 pattern 不够 | [add-pattern](../add-pattern/SKILL.md) |
-| "稿子合规吗?"、"扫描整仓" | [audit-design](../audit-design/SKILL.md) |
-| "怎么 init 项目"、"启动服务"、"跑 lint" | [omit-design-cli](../omit-design-cli/SKILL.md) |
+| "Make a page for X" / "add an order detail page" / a PRD is provided | [new-design](../new-design/SKILL.md) |
+| "Add a wizard pattern" / existing patterns are not enough | [add-pattern](../add-pattern/SKILL.md) |
+| "Is this design compliant?" / "scan the whole repo" | [audit-design](../audit-design/SKILL.md) |
+| "How do I init a project?" / "start the server" / "run lint" | [omit-design-cli](../omit-design-cli/SKILL.md) |
 
-## Pattern 目录(8 个)
+## Pattern catalog (8)
 
 `list-view` `detail-view` `form-view` `sheet-action` `dialog-view` `welcome-view` `dashboard` `tab-view`
 
-具体骨架与示例:`node_modules/@omit-design/preset-mobile/PATTERNS.md`。
+For concrete skeletons and examples see `node_modules/@omit-design/preset-mobile/PATTERNS.md`.
 
-## 平台约定
+## Platform conventions
 
-- **`<HARD-GATE>` 决策卡点**:Skills 中"AI 容易跳过"的关键决策点必须用 `<HARD-GATE>...</HARD-GATE>` 包起,违反 = 拒绝输出。HARD-GATE 不是装饰;只在该停的地方用
-- **`references/` 渐进披露**:主 SKILL.md > 60 行时拆 `references/<topic>.md`,主文件保留触发条件 + 决策树 + HARD-GATE
-- **`design/` 是 ESLint 唯一约束目录**:`mock/` `app/` `preset/` 不约束(允许字面量 / 任意 import)
+- **`<HARD-GATE>` decision points**: in skills, the critical decision points "AI tends to skip" must be wrapped in `<HARD-GATE>...</HARD-GATE>`; violating one means the output is rejected. HARD-GATE is not decoration — use it only where you must stop.
+- **Progressive disclosure via `references/`**: when the main `SKILL.md` exceeds 60 lines, split into `references/<topic>.md`; the main file keeps trigger conditions, decision tree, and HARD-GATE blocks.
+- **`design/` is the only directory ESLint constrains**: `mock/`, `app/`, and `preset/` are unconstrained (literals and arbitrary imports are allowed there).
 
-## 反例
+## Counter-examples
 
-- ❌ 在 `design/*.tsx` 里写 `style={{ color: "#FF6B00" }}` — 走 token
-- ❌ 从 `@ionic/react` 直接 import `IonButton` — 用 `OmButton`
-- ❌ 不读 PATTERNS.md 就编 pattern 名
-- ❌ 跳过 HARD-GATE
+- Writing `style={{ color: "#FF6B00" }}` inside `design/*.tsx` — use a token instead.
+- Importing `IonButton` directly from `@ionic/react` — use `OmButton`.
+- Inventing a pattern name without reading PATTERNS.md.
+- Skipping a HARD-GATE.

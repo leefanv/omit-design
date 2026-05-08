@@ -78,10 +78,10 @@ export function ThemeEditorPage() {
   const [tokenTab, setTokenTab] = useState<TokenTab>("colors");
 
   const statusLabel = hasDraft
-    ? "草稿未应用"
+    ? "Draft not applied"
     : hasUnpublished
-    ? "已应用未发布"
-    : "与发布版一致";
+    ? "Applied, not published"
+    : "Matches published";
   const statusClass = hasDraft
     ? "ted-header__status-pill--draft"
     : hasUnpublished
@@ -101,23 +101,23 @@ export function ThemeEditorPage() {
           ← {resolved.icon} {resolved.name}
         </Link>
         <span className="ted-header__sep">›</span>
-        <span className="ted-header__title">主题编辑器</span>
+        <span className="ted-header__title">Theme Editor</span>
         <span className="ted-header__preset">{preset.displayName}</span>
         <span className={`ted-header__status-pill ${statusClass}`}>{statusLabel}</span>
         <div className="ted-header__actions">
           <button className="ted-btn ted-btn--ghost" onClick={discard} disabled={!hasDraft}>
-            放弃草稿
+            Discard draft
           </button>
           <button className="ted-btn ted-btn--apply" onClick={apply} disabled={!hasDraft}>
-            应用
+            Apply
           </button>
           <button
             className="ted-btn ted-btn--publish"
             onClick={() => void publish()}
             disabled={!hasUnpublished}
-            title="下载 variables.css → 覆盖 project/<id>/preset/theme/variables.css 后 git commit"
+            title="Download variables.css → overwrite project/<id>/preset/theme/variables.css and git commit"
           >
-            ✓ 发布
+            ✓ Publish
           </button>
         </div>
       </header>
@@ -125,13 +125,13 @@ export function ThemeEditorPage() {
       <div className="ted-body">
         {/* ── Left: component tree ── */}
         <nav className="ted-sidebar">
-          <div className="ted-sidebar__header">组件目录</div>
+          <div className="ted-sidebar__header">Components</div>
           <div className="ted-sidebar__scroll">
             <button
               className={`ted-group-btn ${!activeGroupId ? "ted-group-btn--active" : ""}`}
               onClick={() => setActiveGroupId(null)}
             >
-              📋 全部组件
+              📋 All components
             </button>
             {catalog.map((g) => (
               <div key={g.id}>
@@ -162,8 +162,8 @@ export function ThemeEditorPage() {
           {catalog.length === 0 ? (
             <div className="ted-empty">
               <div className="ted-empty__icon">🧩</div>
-              <div>该项目暂未配置组件目录</div>
-              <div style={{ fontSize: 12 }}>在 project.config.ts 里加 catalog 字段即可</div>
+              <div>This project has no component catalog configured</div>
+              <div style={{ fontSize: 12 }}>Add a `catalog` field in project.config.ts</div>
             </div>
           ) : (
             visibleGroups.map((g) => (
@@ -188,20 +188,20 @@ export function ThemeEditorPage() {
               className={`ted-tokens__tab ${tokenTab === "colors" ? "ted-tokens__tab--active" : ""}`}
               onClick={() => setTokenTab("colors")}
             >
-              🎨 颜色
+              🎨 Colors
             </button>
             <button
               className={`ted-tokens__tab ${tokenTab === "spacing" ? "ted-tokens__tab--active" : ""}`}
               onClick={() => setTokenTab("spacing")}
             >
-              📐 间距
+              📐 Spacing
             </button>
           </div>
 
           <div className="ted-tokens__scroll">
             {tokenTab === "colors" && (
               <div className="ted-token-section">
-                <div className="ted-token-section__title">语义色</div>
+                <div className="ted-token-section__title">Semantic colors</div>
                 {colorKeys.map((key) => {
                   const val = draft.colors[key] ?? "";
                   const dirty = val !== applied.colors[key];
@@ -231,7 +231,7 @@ export function ThemeEditorPage() {
 
             {tokenTab === "spacing" && (
               <div className="ted-token-section">
-                <div className="ted-token-section__title">间距 / Spacing</div>
+                <div className="ted-token-section__title">Spacing</div>
                 {spacingKeys.map((key) => {
                   const val = draft.spacing[key] ?? "";
                   const dirty = val !== applied.spacing[key];
@@ -260,7 +260,7 @@ export function ThemeEditorPage() {
               onClick={resetPublished}
               disabled={!hasUnpublished && !hasDraft}
             >
-              重置为已发布版
+              Reset to published
             </button>
           </div>
         </aside>

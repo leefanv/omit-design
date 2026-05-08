@@ -63,14 +63,14 @@ export function OmNumpad({
       {/* 右下角 */}
       {clearMode ? (
         <button className="om-numpad__key pos-numpad__key--clear" type="button" onClick={() => onClear?.()}>
-          清空
+          Clear
         </button>
       ) : showBackspace ? (
         <button
           className="om-numpad__key pos-numpad__key--ghost"
           type="button"
           onClick={() => onBackspace?.()}
-          aria-label="退格"
+          aria-label="Backspace"
         >
           <IonIcon icon={backspaceOutline} />
         </button>

@@ -1,8 +1,8 @@
 // @pattern: welcome-view
 export const meta = {
-  name: "欢迎",
+  name: "Welcome",
   pattern: "welcome-view",
-  description: "默认欢迎页 — 跳转工作台",
+  description: "Default welcome page — Jump to dashboard",
 } as const;
 
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ export function WelcomePage() {
         <h1 style={{ margin: 0 }}>{brand.tagline}</h1>
         <p style={{ margin: 0, color: "#666" }}>{brand.version}</p>
         <OmButton expand="block" onClick={() => navigate("/workspace/playground")}>
-          进入工作台
+          Enter Dashboard
         </OmButton>
       </div>
     </OmPage>

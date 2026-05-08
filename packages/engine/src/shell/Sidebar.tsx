@@ -84,7 +84,7 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
   if (collapsed) {
     return (
       <aside className="shell-sidebar shell-sidebar--collapsed">
-        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="展开侧栏" data-no-inspect>
+        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Expand sidebar" data-no-inspect>
           ›
         </button>
       </aside>
@@ -94,18 +94,18 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
   return (
     <aside className="shell-sidebar" data-no-inspect>
       <header className="shell-sidebar__header">
-        <NavLink to={`/workspace/${project.id}`} className="shell-sidebar__brand" title={`返回 ${project.name}`}>
+        <NavLink to={`/workspace/${project.id}`} className="shell-sidebar__brand" title={`Back to ${project.name}`}>
           <span className="shell-sidebar__logo">{project.icon ?? "◆"}</span>
           {project.name}
         </NavLink>
-        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="收起侧栏">
+        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Collapse sidebar">
           ‹
         </button>
       </header>
 
       <div className="shell-sidebar__project-meta">
-        <span>{groups.length} 组 · {totalEntries} 张稿</span>
-        <NavLink to="/workspace" className="shell-sidebar__switch" title="切换项目">切换…</NavLink>
+        <span>{groups.length} groups · {totalEntries} designs</span>
+        <NavLink to="/workspace" className="shell-sidebar__switch" title="Switch project">Switch…</NavLink>
       </div>
 
       <nav className="shell-sidebar__tree">

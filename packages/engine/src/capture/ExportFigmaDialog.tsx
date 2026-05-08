@@ -57,7 +57,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
   const waitForCurrentLoad = (iframe: HTMLIFrameElement): Promise<void> => {
     if (iframe.contentDocument?.readyState === "complete") return Promise.resolve();
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("iframe 加载超时 5s")), 5000);
+      const timer = setTimeout(() => reject(new Error("iframe load timeout 5s")), 5000);
       iframe.onload = () => { clearTimeout(timer); resolve(); };
     });
   };
@@ -65,7 +65,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
   /** 先挂 onload，再改 src，保证拿到新文档的 load 事件（避免旧文档 readyState=complete 误判） */
   const navigateIframe = (iframe: HTMLIFrameElement, src: string): Promise<void> =>
     new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error(`加载超时: ${src}`)), 8000);
+      const timer = setTimeout(() => reject(new Error(`Load timeout: ${src}`)), 8000);
       iframe.onload = () => { clearTimeout(timer); resolve(); };
       iframe.src = src;
     });
@@ -142,14 +142,14 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
     setBusy(true);
     setError(null);
     setLastResult(null);
-    setProgress("捕获中…");
+    setProgress("Capturing…");
     try {
       await waitForCurrentLoad(iframe);
       await settle();
       const doc = iframe.contentDocument;
-      if (!doc) throw new Error("无法访问 iframe document（可能跨源）");
+      if (!doc) throw new Error("Cannot access iframe document (cross-origin)");
       const root = doc.querySelector(".shell-embed");
-      if (!root) throw new Error("没找到 .shell-embed —— 路由可能不支持 embed 模式");
+      if (!root) throw new Error("'.shell-embed' not found — route may not support embed mode");
       const payload = await captureTree(root, metaFor(route));
       const filename = `capture${route.replace(/\//g, "-")}.json`;
       downloadJson(payload, filename);
@@ -174,7 +174,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
     try {
       for (let i = 0; i < allDesigns.length; i++) {
         const entry = allDesigns[i];
-        setProgress(`捕获 ${i + 1}/${allDesigns.length}: ${entry.name}`);
+        setProgress(`Capturing ${i + 1}/${allDesigns.length}: ${entry.name}`);
         await navigateIframe(iframe, entry.embedHref ?? `${entry.href}?embed=1`);
         await settle();
         const doc = iframe.contentDocument;
@@ -187,7 +187,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
       }
       const filename = `capture-${project.id}-${Date.now()}.json`;
       downloadJson(bundle, filename);
-      const suffix = skipped > 0 ? `（跳过 ${skipped} 张 .shell-embed 未找到）` : "";
+      const suffix = skipped > 0 ? ` (skipped ${skipped}: '.shell-embed' not found)` : "";
       setLastResult({ count: bundle.length, filename, suffix });
       setProgress(null);
     } catch (e) {
@@ -202,15 +202,15 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
     <dialog ref={dialogRef} className="export-dialog" onClose={onClose}>
       <header className="export-dialog__head">
         <div>
-          <h2>导出到 Figma · {project.name}</h2>
+          <h2>Export to Figma · {project.name}</h2>
           <p className="export-dialog__hint">
-            读 DOM → FigmaNode JSON，配套插件读入 Figma 画布生成可编辑 Frame
+            Reads DOM → FigmaNode JSON; the companion plugin imports it into a Figma canvas as editable frames.
           </p>
         </div>
         <button
           type="button"
           className="export-dialog__close"
-          aria-label="关闭"
+          aria-label="Close"
           onClick={onClose}
         >
           ×
@@ -219,9 +219,9 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
 
       <div className="export-dialog__body">
         <section className="export-dialog__section">
-          <h3>1 · 捕获稿件</h3>
+          <h3>1 · Capture designs</h3>
           <label className="export-dialog__label">
-            选择稿件
+            Select design
             <select
               value={route}
               onChange={(e) => setRoute(e.target.value)}
@@ -250,9 +250,9 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               onChange={(e) => setSplitByGroup(e.target.checked)}
               disabled={busy}
             />
-            按分组拆分到独立 Figma Page
+            Split groups into separate Figma pages
             <span className="export-dialog__check-hint">
-              {splitByGroup ? "每个分组一个 Page" : "所有 Frame 放在当前 Page"}
+              {splitByGroup ? "One page per group" : "All frames on the current page"}
             </span>
           </label>
 
@@ -263,7 +263,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               onClick={captureCurrent}
               disabled={busy || !route}
             >
-              {busy ? "捕获中…" : "捕获并下载 JSON"}
+              {busy ? "Capturing…" : "Capture & download JSON"}
             </button>
             <button
               type="button"
@@ -271,14 +271,14 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               onClick={captureAllInProject}
               disabled={busy || allDesigns.length === 0}
             >
-              {busy ? "…" : `捕获全部 (${allDesigns.length}) → bundle`}
+              {busy ? "…" : `Capture all (${allDesigns.length}) → bundle`}
             </button>
             <button
               type="button"
               className="export-dialog__btn export-dialog__btn--ghost"
               onClick={exportTokensJson}
               disabled={busy}
-              title="导出 preset 的 token baseline —— Figma Variables / Tokens Studio 插件可 import"
+              title="Export the preset's token baseline — importable by Figma Variables / Tokens Studio plugins"
             >
               📐 Tokens.json
             </button>
@@ -288,15 +288,15 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
           {error && <div className="export-dialog__error">⚠ {error}</div>}
           {lastResult && !error && !progress && (
             <div className="export-dialog__success">
-              ✓ 已下载 <code>{lastResult.filename}</code>（{lastResult.count} 张）{lastResult.suffix}
+              ✓ Downloaded <code>{lastResult.filename}</code> ({lastResult.count} designs){lastResult.suffix}
             </div>
           )}
         </section>
 
         <section className="export-dialog__section">
-          <h3>2 · 装 Figma 插件「{PLUGIN_NAME}」</h3>
+          <h3>2 · Install the Figma plugin "{PLUGIN_NAME}"</h3>
           <p className="export-dialog__hint">
-            首次使用需把插件导入 Figma 桌面版（浏览器版不支持开发插件）。
+            First-time setup requires importing the plugin into Figma desktop (the browser version does not support plugin development).
           </p>
           <div className="export-dialog__plugin-files">
             <a
@@ -304,7 +304,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               href={pluginZipUrl}
               download={PLUGIN_ZIP_FILENAME}
             >
-              ↓ 下载插件 .zip
+              ↓ Download plugin .zip
             </a>
             <a
               className="export-dialog__btn export-dialog__btn--ghost"
@@ -312,16 +312,16 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               target="_blank"
               rel="noreferrer"
             >
-              在 GitHub 查看源码 ↗
+              View source on GitHub ↗
             </a>
           </div>
           <ol className="export-dialog__steps">
-            <li>下载 <code>{PLUGIN_ZIP_FILENAME}</code> 并解压到任意文件夹</li>
-            <li>打开 Figma 桌面版 → 菜单 → Plugins → Development → Import plugin from manifest…</li>
+            <li>Download <code>{PLUGIN_ZIP_FILENAME}</code> and unzip it to any folder</li>
+            <li>Open Figma desktop → Menu → Plugins → Development → Import plugin from manifest…</li>
             <li>
-              选解压后的 <code>manifest.json</code>，导入后在 Plugins → Development → {PLUGIN_NAME} 里能看到
+              Select the unzipped <code>manifest.json</code>; once imported it appears under Plugins → Development → {PLUGIN_NAME}
             </li>
-            <li>打开插件 → 把第 1 步生成的 JSON 拖入插件面板 → 点「导入」即可</li>
+            <li>Open the plugin → drop the JSON from step 1 into the plugin panel → click "Import"</li>
           </ol>
         </section>
       </div>

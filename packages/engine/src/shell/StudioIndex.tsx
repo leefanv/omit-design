@@ -27,13 +27,13 @@ export function ProjectsHome() {
         <div className="shell-studio__brand">
           <span className="shell-studio__logo">◆</span>
           <h1>omit design</h1>
-          <span className="shell-studio__tag">设计稿工作台</span>
+          <span className="shell-studio__tag">Design workspace</span>
         </div>
       </header>
 
       <div className="shell-projects">
         <h2 className="shell-projects__title">
-          项目
+          Projects
           <span className="shell-projects__count">{projects.length}</span>
         </h2>
         <ul className="shell-projects__grid">
@@ -76,7 +76,7 @@ function ProjectCard({ project }: { project: DiscoveredProject }) {
           <strong className="shell-project-card__name">{project.name}</strong>
           <p className="shell-project-card__desc">{project.description}</p>
           <span className="shell-project-card__meta">
-            {project.groups.length} 个分组 · {total} 张设计稿
+            {project.groups.length} groups · {total} designs
           </span>
         </div>
       </div>
@@ -90,12 +90,12 @@ function ProjectCard({ project }: { project: DiscoveredProject }) {
 // ─────────────────────────────────────────────
 
 const PROJECT_TOOLS: { id: CanvasTool; icon: string; label: string; shortcut: string }[] = [
-  { id: "move", icon: "↖", label: "选择", shortcut: "V" },
-  { id: "hand", icon: "✋", label: "拖拽画布", shortcut: "H" },
-  { id: "inspect", icon: "📐", label: "标注", shortcut: "I" },
-  { id: "measure", icon: "📏", label: "测距", shortcut: "M" },
-  { id: "a11y", icon: "♿", label: "无障碍", shortcut: "A" },
-  { id: "comment", icon: "💬", label: "评论", shortcut: "C" },
+  { id: "move", icon: "↖", label: "Select", shortcut: "V" },
+  { id: "hand", icon: "✋", label: "Pan canvas", shortcut: "H" },
+  { id: "inspect", icon: "📐", label: "Inspect", shortcut: "I" },
+  { id: "measure", icon: "📏", label: "Measure", shortcut: "M" },
+  { id: "a11y", icon: "♿", label: "A11y", shortcut: "A" },
+  { id: "comment", icon: "💬", label: "Comment", shortcut: "C" },
 ];
 
 export function ProjectDetail() {
@@ -106,9 +106,9 @@ export function ProjectDetail() {
     return (
       <div className="shell-studio">
         <div className="shell-studio__empty">
-          找不到项目「{projectId}」
+          Project not found: "{projectId}"
           <br />
-          <Link to="/workspace">← 返回 Workspace</Link>
+          <Link to="/workspace">← Back to Workspace</Link>
         </div>
       </div>
     );
@@ -157,7 +157,7 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
     <div className="shell-studio shell-studio--canvas">
       <header className="shell-studio__header">
         <div className="shell-studio__header-left">
-          <Link to="/workspace" className="shell-pill shell-pill--icon" title="返回项目列表">
+          <Link to="/workspace" className="shell-pill shell-pill--icon" title="Back to project list">
             <span aria-hidden>←</span>
           </Link>
           {!pickerPinned && (
@@ -166,7 +166,7 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
               className="shell-pill shell-pill--text"
               data-entry-picker-trigger
               onClick={toggleEntryPickerOpen}
-              title="切换页面"
+              title="Switch page"
             >
               <span aria-hidden>≡</span> Pages
             </button>
@@ -184,16 +184,16 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
           <Link
             to={`/workspace/${project.id}/settings`}
             className="shell-pill shell-pill--icon"
-            title="项目设置：访问范围 / 成员 / 删除"
-            aria-label="项目设置"
+            title="Project Settings: access / members / delete"
+            aria-label="Project Settings"
           >
             <span aria-hidden>⚙</span>
           </Link>
           <Link
             to={`/workspace/${project.id}/theme-editor`}
             className="shell-pill shell-pill--icon"
-            title="打开全屏主题编辑器"
-            aria-label="主题编辑"
+            title="Open full-screen Theme Editor"
+            aria-label="Theme Editor"
           >
             <span aria-hidden>🎨</span>
           </Link>

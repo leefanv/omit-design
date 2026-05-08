@@ -301,7 +301,7 @@ export function SinglePageCanvas({ Component, caption, frameWidth, frameHeight }
           className="canvas-page-frame"
           style={{ width: frameWidth, height: frameHeight }}
         >
-          {Component ? <Component /> : <div className="canvas-page-empty">未选择页面</div>}
+          {Component ? <Component /> : <div className="canvas-page-empty">No page selected</div>}
         </div>
       </div>
 
@@ -311,12 +311,12 @@ export function SinglePageCanvas({ Component, caption, frameWidth, frameHeight }
         type="button"
         className="canvas-wheel-mode"
         data-no-inspect
-        title={`滚轮：${wheelMode === "auto" ? "自动" : wheelMode === "zoom" ? "缩放" : "平移"}（点击切换）`}
+        title={`Wheel: ${wheelMode === "auto" ? "Auto" : wheelMode === "zoom" ? "Zoom" : "Scroll"} (click to switch)`}
         onClick={() =>
           setWheelMode(wheelMode === "auto" ? "zoom" : wheelMode === "zoom" ? "scroll" : "auto")
         }
       >
-        滚轮·{wheelMode === "auto" ? "自动" : wheelMode === "zoom" ? "缩放" : "平移"}
+        Wheel · {wheelMode === "auto" ? "Auto" : wheelMode === "zoom" ? "Zoom" : "Scroll"}
       </button>
     </div>
   );

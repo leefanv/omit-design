@@ -22,7 +22,7 @@ interface OmSearchBarProps {
  */
 export function OmSearchBar({
   value,
-  placeholder = "搜索",
+  placeholder = "Search",
   onChange,
   onFocus,
   trailing,

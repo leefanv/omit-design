@@ -55,12 +55,12 @@ export function OmProductCard({
               <span className="om-product__price-value">{price.toFixed(2)}</span>
             </span>
             <span className="om-product__unit">/{unit}</span>
-            <span className="om-product__stock">库存{stock}</span>
+            <span className="om-product__stock">Stock {stock}</span>
           </div>
           <button
             className="om-product__add"
             type="button"
-            aria-label={`加购 ${name}`}
+            aria-label={`Add ${name}`}
             onClick={(e) => {
               e.stopPropagation();
               onAdd?.();

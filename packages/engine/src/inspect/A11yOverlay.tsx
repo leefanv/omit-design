@@ -41,7 +41,7 @@ export function A11yOverlay() {
           el,
           rect: r,
           severity: "error",
-          message: `触控区 ${Math.round(r.width)}×${Math.round(r.height)} < ${TOUCH_MIN}`,
+          message: `Touch target ${Math.round(r.width)}×${Math.round(r.height)} < ${TOUCH_MIN}`,
         });
       }
     });
@@ -51,7 +51,7 @@ export function A11yOverlay() {
       const r = el.getBoundingClientRect();
       if (r.width === 0) return;
       if (!el.alt && !el.getAttribute("aria-label")) {
-        collected.push({ el, rect: r, severity: "warn", message: "缺 alt / aria-label" });
+        collected.push({ el, rect: r, severity: "warn", message: "Missing alt / aria-label" });
       }
     });
 
@@ -67,7 +67,7 @@ export function A11yOverlay() {
   return (
     <>
       <div className="a11y-summary">
-        发现 {issues.length} 个问题（{issues.filter((i) => i.severity === "error").length} 错误 / {issues.filter((i) => i.severity === "warn").length} 警告）
+        Found {issues.length} issues ({issues.filter((i) => i.severity === "error").length} errors / {issues.filter((i) => i.severity === "warn").length} warnings)
       </div>
       {issues.map((it, i) => (
         <div

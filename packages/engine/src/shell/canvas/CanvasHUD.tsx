@@ -22,7 +22,7 @@ export function CanvasHUD({ bbox, viewport, onFit }: Props) {
         className="canvas-hud__btn"
         onClick={() => zoomCentered(1 / 1.2, viewport)}
         disabled={zoom <= ZOOM_MIN + 0.001}
-        aria-label="缩小"
+        aria-label="Zoom out"
       >
         −
       </button>
@@ -32,7 +32,7 @@ export function CanvasHUD({ bbox, viewport, onFit }: Props) {
         className="canvas-hud__btn"
         onClick={() => zoomCentered(1.2, viewport)}
         disabled={zoom >= ZOOM_MAX - 0.001}
-        aria-label="放大"
+        aria-label="Zoom in"
       >
         +
       </button>
@@ -41,7 +41,7 @@ export function CanvasHUD({ bbox, viewport, onFit }: Props) {
         type="button"
         className="canvas-hud__btn canvas-hud__btn--text"
         onClick={() => (onFit ? onFit() : fitToContent(bbox, viewport))}
-        title="适应内容 (⌘0)"
+        title="Fit (⌘0)"
       >
         Fit
       </button>

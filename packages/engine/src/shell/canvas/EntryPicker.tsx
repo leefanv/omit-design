@@ -142,8 +142,8 @@ export function EntryPicker({ groups, q, setQ }: Props) {
             type="button"
             className="canvas-picker__head-btn"
             onClick={() => setPinned(!pinned)}
-            title={pinned ? "切换为浮层" : "固定显示"}
-            aria-label={pinned ? "切换为浮层" : "固定显示"}
+            title={pinned ? "Float" : "Pin"}
+            aria-label={pinned ? "Float" : "Pin"}
           >
             {pinned ? "📌" : "📍"}
           </button>
@@ -152,8 +152,8 @@ export function EntryPicker({ groups, q, setQ }: Props) {
               type="button"
               className="canvas-picker__head-btn"
               onClick={() => setOpen(false)}
-              title="关闭"
-              aria-label="关闭"
+              title="Close"
+              aria-label="Close"
             >
               ×
             </button>
@@ -166,7 +166,7 @@ export function EntryPicker({ groups, q, setQ }: Props) {
         <input
           type="search"
           value={q}
-          placeholder="搜索稿名 / 路由 / pattern…"
+          placeholder="Search designs / routes / patterns…"
           onChange={(e) => setQ(e.target.value)}
         />
         {q && (
@@ -174,7 +174,7 @@ export function EntryPicker({ groups, q, setQ }: Props) {
             type="button"
             className="canvas-picker__search-clear"
             onClick={() => setQ("")}
-            aria-label="清空搜索"
+            aria-label="Clear search"
           >
             ×
           </button>
@@ -184,7 +184,7 @@ export function EntryPicker({ groups, q, setQ }: Props) {
 
       <nav className="canvas-picker__tree">
         {visibleGroups.length === 0 && (
-          <div className="canvas-picker__empty">没有匹配「{q}」的稿。</div>
+          <div className="canvas-picker__empty">No designs match "{q}".</div>
         )}
         {visibleGroups.map((g) => {
           const isOpen = !closedGroups.has(g.id);

@@ -6,9 +6,9 @@
 //   4. iconColor / confirmColor 按场景设(danger / warning / success / primary)
 
 export const meta = {
-  name: "TODO 对话框",
+  name: "TODO Dialog",
   pattern: "dialog-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -21,11 +21,11 @@ export function TodoDialogPage() {
       <OmDialog
         icon={informationCircleOutline}
         iconColor="primary"
-        title="TODO 标题"
-        subtitle="TODO 副标题描述。"
-        cancelText="取消"
+        title="TODO Title"
+        subtitle="TODO subtitle description."
+        cancelText="Cancel"
         cancelHref="/designs/TODO-from"
-        confirmText="确认"
+        confirmText="Confirm"
         confirmHref="/designs/TODO-next"
       />
     </OmPage>

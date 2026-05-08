@@ -66,12 +66,12 @@ const IS_EMBED =
   new URLSearchParams(window.location.search).get("embed") === "1";
 
 const DESIGN_TOOLS: { id: CanvasTool; icon: string; label: string; shortcut: string }[] = [
-  { id: "move", icon: "↖", label: "选择", shortcut: "V" },
-  { id: "hand", icon: "✋", label: "拖拽", shortcut: "H" },
-  { id: "inspect", icon: "📐", label: "标注", shortcut: "I" },
-  { id: "measure", icon: "📏", label: "测距", shortcut: "M" },
-  { id: "a11y", icon: "♿", label: "无障碍", shortcut: "A" },
-  { id: "theme", icon: "🎨", label: "主题", shortcut: "T" },
+  { id: "move", icon: "↖", label: "Select", shortcut: "V" },
+  { id: "hand", icon: "✋", label: "Pan", shortcut: "H" },
+  { id: "inspect", icon: "📐", label: "Inspect", shortcut: "I" },
+  { id: "measure", icon: "📏", label: "Measure", shortcut: "M" },
+  { id: "a11y", icon: "♿", label: "A11y", shortcut: "A" },
+  { id: "theme", icon: "🎨", label: "Theme", shortcut: "T" },
 ];
 
 /**

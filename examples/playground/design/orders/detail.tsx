@@ -1,8 +1,8 @@
 // @pattern: detail-view
 export const meta = {
-  name: "订单详情",
+  name: "Order Details",
   pattern: "detail-view",
-  description: "单个订单详情",
+  description: "Single order details",
 } as const;
 
 import { IonBackButton } from "@ionic/react";
@@ -12,15 +12,15 @@ export function OrderDetailPage() {
   return (
     <OmPage
       padding="none"
-      header={<OmHeader title="订单详情" start={<IonBackButton defaultHref="/designs/orders/list" />} />}
+      header={<OmHeader title="Order Details" start={<IonBackButton defaultHref="/designs/orders/list" />} />}
     >
       <div style={{ padding: 16 }}>
         <h2 style={{ margin: 0 }}>#ORD-1001</h2>
-        <p style={{ color: "#666" }}>2026-05-08 09:14 · 已完成</p>
+        <p style={{ color: "#666" }}>2026-05-08 09:14 · Completed</p>
       </div>
-      <OmListRow title="拿铁 Latte × 2" detail="¥58" />
-      <OmListRow title="支付方式" detail="微信支付" />
-      <OmListRow title="备注" detail="少冰、少糖" />
+      <OmListRow title="Latte × 2" detail="¥58" />
+      <OmListRow title="Payment Method" detail="WeChat Pay" />
+      <OmListRow title="Notes" detail="Less ice, less sugar" />
     </OmPage>
   );
 }

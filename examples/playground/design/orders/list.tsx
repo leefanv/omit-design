@@ -1,8 +1,8 @@
 // @pattern: list-view
 export const meta = {
-  name: "订单列表",
+  name: "Order List",
   pattern: "list-view",
-  description: "近 24 小时订单",
+  description: "Recent orders",
 } as const;
 
 import { IonList } from "@ionic/react";
@@ -11,7 +11,7 @@ import { orderItems } from "../../mock/data";
 
 export function OrderListPage() {
   return (
-    <OmPage padding="none" header={<OmHeader title="订单" />}>
+    <OmPage padding="none" header={<OmHeader title="Orders" />}>
       <IonList>
         {orderItems.map((it) => (
           <OmListRow key={it.id} title={it.title} detail={it.detail} href={`/designs/orders/detail`} />

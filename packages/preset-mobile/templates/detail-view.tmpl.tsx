@@ -6,9 +6,9 @@
 //   4. 主操作改成业务跳转
 
 export const meta = {
-  name: "TODO 详情页名",
+  name: "TODO Detail page",
   pattern: "detail-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -30,9 +30,9 @@ interface Record {
 // TODO: 替换为真实 mock import
 const RECORD: Record = {
   id: "TODO",
-  title: "示例标题",
+  title: "Sample title",
   amount: 0,
-  status: "TODO 状态",
+  status: "TODO status",
 };
 
 export function TodoDetailPage() {
@@ -41,19 +41,19 @@ export function TodoDetailPage() {
       padding="lg"
       header={
         <OmHeader
-          title="TODO 详情"
+          title="TODO Detail"
           start={<IonBackButton defaultHref="/designs/TODO" />}
         />
       }
     >
       <OmCard title={RECORD.title} subtitle={`#${RECORD.id}`}>
-        <p>金额:¥{RECORD.amount.toFixed(2)}</p>
-        <p>状态:{RECORD.status}</p>
+        <p>Amount: ${RECORD.amount.toFixed(2)}</p>
+        <p>Status: {RECORD.status}</p>
       </OmCard>
 
       {/* TODO: 关联信息分块 —— 增加更多 OmCard */}
 
-      <OmButton expand="block">主操作</OmButton>
+      <OmButton expand="block">Primary action</OmButton>
     </OmPage>
   );
 }

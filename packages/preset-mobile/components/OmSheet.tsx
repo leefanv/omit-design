@@ -37,7 +37,7 @@ export function OmSheet({ title, children, onDismiss, dismissHref, size = "auto"
         {title && (
           <div className="om-sheet__head">
             <span className="om-sheet__title">{title}</span>
-            <button className="om-sheet__close" type="button" onClick={dismiss} aria-label="关闭">
+            <button className="om-sheet__close" type="button" onClick={dismiss} aria-label="Close">
               <IonIcon icon={closeOutline} />
             </button>
           </div>

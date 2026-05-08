@@ -42,7 +42,7 @@ export function EmbedCaptureBridge() {
       try {
         const root = document.querySelector(".shell-embed");
         if (!root) {
-          reply({ ok: false, error: "未找到 .shell-embed 根节点" });
+          reply({ ok: false, error: "'.shell-embed' root node not found" });
           return;
         }
         const rect = root.getBoundingClientRect();

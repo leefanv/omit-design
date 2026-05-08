@@ -241,7 +241,7 @@ async function runCapture(
       logToServer(tag, "shell-embed missing", {
         bodyHTML: doc?.body?.innerHTML?.slice(0, 200),
       });
-      throw new Error("shell-embed 节点未找到");
+      throw new Error("'.shell-embed' node not found");
     }
     logToServer(tag, "html-to-image start");
     const { toPng } = await import("html-to-image");
@@ -266,7 +266,7 @@ async function runCapture(
       setState({ kind: "ready", url: dataUrl });
     }
   } catch (e) {
-    console.warn("[DesignThumbnail] capture 失败:", href, e);
+    console.warn("[DesignThumbnail] capture failed:", href, e);
     logToServer(tag, "capture failed", {
       err: e instanceof Error ? e.message : String(e),
       total_ms: Math.round(performance.now() - t0),

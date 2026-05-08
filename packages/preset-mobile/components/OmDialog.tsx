@@ -39,7 +39,7 @@ export function OmDialog({
   iconColor = "primary",
   title,
   subtitle,
-  confirmText = "知道了",
+  confirmText = "OK",
   confirmColor = "primary",
   confirmHref,
   onConfirm,
@@ -81,7 +81,7 @@ export function OmDialog({
             <>
               {hasCancel && (
                 <OmButton variant="outline" color="medium" onClick={handleCancel}>
-                  {cancelText ?? "取消"}
+                  {cancelText ?? "Cancel"}
                 </OmButton>
               )}
               <OmButton color={confirmColor} onClick={handleConfirm}>

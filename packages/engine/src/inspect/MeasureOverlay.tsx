@@ -17,7 +17,7 @@ export function MeasureOverlay({ anchor, hovered }: MeasureOverlayProps) {
   if (!anchor) {
     return (
       <div className="measure-hint">
-        点击一个元素作为<strong>测量起点</strong>，再 hover 另一个元素查看距离
+        Click an element to set the <strong>start point</strong>, then hover another element to see the distance.
       </div>
     );
   }
@@ -31,9 +31,9 @@ export function MeasureOverlay({ anchor, hovered }: MeasureOverlayProps) {
           className="measure-anchor"
           style={{ top: aRect.top, left: aRect.left, width: aRect.width, height: aRect.height }}
         >
-          <span className="measure-anchor-label">起点：{anchor.component}</span>
+          <span className="measure-anchor-label">Start: {anchor.component}</span>
         </div>
-        <div className="measure-hint">已锁定起点，hover 另一个元素查看距离</div>
+        <div className="measure-hint">Start point locked. Hover another element to see the distance.</div>
       </>
     );
   }

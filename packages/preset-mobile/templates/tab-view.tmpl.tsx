@@ -8,9 +8,9 @@
 // 本 template 展示扁平结构,首批落地后可重构为 shell。
 
 export const meta = {
-  name: "TODO Tab 页",
+  name: "TODO Tab page",
   pattern: "tab-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -28,21 +28,21 @@ import {
 } from "@omit-design/preset-mobile";
 
 const TABS: OmTabItem[] = [
-  { tab: "stored", href: "/designs/TODO-stored", label: "寄存", icon: cubeOutline },
-  { tab: "orders", href: "/designs/TODO-orders", label: "订单", icon: receiptOutline },
-  { tab: "member", href: "/designs/TODO-member", label: "会员", icon: peopleOutline },
-  { tab: "settings", href: "/designs/TODO-settings", label: "设置", icon: settingsOutline },
+  { tab: "stored", href: "/designs/TODO-stored", label: "Stored", icon: cubeOutline },
+  { tab: "orders", href: "/designs/TODO-orders", label: "Orders", icon: receiptOutline },
+  { tab: "member", href: "/designs/TODO-member", label: "Members", icon: peopleOutline },
+  { tab: "settings", href: "/designs/TODO-settings", label: "Settings", icon: settingsOutline },
 ];
 
 export function TodoTabPage() {
   return (
     <OmPage
       padding="lg"
-      header={<OmAppBar variant="brand" brandTitle="TODO 品牌" />}
+      header={<OmAppBar variant="brand" brandTitle="TODO Brand" />}
     >
       <div>
         {/* TODO: 主体内容 —— 表单 / 列表 / 空态 */}
-        <h1>TODO Tab 页主体</h1>
+        <h1>TODO Tab page body</h1>
       </div>
       <OmTabBar items={TABS} />
     </OmPage>

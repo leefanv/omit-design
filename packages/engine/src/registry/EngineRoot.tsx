@@ -38,7 +38,7 @@ export function EngineRoot({ source, children }: EngineRootProps) {
 
 function useEngine(): EngineContextValue {
   const v = useContext(EngineContext);
-  if (!v) throw new Error("useEngine 必须在 <EngineRoot> 内使用");
+  if (!v) throw new Error("useEngine must be used inside <EngineRoot>");
   return v;
 }
 

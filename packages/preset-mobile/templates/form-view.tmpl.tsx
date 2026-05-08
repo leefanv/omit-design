@@ -6,9 +6,9 @@
 //   4. IonBackButton defaultHref 改成上一级
 
 export const meta = {
-  name: "TODO 表单页名",
+  name: "TODO Form page",
   pattern: "form-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -32,19 +32,19 @@ export function TodoFormPage() {
       padding="lg"
       header={
         <OmHeader
-          title="TODO 表单"
+          title="TODO Form"
           start={<IonBackButton defaultHref="/designs/TODO" />}
         />
       }
     >
-      <OmInput label="字段一" value={field1} onChange={setField1} />
-      <OmInput label="字段二" value={field2} onChange={setField2} />
+      <OmInput label="Field one" value={field1} onChange={setField1} />
+      <OmInput label="Field two" value={field2} onChange={setField2} />
 
       <OmButton
         expand="block"
         onClick={() => navigate("/designs/TODO-next")}
       >
-        提交
+        Submit
       </OmButton>
     </OmPage>
   );

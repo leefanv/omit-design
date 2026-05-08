@@ -43,7 +43,7 @@ export function OmOrderFooter({
         className="om-order-footer__cart"
         type="button"
         onClick={onCartClick}
-        aria-label="购物车"
+        aria-label="Cart"
       >
         <IonIcon icon={cartOutline} />
         {typeof cartCount === "number" && cartCount > 0 && (
@@ -55,7 +55,7 @@ export function OmOrderFooter({
         <button className="om-order-footer__discount" type="button" onClick={onDiscountClick}>
           <span className="om-order-footer__discount-amount">{discountLabel}</span>
           <span className="om-order-footer__discount-label">
-            优惠明细
+            Discount details
             <IonIcon icon={chevronForward} aria-hidden />
           </span>
         </button>

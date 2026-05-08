@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/preset-mobile",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Mobile design preset for omit-design: Om* whitelist components, --om-* / --ion-* token map, Ionic 8 runtime.",
   "main": "./index.ts",

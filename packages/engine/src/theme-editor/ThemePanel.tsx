@@ -66,10 +66,10 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
     return (
       <aside className={`theme-panel theme-panel--${variant}`}>
         <header className="theme-panel__header">
-          <h3>主题编辑器</h3>
-          {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="关闭">×</button>}
+          <h3>Theme Editor</h3>
+          {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close">×</button>}
         </header>
-        <div className="theme-panel__loading">载入 {preset.displayName} 主题…</div>
+        <div className="theme-panel__loading">Loading {preset.displayName} theme…</div>
       </aside>
     );
   }
@@ -81,24 +81,24 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
   return (
     <aside className={`theme-panel theme-panel--${variant}`}>
       <header className="theme-panel__header">
-        <h3>主题编辑器 · {preset.displayName}</h3>
-        {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="关闭">×</button>}
+        <h3>Theme Editor · {preset.displayName}</h3>
+        {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close">×</button>}
       </header>
 
       <div className="theme-panel__status">
         {hasUnappliedDraft && (
-          <span className="status-pill status-pill--draft">草稿未应用</span>
+          <span className="status-pill status-pill--draft">Draft not applied</span>
         )}
         {!hasUnappliedDraft && hasUnpublishedChanges && (
-          <span className="status-pill status-pill--applied">已应用未发布</span>
+          <span className="status-pill status-pill--applied">Applied, not published</span>
         )}
         {!hasUnappliedDraft && !hasUnpublishedChanges && (
-          <span className="status-pill status-pill--clean">与发布版一致</span>
+          <span className="status-pill status-pill--clean">Matches published</span>
         )}
       </div>
 
       <section className="theme-panel__section">
-        <h4>颜色</h4>
+        <h4>Colors</h4>
         <div className="token-grid">
           {visibleColorKeys.map((key) => {
             const draftValue = draft.colors[key] ?? "";
@@ -125,7 +125,7 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
       </section>
 
       <section className="theme-panel__section">
-        <h4>间距</h4>
+        <h4>Spacing</h4>
         <div className="token-grid">
           {visibleSpacingKeys.map((key) => {
             const draftValue = draft.spacing[key] ?? "";
@@ -147,24 +147,24 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
 
       <footer className="theme-panel__footer">
         <button className="btn btn--ghost" onClick={discardDraft} disabled={!hasUnappliedDraft}>
-          放弃草稿
+          Discard draft
         </button>
         <button className="btn btn--primary" onClick={apply} disabled={!hasUnappliedDraft}>
-          应用
+          Apply
         </button>
         <button
           className="btn btn--success"
           onClick={() => void publish()}
           disabled={!hasUnpublishedChanges}
-          title="导出当前 preset 的 variables.css 让你 commit 到仓库"
+          title="Export the current preset's variables.css so you can commit it to the repo"
         >
-          发布…
+          Publish…
         </button>
       </footer>
 
       <div className="theme-panel__reset">
         <button className="btn-link" onClick={resetToPublished} disabled={!hasUnpublishedChanges && !hasUnappliedDraft}>
-          重置为已发布版
+          Reset to published
         </button>
       </div>
     </aside>

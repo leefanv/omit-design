@@ -6,9 +6,9 @@
 //   4. 调整空态文案
 
 export const meta = {
-  name: "TODO 列表页名",
+  name: "TODO List page",
   pattern: "list-view",
-  description: "TODO 一句话描述",
+  description: "TODO one-line description",
   source: "prd",
 } as const;
 
@@ -28,8 +28,8 @@ interface Item {
 
 // TODO: 替换为 import { items } from ""./mock/<group>" 相对路径";
 const ITEMS: Item[] = [
-  { id: "1", title: "示例条目 1", detail: "副信息" },
-  { id: "2", title: "示例条目 2" },
+  { id: "1", title: "Sample item 1", detail: "Subinfo" },
+  { id: "2", title: "Sample item 2" },
 ];
 
 export function TodoListPage() {
@@ -38,13 +38,13 @@ export function TodoListPage() {
       padding="none"
       header={
         <OmHeader
-          title="TODO 标题"
+          title="TODO Title"
           start={<IonBackButton defaultHref="/designs/TODO" />}
         />
       }
     >
       {ITEMS.length === 0 ? (
-        <OmEmptyState title="暂无数据" description="TODO 空态描述" />
+        <OmEmptyState title="No data" description="TODO empty-state description" />
       ) : (
         <IonList lines="none">
           {ITEMS.map((it) => (
