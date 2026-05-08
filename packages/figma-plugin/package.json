@@ -1,16 +1,19 @@
 {
   "name": "@omit-design/figma-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Figma plugin: consumes FigmaNode JSON exported from omit-design's engine capture runtime; generates Frames in Figma.",
   "license": "MIT",
   "files": [
     "code.js",
     "manifest.json",
     "ui.html",
-    "README.md"
+    "README.md",
+    "omit-web-to-figma.zip"
   ],
   "scripts": {
-    "build:zip": "node ../../scripts/zip-figma-plugin.mjs"
+    "build": "node ../../scripts/zip-figma-plugin.mjs",
+    "build:zip": "node ../../scripts/zip-figma-plugin.mjs",
+    "prepublishOnly": "node ../../scripts/zip-figma-plugin.mjs"
   },
   "repository": {
     "type": "git",

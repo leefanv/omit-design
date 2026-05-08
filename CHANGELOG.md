@@ -5,6 +5,20 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [figma-plugin 0.1.1] - 2026-05-08
+
+Patch release. Fixes a P0 distribution bug since 0.1.0.
+
+### Fixed
+
+- **@omit-design/figma-plugin** — `omit-web-to-figma.zip` is now included in
+  the published tarball (added to `files` field). 0.1.0 omitted it, so
+  `https://unpkg.com/@omit-design/figma-plugin@latest/omit-web-to-figma.zip`
+  (referenced by engine's `ExportFigmaDialog`) returned 404; the
+  "Download plugin" link in the Export-to-Figma dialog has been broken since
+  initial release. Also adds `prepublishOnly` hook to rebuild the zip before
+  every publish so the tarball can never ship stale.
+
 ## [0.1.4-cli] - 2026-05-08
 
 CLI patch release. Extends `upgrade` with a project-wide legacy-API scanner.
