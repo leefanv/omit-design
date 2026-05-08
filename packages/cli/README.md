@@ -18,6 +18,7 @@ npx @omit-design/cli init my-app
 | `omit-design dev` | Start the local design server (Vite). |
 | `omit-design lint` | Run the three hard rules (`no-design-literal` / `no-non-whitelist-import` / `require-pattern-header`). |
 | `omit-design skills update` | Sync the cli's built-in `.claude/skills/` into the current project's `.claude/skills/`. |
+| `omit-design new-page <pattern> <path>` | Scaffold a design page from a preset-mobile pattern template. |
 
 ## Quick start
 
@@ -51,6 +52,12 @@ omit-design lint --glob 'src/views/**/*.tsx' # custom glob
 omit-design skills update
 omit-design skills update --dry-run          # preview only
 omit-design skills update --target other/dir
+
+# new-page (scaffold a page from a preset-mobile pattern template)
+omit-design new-page list-view design/main/products
+omit-design new-page detail-view design/main/order --force
+# patterns: dashboard / detail-view / dialog-view / form-view /
+#           list-view / sheet-action / tab-view / welcome-view
 ```
 
 ## License
