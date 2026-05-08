@@ -77,7 +77,7 @@
 - [ ] **README "Getting Started" 章节**:`npm install -g @omit-design/cli` 或 `npx`,五步上手
 - [ ] **engine 包 README**:每个子模块(registry / discovery / inspect / theme-editor / capture / shell)一段
 - [ ] **preset-mobile 组件文档**:21 个 Om* 组件 props 表 + 截图(可后续做)
-- [ ] **`omit-design --help` 输出**:citty 默认 help 够用,但每个 command 加 `examples` 字段更友好
+- [x] **`omit-design --help` 输出**:cli.ts 顶层 description 加 Quick start;subcommand description 保持单行(避免破坏顶层 list 渲染);完整示例放 [packages/cli/README.md](packages/cli/README.md) 的 Examples 章节(citty 的 `CommandMeta` 没有独立 `examples` 字段)
 
 ### P2:浏览器实测 + 修复运行时 bug
 
@@ -102,7 +102,7 @@
 
 - [ ] **`omit-design skills update`** 命令:升级项目 `.claude/skills/` 到最新版
 - [ ] **`omit-design new-page <pattern> <path>`**(可选):agent 走 skill,人也可以直接命令
-- [ ] **包之间循环依赖审计**:engine + preset-mobile 通过 manifest 类型耦合,审一遍
+- [x] **包之间循环依赖审计**(2026-05-08):无运行时循环。依赖图: `preset-mobile ──(type-only peer)──> engine`,其余 4 个包均无 inter-package dep。修了 1 处缺失声明:`preset-mobile/package.json` 的 peerDependencies 加上 `@omit-design/engine: ^0.1.0`(原先 catalog.tsx / preset.manifest.ts 用了 engine 的 type 但未声明)
 - [ ] **HMR 体验**:design/ 文件改后局部刷新(目前是 vite 整页 reload)
 
 ## v0.2+ 可能的方向

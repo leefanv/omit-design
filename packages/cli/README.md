@@ -29,6 +29,24 @@ npm run dev
 
 Then open `http://localhost:5173/`. The scaffold ships a single demo design at `design/main/welcome.tsx`.
 
+## Examples
+
+```bash
+# Scaffold a new project
+npx omit-design init my-app
+npx omit-design init my-app --force          # overwrite existing dir
+
+# Dev server
+omit-design dev
+omit-design dev --port 3000
+omit-design dev --host                       # expose on LAN
+
+# Lint
+omit-design lint
+omit-design lint --json                      # raw ESLint JSON
+omit-design lint --glob 'src/views/**/*.tsx' # custom glob
+```
+
 ## License
 
 MIT

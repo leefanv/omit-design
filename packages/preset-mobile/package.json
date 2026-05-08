@@ -41,6 +41,7 @@
   },
   "peerDependencies": {
     "@ionic/react": "^8",
+    "@omit-design/engine": "^0.1.0",
     "ionicons": "^7 || ^8",
     "react": "^19",
     "react-router-dom": "^6"

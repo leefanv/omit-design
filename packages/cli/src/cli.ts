@@ -5,7 +5,15 @@ const main = defineCommand({
   meta: {
     name: "omit-design",
     version: "0.1.0",
-    description: "AI-collaborative design composition framework — write TSX, lint with hard rules, preview locally.",
+    description: [
+      "AI-collaborative design composition framework — write TSX, lint with hard rules, preview locally.",
+      "",
+      "Quick start:",
+      "  npx omit-design init my-app",
+      "  cd my-app && npm install",
+      "  npm run dev",
+      "",
+    ].join("\n"),
   },
   subCommands: {
     init: () => import("./commands/init.js").then((m) => m.default),
