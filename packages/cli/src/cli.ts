@@ -19,6 +19,7 @@ const main = defineCommand({
     init: () => import("./commands/init.js").then((m) => m.default),
     dev: () => import("./commands/dev.js").then((m) => m.default),
     lint: () => import("./commands/lint.js").then((m) => m.default),
+    skills: () => import("./commands/skills.js").then((m) => m.default),
   },
 });
 

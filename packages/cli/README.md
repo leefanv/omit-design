@@ -17,6 +17,7 @@ npx @omit-design/cli init my-app
 | `omit-design init <name>` | Scaffold a new project (Vite + React + preset-mobile + ESLint hard rules + `.claude/skills/`) |
 | `omit-design dev` | Start the local design server (Vite). |
 | `omit-design lint` | Run the three hard rules (`no-design-literal` / `no-non-whitelist-import` / `require-pattern-header`). |
+| `omit-design skills update` | Sync the cli's built-in `.claude/skills/` into the current project's `.claude/skills/`. |
 
 ## Quick start
 
@@ -45,6 +46,11 @@ omit-design dev --host                       # expose on LAN
 omit-design lint
 omit-design lint --json                      # raw ESLint JSON
 omit-design lint --glob 'src/views/**/*.tsx' # custom glob
+
+# Skills (upgrade .claude/skills/ to the version shipped with this cli)
+omit-design skills update
+omit-design skills update --dry-run          # preview only
+omit-design skills update --target other/dir
 ```
 
 ## License

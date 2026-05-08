@@ -100,7 +100,7 @@
 
 ### P3:补强
 
-- [ ] **`omit-design skills update`** 命令:升级项目 `.claude/skills/` 到最新版
+- [x] **`omit-design skills update`** 命令(2026-05-08):同步 cli 内置 `templates/init/.claude/skills/` 到当前项目 `./.claude/skills/`。`--dry-run` 仅预览;`--target` 改目标目录。报告 `+ 新增 / ~ 更新 / = 一致` 三类。幂等。实现:[packages/cli/src/commands/skills.ts](packages/cli/src/commands/skills.ts)
 - [ ] **`omit-design new-page <pattern> <path>`**(可选):agent 走 skill,人也可以直接命令
 - [x] **包之间循环依赖审计**(2026-05-08):无运行时循环。依赖图: `preset-mobile ──(type-only peer)──> engine`,其余 4 个包均无 inter-package dep。修了 1 处缺失声明:`preset-mobile/package.json` 的 peerDependencies 加上 `@omit-design/engine: ^0.1.0`(原先 catalog.tsx / preset.manifest.ts 用了 engine 的 type 但未声明)
 - [ ] **HMR 体验**:design/ 文件改后局部刷新(目前是 vite 整页 reload)
