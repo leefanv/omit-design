@@ -93,15 +93,25 @@ const EXCLUDE_SELECTOR = [
 ].join(", ");
 
 /**
+ * 设计稿根容器白名单 — 必须在以下任一容器内，元素才视为可 inspect。
+ * 多个选择器是为了兼容不同 shell：
+ *   - `.canvas-page-frame`：新画布单页容器（SinglePageCanvas）
+ *   - `.shell-design-frame`：单页路由 DesignFrame 的 stage 容器
+ *   - `.shell-device-content`：旧 DesignFrame mockup 内容（保留兼容）
+ */
+const DESIGN_ROOT_SELECTOR =
+  ".canvas-page-frame, .shell-design-frame, .shell-device-content";
+
+/**
  * 把任意 DOM target 解析成可 inspect 的元素：
- *  - 必须在 `.shell-device-content` 内（设备屏幕内）
+ *  - 必须落在 DESIGN_ROOT_SELECTOR 之一内
  *  - 不在 inspect/theme overlay 自身里
  *  - 任何元素都行,不限于 preset 组件
  */
 export function findInspectableTarget(start: HTMLElement | null): HTMLElement | null {
   if (!start) return null;
   if (start.closest(EXCLUDE_SELECTOR)) return null;
-  if (!start.closest(".shell-device-content")) return null;
+  if (!start.closest(DESIGN_ROOT_SELECTOR)) return null;
   return start;
 }
 

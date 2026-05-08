@@ -1,61 +1,59 @@
-import { useEffect, useState } from "react";
-import { useInspectStore } from "../inspect/store";
+import { useEffect } from "react";
+import { useInspectStore, type InspectMode } from "../inspect/store";
 import { InspectInspector } from "../inspect/InspectInspector";
 import { ThemePanel } from "../theme-editor/ThemePanel";
-import { OverviewPanel } from "./panels/OverviewPanel";
+import { isInspectTool, useCanvasStore } from "./canvas/canvasStore";
 
-type TabId = "overview" | "inspect" | "theme";
-const TAB_STORAGE_KEY = "omit-engine-right-tab";
+const PANEL_TITLE: Record<string, string> = {
+  inspect: "Inspect",
+  measure: "Measure",
+  a11y: "A11y",
+  theme: "Theme",
+};
 
-const TABS: Array<{ id: TabId; icon: string; label: string }> = [
-  { id: "overview", icon: "⊕", label: "概览" },
-  { id: "inspect", icon: "📐", label: "标注" },
-  { id: "theme", icon: "🎨", label: "主题" },
-];
-
-function loadTab(): TabId {
-  const saved = localStorage.getItem(TAB_STORAGE_KEY);
-  if (saved === "overview" || saved === "inspect" || saved === "theme") return saved;
-  return "overview";
-}
-
+/**
+ * 浮卡形态的右侧面板。按 activeTool 显示对应工具的面板。
+ * inspect / measure / a11y 是独立工具，分别同步到 inspect store 的 mode + enabled。
+ */
 export function RightPanel() {
-  const [tab, setTab] = useState<TabId>(loadTab);
+  const activeTool = useCanvasStore((s) => s.activeTool);
   const setEnabled = useInspectStore((s) => s.setEnabled);
-  const selected = useInspectStore((s) => s.selected);
+  const setMode = useInspectStore((s) => s.setMode);
+  const setTool = useCanvasStore((s) => s.setTool);
 
-  // tab 切换驱动 Inspect mode 启停（Figma 风格：tabs 互斥）
+  // 同步：左栏选哪个 inspect 子工具 → inspect store 的 mode
   useEffect(() => {
-    setEnabled(tab === "inspect");
-    localStorage.setItem(TAB_STORAGE_KEY, tab);
-  }, [tab, setEnabled]);
+    if (isInspectTool(activeTool)) {
+      setEnabled(true);
+      setMode(activeTool as InspectMode);
+    } else {
+      setEnabled(false);
+    }
+    return () => {
+      setEnabled(false);
+    };
+  }, [activeTool, setEnabled, setMode]);
 
-  // 用户点画布上的元素 → 强制切到标注 tab
-  useEffect(() => {
-    if (selected) setTab("inspect");
-  }, [selected]);
+  const title = PANEL_TITLE[activeTool] ?? "";
+  const inspectMode = isInspectTool(activeTool);
 
   return (
     <aside className="shell-right-panel" data-no-inspect>
-      <nav className="shell-right-panel__tabs" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            aria-selected={tab === t.id}
-            className={`shell-right-panel__tab ${tab === t.id ? "active" : ""}`}
-            onClick={() => setTab(t.id)}
-          >
-            <span className="shell-right-panel__tab-icon">{t.icon}</span>
-            <span className="shell-right-panel__tab-label">{t.label}</span>
-          </button>
-        ))}
-      </nav>
-
+      <header className="shell-right-panel__head">
+        <span className="shell-right-panel__head-title">{title}</span>
+        <button
+          type="button"
+          className="shell-right-panel__close"
+          onClick={() => setTool("move")}
+          aria-label="关闭面板"
+          title="关闭面板"
+        >
+          ×
+        </button>
+      </header>
       <div className="shell-right-panel__content">
-        {tab === "overview" && <OverviewPanel />}
-        {tab === "inspect" && <InspectInspector />}
-        {tab === "theme" && <ThemePanel variant="aside" />}
+        {inspectMode && <InspectInspector />}
+        {activeTool === "theme" && <ThemePanel variant="aside" />}
       </div>
     </aside>
   );

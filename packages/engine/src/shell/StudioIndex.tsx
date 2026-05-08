@@ -4,12 +4,16 @@ import {
   useProjects,
   useProjectGroups,
   useProject,
-  type DesignEntry,
-  type DesignGroup,
   type DiscoveredProject,
 } from "../registry";
 import { ExportFigmaDialog } from "../capture/ExportFigmaDialog";
 import { DesignThumbnail } from "./DesignThumbnail";
+import { InspectOverlay } from "../inspect/InspectOverlay";
+import { SinglePageCanvas } from "./canvas/SinglePageCanvas";
+import { EntryPicker } from "./canvas/EntryPicker";
+import { ToolRail } from "./canvas/ToolRail";
+import { useCanvasStore, getPanelOpen, type CanvasTool } from "./canvas/canvasStore";
+import { RightPanel } from "./RightPanel";
 
 // ─────────────────────────────────────────────
 // ProjectsHome — /workspace（Figma 风格项目列表）
@@ -82,7 +86,17 @@ function ProjectCard({ project }: { project: DiscoveredProject }) {
 
 // ─────────────────────────────────────────────
 // ProjectDetail — /workspace/:projectId
+// 单页画布 + 左侧分组/页面选择
 // ─────────────────────────────────────────────
+
+const PROJECT_TOOLS: { id: CanvasTool; icon: string; label: string; shortcut: string }[] = [
+  { id: "move", icon: "↖", label: "选择", shortcut: "V" },
+  { id: "hand", icon: "✋", label: "拖拽画布", shortcut: "H" },
+  { id: "inspect", icon: "📐", label: "标注", shortcut: "I" },
+  { id: "measure", icon: "📏", label: "测距", shortcut: "M" },
+  { id: "a11y", icon: "♿", label: "无障碍", shortcut: "A" },
+  { id: "comment", icon: "💬", label: "评论", shortcut: "C" },
+];
 
 export function ProjectDetail() {
   const { projectId = "" } = useParams<{ projectId: string }>();
@@ -104,107 +118,93 @@ export function ProjectDetail() {
 }
 
 function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
-  // Group entries 是 useProjectGroups 算出来的 ——保留 group meta + 该 group 的 entries
   const groups = useProjectGroups(project.id);
-  const total = project.entries.length;
   const [q, setQ] = useState("");
   const [exportOpen, setExportOpen] = useState(false);
-  const [activeGroup, setActiveGroup] = useState<string>(groups[0]?.id ?? "");
 
-  const visibleGroups = useMemo<DesignGroup[]>(() => {
-    const term = q.trim().toLowerCase();
-    if (!term) return groups;
-    return groups
-      .map((g) => ({
-        ...g,
-        entries: g.entries.filter((e) => matches(e, term)),
-      }))
-      .filter((g) => g.entries.length > 0);
-  }, [q, groups]);
+  const setProjectId = useCanvasStore((s) => s.setProjectId);
+  const selectedHref = useCanvasStore((s) => s.selectedEntryHref);
+  const selectEntry = useCanvasStore((s) => s.selectEntry);
+  const panelOpen = useCanvasStore(getPanelOpen);
+  const pickerPinned = useCanvasStore((s) => s.entryPickerPinned);
+  const toggleEntryPickerOpen = useCanvasStore((s) => s.toggleEntryPickerOpen);
 
-  const visibleTotal = useMemo(
-    () => visibleGroups.reduce((sum, g) => sum + g.entries.length, 0),
-    [visibleGroups]
-  );
+  // Hydrate per-project state and pick a default entry if none persisted
+  useEffect(() => {
+    setProjectId(project.id);
+  }, [project.id, setProjectId]);
 
   useEffect(() => {
-    const ids = visibleGroups.map((g) => `group-${g.id}`);
-    const els = ids
-      .map((id) => document.getElementById(id))
-      .filter((x): x is HTMLElement => !!x);
-    if (els.length === 0) return;
+    const current = useCanvasStore.getState().selectedEntryHref;
+    const stillExists = current && project.entries.some((e) => e.href === current);
+    if (!stillExists) {
+      const first = project.entries[0];
+      selectEntry(first?.href ?? null);
+    }
+  }, [project.id, project.entries, selectEntry]);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        if (visible.length > 0) {
-          const id = visible[0].target.id.replace(/^group-/, "");
-          setActiveGroup(id);
-        }
-      },
-      { rootMargin: "-40% 0px -50% 0px", threshold: 0 }
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [visibleGroups]);
+  const selectedEntry = useMemo(() => {
+    if (!selectedHref) return null;
+    return project.entries.find((e) => e.href === selectedHref) ?? null;
+  }, [project.entries, selectedHref]);
+
+  const SelectedComponent = selectedEntry?.component ?? null;
+  const caption = selectedEntry
+    ? `${groupLabel(groups, selectedEntry.groupId)} · ${selectedEntry.name}`
+    : "";
 
   return (
-    <div className="shell-studio">
+    <div className="shell-studio shell-studio--canvas">
       <header className="shell-studio__header">
-        <div className="shell-studio__brand">
-          <Link to="/workspace" className="shell-studio__back">
-            <span className="shell-studio__logo">◆</span>
+        <div className="shell-studio__header-left">
+          <Link to="/workspace" className="shell-pill shell-pill--icon" title="返回项目列表">
+            <span aria-hidden>←</span>
           </Link>
-          <span className="shell-studio__project-icon">{project.icon}</span>
-          <h1>{project.name}</h1>
-          <span className="shell-studio__tag">{project.description}</span>
-        </div>
-
-        <div className="shell-studio__search">
-          <span className="shell-studio__search-icon" aria-hidden>🔍</span>
-          <input
-            type="search"
-            value={q}
-            placeholder="搜索稿名 / 路由 / pattern…"
-            onChange={(e) => setQ(e.target.value)}
-            autoFocus
-          />
-          {q && (
+          {!pickerPinned && (
             <button
               type="button"
-              className="shell-studio__search-clear"
-              onClick={() => setQ("")}
-              aria-label="清空搜索"
+              className="shell-pill shell-pill--text"
+              data-entry-picker-trigger
+              onClick={toggleEntryPickerOpen}
+              title="切换页面"
             >
-              ×
+              <span aria-hidden>≡</span> Pages
             </button>
           )}
-          <kbd className="shell-studio__search-kbd">{visibleTotal}/{total}</kbd>
+          <div className="shell-pill shell-pill--combobox" title={project.description}>
+            <span className="shell-pill__icon-bubble" aria-hidden>{project.icon}</span>
+            <span className="shell-pill__text">{project.name}</span>
+            <span className="shell-pill__caret" aria-hidden>▾</span>
+          </div>
         </div>
 
-        <Link
-          to={`/workspace/${project.id}/settings`}
-          className="shell-studio__action"
-          title="项目设置：访问范围 / 成员 / 删除"
-        >
-          <span aria-hidden>⚙</span> 项目设置
-        </Link>
-        <Link
-          to={`/workspace/${project.id}/theme-editor`}
-          className="shell-studio__action"
-          title="打开全屏主题编辑器 — 所见即所得调整 token，发布后更新全部页面"
-        >
-          <span aria-hidden>🎨</span> 主题编辑器
-        </Link>
-        <button
-          type="button"
-          className="shell-studio__action"
-          onClick={() => setExportOpen(true)}
-        >
-          <span aria-hidden>↗</span> 导出到 Figma
-        </button>
+        <div className="shell-studio__header-spacer" />
+
+        <div className="shell-studio__header-right">
+          <Link
+            to={`/workspace/${project.id}/settings`}
+            className="shell-pill shell-pill--icon"
+            title="项目设置：访问范围 / 成员 / 删除"
+            aria-label="项目设置"
+          >
+            <span aria-hidden>⚙</span>
+          </Link>
+          <Link
+            to={`/workspace/${project.id}/theme-editor`}
+            className="shell-pill shell-pill--icon"
+            title="打开全屏主题编辑器"
+            aria-label="主题编辑"
+          >
+            <span aria-hidden>🎨</span>
+          </Link>
+          <button
+            type="button"
+            className="shell-pill shell-pill--text"
+            onClick={() => setExportOpen(true)}
+          >
+            <span aria-hidden>↗</span> Export to Figma
+          </button>
+        </div>
       </header>
 
       {exportOpen && (
@@ -214,137 +214,30 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
         />
       )}
 
-      <div className="shell-studio__layout">
-        <aside className="shell-studio__toc" aria-label="分组目录">
-          <div className="shell-studio__toc-head">
-            <span>分组</span>
-            <span className="shell-studio__toc-count">{total}</span>
-          </div>
-          <ul>
-            {groups.map((g) => {
-              const visibleEntries =
-                visibleGroups.find((v) => v.id === g.id)?.entries.length ?? 0;
-              const isMuted = q.trim().length > 0 && visibleEntries === 0;
-              return (
-                <li key={g.id}>
-                  <a
-                    href={`#group-${g.id}`}
-                    className={[
-                      "shell-studio__toc-item",
-                      activeGroup === g.id ? "shell-studio__toc-item--active" : "",
-                      isMuted ? "shell-studio__toc-item--muted" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById(`group-${g.id}`)?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                    }}
-                  >
-                    {g.icon && (
-                      <span className="shell-studio__toc-icon">{g.icon}</span>
-                    )}
-                    <span className="shell-studio__toc-label">{g.label}</span>
-                    <span className="shell-studio__toc-badge">
-                      {q.trim().length > 0
-                        ? `${visibleEntries}/${g.entries.length}`
-                        : g.entries.length}
-                    </span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </aside>
-
-        <main className="shell-studio__main">
-          {visibleGroups.length === 0 ? (
-            <div className="shell-studio__empty">
-              没有匹配"{q}"的稿。
-            </div>
-          ) : (
-            visibleGroups.map((g) => (
-              <section
-                key={g.id}
-                id={`group-${g.id}`}
-                className="shell-studio__group"
-              >
-                <h3 className="shell-studio__group-head">
-                  {g.icon && (
-                    <span className="shell-studio__group-icon">{g.icon}</span>
-                  )}
-                  {g.label}
-                  <span className="shell-studio__group-count">
-                    {g.entries.length}
-                  </span>
-                </h3>
-                <ul className="shell-studio__grid">
-                  {g.entries.map((d) => {
-                    const isDesktop = project.preset.canvas.chrome === "desktop";
-                    return (
-                    <li
-                      key={d.href}
-                      className={
-                        "shell-studio__card" +
-                        (isDesktop ? " shell-studio__card--desktop" : "")
-                      }
-                    >
-                      <Link to={d.href}>
-                        <div
-                          className={
-                            "shell-studio__thumb" +
-                            (isDesktop ? " shell-studio__thumb--desktop" : "")
-                          }
-                        >
-                          <DesignThumbnail
-                            href={d.href}
-                            embedHref={d.embedHref}
-                            isDesktop={isDesktop}
-                            icon={g.icon}
-                          />
-                          {d.source === "prd" && (
-                            <span className="shell-studio__source shell-studio__source--prd">
-                              来自 PRD
-                            </span>
-                          )}
-                        </div>
-                        <div className="shell-studio__meta">
-                          <div className="shell-studio__meta-top">
-                            <strong>
-                              {g.label} · {d.name}
-                            </strong>
-                            <span className="shell-studio__pattern">
-                              @{d.pattern}
-                            </span>
-                          </div>
-                          {d.description && <p>{d.description}</p>}
-                        </div>
-                      </Link>
-                    </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))
-          )}
-        </main>
+      <div className="canvas-root">
+        <SinglePageCanvas
+          Component={SelectedComponent}
+          caption={caption}
+          frameWidth={project.preset.canvas.default.width}
+          frameHeight={project.preset.canvas.default.height}
+        />
+        <ToolRail tools={PROJECT_TOOLS} />
+        <EntryPicker groups={groups} q={q} setQ={setQ} />
+        {panelOpen && <RightPanel />}
       </div>
+
+      <InspectOverlay />
     </div>
   );
 }
 
+function groupLabel(groups: { id: string; label: string }[], id: string): string {
+  return groups.find((g) => g.id === id)?.label ?? id;
+}
+
 // ─────────────────────────────────────────────
-// 向后兼容 export（防止旧引用）
+// 向后兼容 export
 // ─────────────────────────────────────────────
 export function StudioIndex() {
   return <ProjectsHome />;
-}
-
-function matches(e: DesignEntry, term: string): boolean {
-  const hay =
-    `${e.name} ${e.href} ${e.pattern} ${e.description ?? ""} ${e.source ?? ""}`.toLowerCase();
-  return hay.includes(term);
 }

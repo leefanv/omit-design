@@ -1,0 +1,569 @@
+/* ==========================================================================
+ * Figma 风格画布（单页 · 悬浮式）
+ *
+ * 设计 token 摘自 Figma 1:690 详情页：
+ *   bg #fafafa · text #1a1a1a · text-2 rgba(0,0,0,0.6)
+ *   border #ebebeb · surface #fff · pill 9999
+ *   Aside dark: bg #171717 · border #292929 · active bg #212121
+ *   user bubble: bg rgba(217,217,217,0.15) · text #d9d9d9
+ *   shadow-lift: 0 25px 50px -12px rgba(0,0,0,0.25)
+ *   shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.05)
+ * ========================================================================== */
+
+.canvas-root {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --border: #ebebeb;
+  --text: #1a1a1a;
+  --text-2: rgba(0, 0, 0, 0.6);
+  --text-3: #a8a8a8;
+  --accent: #1a1a1a;        /* 设计稿 active 用纯黑 */
+  --accent-soft: #f5f5f5;
+  --rail-bg: #171717;
+  --rail-border: #292929;
+  --rail-active: #212121;
+  --rail-text: #d9d9d9;
+  --pill-radius: 9999px;
+  --card-radius: 16px;
+  --rail-radius: 32px;
+  --shadow-lift: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+}
+
+/* ==========================================================================
+ * 暗色悬浮 ToolRail（左中悬浮）
+ * ========================================================================== */
+.canvas-tool-rail {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 62px;
+  padding: 13px;
+  background: var(--rail-bg);
+  border: 1px solid var(--rail-border);
+  border-radius: var(--rail-radius);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.05));
+}
+.canvas-tool-rail__logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: var(--rail-active);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  user-select: none;
+}
+.canvas-tool-rail__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.canvas-tool-rail__btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 0.12s, color 0.12s;
+}
+.canvas-tool-rail__btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+}
+.canvas-tool-rail__btn[data-active] {
+  background: var(--rail-active);
+  color: #fff;
+}
+.canvas-tool-rail__icon {
+  pointer-events: none;
+}
+.canvas-tool-rail__tip {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #1f1f1f;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 100;
+}
+.canvas-tool-rail__tip kbd {
+  display: inline-block;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+.canvas-tool-rail__btn:hover .canvas-tool-rail__tip {
+  opacity: 1;
+}
+.canvas-tool-rail__user {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: rgba(217, 217, 217, 0.15);
+  border: 1px solid var(--rail-border);
+  color: var(--rail-text);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* ==========================================================================
+ * EntryPicker — 两种形态：常驻 (pinned) vs 浮层 (floating)
+ * ========================================================================== */
+.canvas-picker {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+  z-index: 25;
+}
+.canvas-picker--pinned {
+  position: absolute;
+  left: 84px;       /* ToolRail (10+62) + 12 gap = 84 */
+  top: 12px;
+  bottom: 12px;
+  width: 240px;
+  box-shadow: var(--shadow-soft);
+}
+.canvas-picker--floating {
+  position: absolute;
+  left: 84px;
+  top: 12px;
+  width: 280px;
+  max-height: calc(100% - 24px);
+  box-shadow: var(--shadow-lift);
+  animation: canvas-picker-pop 0.15s ease-out;
+}
+@keyframes canvas-picker-pop {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.canvas-picker__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.canvas-picker__head-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+.canvas-picker__head-actions {
+  display: flex;
+  gap: 4px;
+}
+.canvas-picker__head-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.canvas-picker__head-btn:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.canvas-picker__search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  margin: 12px;
+  height: 32px;
+  background: var(--accent-soft);
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  transition: border-color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.canvas-picker__search:focus-within {
+  background: var(--surface);
+  border-color: var(--text);
+}
+.canvas-picker__search-icon {
+  font-size: 12px;
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+.canvas-picker__search input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  min-width: 0;
+}
+.canvas-picker__search input::placeholder {
+  color: var(--text-3);
+}
+.canvas-picker__search-clear {
+  border: none;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.canvas-picker__search-clear:hover {
+  background: var(--surface);
+}
+.canvas-picker__count {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--text-2);
+  padding: 0 5px;
+  background: var(--surface);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.canvas-picker__tree {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 4px 0 12px;
+}
+.canvas-picker__empty {
+  padding: 16px;
+  color: var(--text-3);
+  font-size: 12px;
+  text-align: center;
+}
+.canvas-picker__group + .canvas-picker__group {
+  margin-top: 2px;
+}
+.canvas-picker__group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+}
+.canvas-picker__group-head:hover {
+  background: var(--accent-soft);
+}
+.canvas-picker__group-head[data-active] {
+  color: var(--text);
+}
+.canvas-picker__caret {
+  display: inline-block;
+  font-size: 10px;
+  width: 12px;
+  text-align: center;
+  color: var(--text-3);
+  transition: transform 0.15s;
+}
+.canvas-picker__caret--open {
+  transform: rotate(90deg);
+}
+.canvas-picker__group-icon {
+  font-size: 14px;
+}
+.canvas-picker__group-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.canvas-picker__group-count {
+  font-size: 11px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.canvas-picker__entries {
+  list-style: none;
+  margin: 2px 0 4px;
+  padding: 0;
+}
+.canvas-picker__entry {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  width: calc(100% - 16px);
+  margin: 1px 8px;
+  padding: 6px 8px 6px 26px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-2);
+  font: inherit;
+}
+.canvas-picker__entry:hover {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+.canvas-picker__entry[data-active] {
+  background: var(--text);
+  color: #fff;
+}
+.canvas-picker__entry-name {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.canvas-picker__entry-pattern {
+  font-family: ui-monospace, monospace;
+  font-size: 10px;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.canvas-picker__entry[data-active] .canvas-picker__entry-pattern {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+ * 视口 + Stage
+ * ========================================================================== */
+.canvas-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  contain: strict;
+  cursor: default;
+  touch-action: none;
+  background: var(--bg);
+}
+.canvas-viewport[data-tool="hand"],
+.canvas-viewport[data-space-pan="1"] {
+  cursor: grab;
+}
+.canvas-viewport[data-panning="1"] {
+  cursor: grabbing;
+}
+.canvas-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.canvas-page-caption {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--text-2);
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+.canvas-page-frame {
+  position: relative;
+  background: var(--surface);
+  border-radius: 8px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 8px 32px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+.canvas-page-frame > * {
+  width: 100%;
+  height: 100%;
+}
+.canvas-page-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  font-size: 14px;
+}
+
+/* ==========================================================================
+ * HUD (zoom controls, bottom-right) — 圆角药丸
+ * ========================================================================== */
+.canvas-hud {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  box-shadow: var(--shadow-soft);
+  z-index: 20;
+  font-size: 12px;
+}
+.canvas-hud__btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 9999px;
+  font: inherit;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.canvas-hud__btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+.canvas-hud__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.canvas-hud__btn--text {
+  width: auto;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.canvas-hud__pct {
+  min-width: 44px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--text);
+}
+.canvas-hud__sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.canvas-wheel-mode {
+  position: absolute;
+  bottom: 16px;
+  right: 220px;
+  padding: 4px 12px;
+  height: 28px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: 9999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  z-index: 20;
+  box-shadow: var(--shadow-soft);
+}
+.canvas-wheel-mode:hover {
+  color: var(--text);
+}
+
+/* ==========================================================================
+ * 单页 DesignFrame stage（保留供单页路由使用）
+ * ========================================================================== */
+.shell-design-stage {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg, #fafafa);
+}
+.shell-design-stage__canvas {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+  min-height: 0;
+}
+.shell-design-frame {
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+.shell-design-frame > * {
+  width: 100%;
+  height: 100%;
+}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useInspectStore, type InspectMode, type InspectTarget } from "./store";
+import { useInspectStore, type InspectTarget } from "./store";
 import { codegenWeb } from "./codegen/web";
 import { codegenCompose } from "./codegen/compose";
 import { codegenXml } from "./codegen/xml";
@@ -8,26 +8,12 @@ import { detectAssetSource, downloadUrl, exportElementAsPng, type ExportScale } 
 type CodeTarget = "web" | "compose" | "xml";
 type SecondaryTab = "props" | "code";
 
-const MODES: Array<{ id: InspectMode; label: string }> = [
-  { id: "inspect", label: "Inspect" },
-  { id: "measure", label: "Measure" },
-  { id: "a11y", label: "A11y" },
-];
-
 /**
- * 标注 tab 内容：
- *   ┌────────────────────────┐
- *   │ Mode: Inspect|Measure|A11y │   ← 一直在顶部
- *   ├────────────────────────┤
- *   │ [选中元素 header]        │   ← 选中时
- *   │ Props | Code           │   ← 二级 tab
- *   │ ...                    │
- *   └────────────────────────┘
- *   未选中元素时显示空态提示。
+ * 右侧面板里 inspect/measure/a11y 三个工具共用的内容。
+ * Mode 由左侧 ToolRail 选哪个工具决定，此处不再渲染 mode segmented control。
  */
 export function InspectInspector() {
   const mode = useInspectStore((s) => s.mode);
-  const setMode = useInspectStore((s) => s.setMode);
   const selected = useInspectStore((s) => s.selected);
   const setSelected = useInspectStore((s) => s.setSelected);
   const showBoxModel = useInspectStore((s) => s.showBoxModel);
@@ -38,17 +24,6 @@ export function InspectInspector() {
   return (
     <div className="inspect-inspector-content">
       <header className="inspect-section inspect-section--mode">
-        <div className="shell-segment">
-          {MODES.map((m) => (
-            <button
-              key={m.id}
-              className={`shell-segment__btn ${mode === m.id ? "active" : ""}`}
-              onClick={() => setMode(m.id)}
-            >
-              {m.label}
-            </button>
-          ))}
-        </div>
         <p className="inspect-mode-hint">
           {mode === "inspect" && "在画布上 hover 元素查看高亮，点击选中查看详情"}
           {mode === "measure" && "点击一个元素作为起点，hover 另一个元素查看距离"}

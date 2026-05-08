@@ -1,57 +1,68 @@
+/* 浮卡形态：在画布右上方悬浮，参考 Figma 1:1587 right-panel */
 .shell-right-panel {
-  width: 360px;
-  flex-shrink: 0;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  bottom: 12px;
+  width: 280px;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  background: var(--shell-surface);
-  border-left: 1px solid var(--shell-border);
-  font-family: var(--shell-font);
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  font-family: "Poppins", system-ui, -apple-system, sans-serif;
   font-size: 13px;
-  color: var(--shell-text);
+  color: #1a1a1a;
+  overflow: hidden;
+  z-index: 25;
+  animation: shell-right-panel-pop 0.18s ease-out;
+}
+@keyframes shell-right-panel-pop {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* ===== 一级 tabs（顶部） ===== */
-.shell-right-panel__tabs {
+.shell-right-panel__head {
   display: flex;
-  border-bottom: 1px solid var(--shell-border);
-  background: var(--shell-surface);
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: #fff;
   position: sticky;
   top: 0;
   z-index: 5;
+  flex-shrink: 0;
 }
-.shell-right-panel__tab {
-  flex: 1;
-  padding: 12px 8px;
+.shell-right-panel__head-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.2px;
+}
+.shell-right-panel__close {
+  width: 24px;
+  height: 24px;
   border: none;
   background: transparent;
-  color: var(--shell-text-subtle);
-  font-size: 12px;
+  border-radius: 6px;
+  color: rgba(0, 0, 0, 0.6);
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
+  font-size: 18px;
+  display: inline-flex;
   align-items: center;
-  gap: 3px;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 0.15s;
+  justify-content: center;
 }
-.shell-right-panel__tab:hover {
-  color: var(--shell-text);
-}
-.shell-right-panel__tab.active {
-  color: var(--shell-accent);
-  border-bottom-color: var(--shell-accent);
-  font-weight: 500;
-}
-.shell-right-panel__tab-icon {
-  font-size: 16px;
-  line-height: 1;
-}
-.shell-right-panel__tab-label {
-  font-size: 11px;
+.shell-right-panel__close:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
 }
 
 .shell-right-panel__content {

@@ -6,4 +6,5 @@
 @import "./sidebar.css";
 @import "./right-panel.css";
 @import "./studio.css";
+@import "./canvas/canvas.css";
 @import "../capture/export-dialog.css";

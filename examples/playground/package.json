@@ -1,0 +1,27 @@
+{
+  "name": "@omit-design/playground",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ionic/react": "^8",
+    "@omit-design/engine": "workspace:*",
+    "@omit-design/preset-mobile": "workspace:*",
+    "ionicons": "^7",
+    "react": "^19",
+    "react-dom": "^19",
+    "react-router-dom": "^6"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4",
+    "typescript": "^5.7",
+    "vite": "^6"
+  }
+}

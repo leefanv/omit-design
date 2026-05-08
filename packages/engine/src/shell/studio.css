@@ -8,6 +8,102 @@
   scroll-behavior: smooth;
 }
 
+/* 画布模式 — 详情页：header 透明悬浮 + 画布占满，整体不滚动 */
+.shell-studio--canvas {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fafafa;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+}
+.shell-studio--canvas .shell-studio__header {
+  position: relative;
+  flex-shrink: 0;
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+  padding: 12px 86px;
+  gap: 6px;
+  z-index: 30;
+}
+.shell-studio--canvas > .canvas-root {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.shell-studio__header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.shell-studio__header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.shell-studio__header-spacer {
+  flex: 1 1 auto;
+}
+
+/* ---------- shell-pill: 设计稿里的圆角药丸按钮系统 ---------- */
+.shell-pill {
+  --pill-bg: #fff;
+  --pill-border: #ebebeb;
+  --pill-text: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  height: 36px;
+  background: var(--pill-bg);
+  border: 1px solid var(--pill-border);
+  border-radius: 9999px;
+  color: var(--pill-text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.shell-pill:hover {
+  background: #f5f5f5;
+}
+.shell-pill--icon {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+  font-size: 16px;
+}
+.shell-pill--text {
+  /* 默认 text+icon */
+}
+.shell-pill--combobox {
+  padding: 4px 10px 4px 5px;
+  cursor: pointer;
+}
+.shell-pill__icon-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 9999px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.shell-pill__text {
+  font-size: 14px;
+}
+.shell-pill__caret {
+  font-size: 10px;
+  color: #6b7280;
+  margin-left: 2px;
+}
+
 .shell-studio__header {
   display: flex;
   align-items: center;
