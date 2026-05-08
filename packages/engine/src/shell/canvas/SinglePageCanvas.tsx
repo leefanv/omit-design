@@ -91,7 +91,6 @@ export function SinglePageCanvas({ Component, caption, frameWidth, frameHeight }
     if (!hasPersisted) {
       fitVisible();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewportSize.width, viewportSize.height, bbox]);
 
   // Imperative stage transform — subscribe to {panX, panY, zoom} and write DOM.
@@ -236,7 +235,6 @@ export function SinglePageCanvas({ Component, caption, frameWidth, frameHeight }
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bbox, resetTo100, setTool, viewportSize, zoomCentered]);
 
   function flushDrag() {
