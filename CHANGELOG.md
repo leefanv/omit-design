@@ -5,6 +5,34 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [docs] - 2026-05-08
+
+Documentation overhaul for OSS readiness. No code changes; bumps every package
+patch so the new READMEs propagate to npm.
+
+### Added
+- Root `README.md` rewritten with badges, architecture diagram, three-rule
+  explainer, packages table, upgrade instructions; new `README.zh-CN.md`.
+- `CONTRIBUTING.md` rewritten with release process pointer, CI overview,
+  code-style guidance; new `CONTRIBUTING.zh-CN.md`.
+- `docs/architecture.md` — module graph, single-page canvas rationale,
+  source-shipping rationale, versioning policy.
+- `docs/release.md` — maintainer release runbook (bump → CHANGELOG → publish).
+- Per-package READMEs: `engine` expanded with canvas shell + module reference,
+  `preset-mobile` translated to EN + new `README.zh-CN.md`, `figma-plugin`
+  translated to EN + new `README.zh-CN.md`, `eslint-plugin` gains usage
+  examples and configuration reference.
+
+### Removed
+- `PROGRESS.md` (obsolete v0.1 internal tracking — git history preserved).
+
+### Bumped
+- `@omit-design/engine` 0.2.0 → **0.2.1**
+- `@omit-design/preset-mobile` 0.2.0 → **0.2.1**
+- `@omit-design/cli` 0.1.4 → **0.1.5**
+- `@omit-design/eslint-plugin` 0.1.0 → **0.1.1**
+- `@omit-design/figma-plugin` 0.1.1 → **0.1.2**
+
 ## [figma-plugin 0.1.1] - 2026-05-08
 
 Patch release. Fixes a P0 distribution bug since 0.1.0.

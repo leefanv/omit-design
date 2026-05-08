@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/figma-plugin",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Figma plugin: consumes FigmaNode JSON exported from omit-design's engine capture runtime; generates Frames in Figma.",
   "license": "MIT",
   "files": [

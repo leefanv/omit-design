@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/eslint-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Three hard rules for omit-design business pages: no design literals, whitelist imports, mandatory pattern header.",
   "type": "module",
   "main": "./index.js",
