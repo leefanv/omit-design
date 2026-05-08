@@ -9,13 +9,25 @@
   "main": "./dist/cli.js",
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node ./scripts/copy-templates.mjs",
-    "dev": "tsc -p tsconfig.json --watch"
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leefanv/omit-design.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/leefanv/omit-design/tree/main/packages/cli#readme",
+  "bugs": "https://github.com/leefanv/omit-design/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "citty": "^0.1",
     "fs-extra": "^11"

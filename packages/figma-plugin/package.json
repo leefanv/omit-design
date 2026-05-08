@@ -8,5 +8,18 @@
     "manifest.json",
     "ui.html",
     "README.md"
-  ]
+  ],
+  "scripts": {
+    "build:zip": "node ../../scripts/zip-figma-plugin.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leefanv/omit-design.git",
+    "directory": "packages/figma-plugin"
+  },
+  "homepage": "https://github.com/leefanv/omit-design/tree/main/packages/figma-plugin#readme",
+  "bugs": "https://github.com/leefanv/omit-design/issues",
+  "publishConfig": {
+    "access": "public"
+  }
 }

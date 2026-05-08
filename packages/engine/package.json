@@ -14,9 +14,23 @@
   },
   "sideEffects": false,
   "files": [
-    "src"
+    "src",
+    "README.md"
   ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leefanv/omit-design.git",
+    "directory": "packages/engine"
+  },
+  "homepage": "https://github.com/leefanv/omit-design/tree/main/packages/engine#readme",
+  "bugs": "https://github.com/leefanv/omit-design/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "html-to-image": "^1.11",
     "zustand": "^5"
@@ -25,5 +39,10 @@
     "react": "^19",
     "react-dom": "^19",
     "react-router-dom": "^6"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5.7"
   }
 }

@@ -66,11 +66,11 @@
 
 ### P0:发包准备
 
-- [ ] **publish 流程**:CI 跑 `tsc --noEmit` + `eslint .`;`npm publish` 5 个包(注意 access public + 顺序依赖)
-- [ ] **真实 `npx omit-design init` 烟雾测试**:发到 npm 后,clean shell 跑 `npx omit-design init test-app && cd test-app && npm install && npm run dev`,确认所有 deps 从 registry 解析
-- [ ] **figma-plugin zip 重打**:目前的 `omit-web-to-figma.zip` 是从 pos-design 仓拷过来的;omit-design 仓里 `npm run build:figma-plugin` 还没接上(scripts/zip-figma-plugin.mjs 没迁过来)。要么补这个脚本,要么文档化"用户自己解压目录装"
-- [ ] **engine 加 `tsconfig.json`**:engine 自己的 typecheck 现在走消费方;独立 tsc 能更早抓 bug
-- [ ] **CHANGELOG.md**:第一版手写,后续接 changesets
+- [x] **publish 流程**:GitHub Actions CI(`.github/workflows/ci.yml`)跑 typecheck + lint;`npm publish` 5 个包(`publishConfig.access: public` 写进每个 package.json,无须传 flag)
+- [x] **真实 `npx omit-design init` 烟雾测试**:见下文 "v0.1.0 发包记录"
+- [x] **figma-plugin zip 重打**:[scripts/zip-figma-plugin.mjs](scripts/zip-figma-plugin.mjs)(用 `zip` 命令)+ `bun --cwd packages/figma-plugin run build:zip`
+- [x] **engine 加 `tsconfig.json`**:[packages/engine/tsconfig.json](packages/engine/tsconfig.json) + `bun --cwd packages/engine run typecheck`
+- [x] **CHANGELOG.md**:[CHANGELOG.md](CHANGELOG.md) Keep a Changelog 格式
 
 ### P1:文档与 DX
 

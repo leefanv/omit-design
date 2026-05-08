@@ -3,8 +3,6 @@ import type { DiscoveredProject } from "../registry";
 import { captureTree } from "./index";
 import type { CapturePayload } from "./index";
 
-import pluginZipUrl from "../../../figma-plugin/omit-web-to-figma.zip?url";
-
 import "./export-dialog.css";
 
 const VIEWPORT_BY_DEVICE: Record<"mobile" | "desktop", { w: number; h: number }> = {
@@ -14,6 +12,10 @@ const VIEWPORT_BY_DEVICE: Record<"mobile" | "desktop", { w: number; h: number }>
 
 const PLUGIN_REPO_URL =
   "https://github.com/omit-design/omit-design/tree/main/packages/figma-plugin";
+
+// unpkg URL resolves once the package is published to npm
+const pluginZipUrl =
+  "https://unpkg.com/@omit-design/figma-plugin@latest/omit-web-to-figma.zip";
 
 const PLUGIN_NAME = "Omit Web to Figma";
 const PLUGIN_ZIP_FILENAME = "omit-web-to-figma.zip";

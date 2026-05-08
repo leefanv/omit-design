@@ -29,6 +29,16 @@
     "README.md"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leefanv/omit-design.git",
+    "directory": "packages/preset-mobile"
+  },
+  "homepage": "https://github.com/leefanv/omit-design/tree/main/packages/preset-mobile#readme",
+  "bugs": "https://github.com/leefanv/omit-design/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "@ionic/react": "^8",
     "ionicons": "^7 || ^8",
