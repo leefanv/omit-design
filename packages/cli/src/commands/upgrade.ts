@@ -6,11 +6,14 @@
  *   2. 并发拉每个包在 npm 上的 `latest` 版本
  *   3. 把范围改成 `^X.Y.Z`，写回 package.json
  *   4. 检测包管理器（bun.lock / pnpm-lock.yaml / yarn.lock / package-lock.json），跑对应 install
- *   5. 打印一条 CHANGELOG 链接给用户看 breaking changes
+ *   5. 扫项目里残留的旧类名 / API（来自历次 CHANGELOG），打印迁移建议
+ *   6. 打印 CHANGELOG 链接
  *
  * 标志:
- *   --dry-run   只打印计划，不改文件、不装包
- *   --check     只做 1+2 步，列出可升级的包并 exit 1（CI 友好）
+ *   --dry-run     只打印计划，不改文件、不装包
+ *   --check       只做 1+2 步，列出可升级的包并 exit 1（CI 友好）
+ *   --no-install  跳过 install
+ *   --no-migrate  跳过项目代码扫描
  */
 import { defineCommand } from "citty";
 import { spawn } from "node:child_process";
@@ -41,10 +44,15 @@ export default defineCommand({
       description: "只检查是否有可升级的版本，有则 exit 1（CI 友好）。",
       default: false,
     },
-    "no-install": {
+    install: {
       type: "boolean",
-      description: "改 package.json 但跳过 install（之后自己跑）。",
-      default: false,
+      description: "升级后自动跑 install（用 --no-install 跳过）。",
+      default: true,
+    },
+    migrate: {
+      type: "boolean",
+      description: "扫描项目代码里残留的旧类名 / API（用 --no-migrate 跳过）。",
+      default: true,
     },
   },
   async run({ args }) {
@@ -137,8 +145,10 @@ export default defineCommand({
 
     process.stdout.write(`✓ 已更新 package.json（${upgradable.length} 个范围）。\n`);
 
-    if (args["no-install"]) {
+    if (!args.install) {
       process.stdout.write(`(--no-install) 跳过依赖安装。手动跑 install 完成升级。\n`);
+      // 仍然执行迁移扫描
+      if (args.migrate) await scanLegacyUsage(cwd);
       return;
     }
 
@@ -153,6 +163,11 @@ export default defineCommand({
 
     process.stdout.write(`\n✓ 升级完成。\n`);
 
+    // 扫项目里残留的旧 class / API
+    if (args.migrate) {
+      await scanLegacyUsage(cwd);
+    }
+
     // 提示 CHANGELOG
     const engineUpgraded = upgradable.find((p) => p.name === "@omit-design/engine");
     if (engineUpgraded) {
@@ -163,6 +178,191 @@ export default defineCommand({
     }
   },
 });
+
+/**
+ * 历次 release 删除 / 重命名的 class / API。每条记录可指向：
+ *   - removedIn: 删除发生的版本（仅供说明）
+ *   - replacement: 一句话迁移建议；null 表示"已彻底移除，不再需要"
+ *
+ * 检测策略：用 RegExp `\b<token>\b` 匹配，避免误命中 substring。
+ */
+interface LegacyEntry {
+  token: string;
+  removedIn: string;
+  replacement: string | null;
+}
+
+const LEGACY_TOKENS: LegacyEntry[] = [
+  // 0.2.0 — RightPanel 三 Tab 删除
+  { token: "shell-right-panel__tabs", removedIn: "engine 0.2.0", replacement: ".shell-right-panel__head" },
+  { token: "shell-right-panel__tab", removedIn: "engine 0.2.0", replacement: "（已删除，标题改为单标题）" },
+  { token: "shell-right-panel__tab-icon", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  { token: "shell-right-panel__tab-label", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  // 0.2.0 — DesignFrame 设备外壳删除
+  { token: "shell-device-screen", removedIn: "engine 0.2.0", replacement: ".shell-design-frame" },
+  { token: "shell-device-notch", removedIn: "engine 0.2.0", replacement: null },
+  { token: "shell-device-statusbar", removedIn: "engine 0.2.0", replacement: null },
+  { token: "shell-device-content", removedIn: "engine 0.2.0", replacement: ".canvas-page-frame 或 .shell-design-frame" },
+  { token: "DeviceStatusBar", removedIn: "engine 0.2.0", replacement: null },
+  // 0.2.0 — ProjectDetail 老布局删除
+  { token: "shell-studio__layout", removedIn: "engine 0.2.0", replacement: ".canvas-root" },
+  { token: "shell-studio__toc", removedIn: "engine 0.2.0", replacement: ".canvas-picker" },
+  { token: "shell-studio__main", removedIn: "engine 0.2.0", replacement: ".canvas-viewport" },
+  { token: "shell-studio__group", removedIn: "engine 0.2.0", replacement: ".canvas-picker__group" },
+  { token: "shell-studio__grid", removedIn: "engine 0.2.0", replacement: "（已删除，改为单页画布）" },
+  { token: "shell-studio__card", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  { token: "shell-studio__thumb", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  { token: "shell-studio__meta", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+];
+
+const SCAN_EXTS = new Set([
+  ".css",
+  ".scss",
+  ".sass",
+  ".less",
+  ".tsx",
+  ".ts",
+  ".jsx",
+  ".js",
+  ".mjs",
+  ".cjs",
+  ".html",
+  ".vue",
+  ".svelte",
+  ".astro",
+]);
+
+const SKIP_DIRS = new Set([
+  "node_modules",
+  "dist",
+  "build",
+  "out",
+  ".vite",
+  ".next",
+  ".nuxt",
+  ".turbo",
+  ".cache",
+  ".git",
+  ".svn",
+  "coverage",
+]);
+
+interface Hit {
+  file: string;
+  line: number;
+  token: string;
+  excerpt: string;
+}
+
+async function scanLegacyUsage(root: string): Promise<void> {
+  process.stdout.write(`\n扫描项目代码里残留的旧类名 / API…\n`);
+  const files: string[] = [];
+  await walk(root, files);
+  if (files.length === 0) {
+    process.stdout.write(`  （未发现可扫描的源文件）\n`);
+    return;
+  }
+
+  // 一次性编译所有 token 的 regex（边界用 [^A-Za-z0-9_-] 而非 \b，因为 token
+  // 含 `-` / `__` ，\b 不一定按预期工作）
+  const tokenRegexes = LEGACY_TOKENS.map((t) => ({
+    entry: t,
+    re: new RegExp(`(^|[^A-Za-z0-9_-])${escapeRegex(t.token)}([^A-Za-z0-9_-]|$)`),
+  }));
+
+  const hits: Hit[] = [];
+  for (const file of files) {
+    let content: string;
+    try {
+      content = await fs.readFile(file, "utf8");
+    } catch {
+      continue;
+    }
+    if (!content) continue;
+    const lines = content.split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      for (const { entry, re } of tokenRegexes) {
+        if (re.test(line)) {
+          hits.push({
+            file: path.relative(root, file),
+            line: i + 1,
+            token: entry.token,
+            excerpt: line.trim().slice(0, 100),
+          });
+        }
+      }
+    }
+  }
+
+  if (hits.length === 0) {
+    process.stdout.write(`  ✓ 无残留。扫描了 ${files.length} 个文件。\n`);
+    return;
+  }
+
+  // 按 token 分组报告
+  const byToken = new Map<string, Hit[]>();
+  for (const h of hits) {
+    let arr = byToken.get(h.token);
+    if (!arr) {
+      arr = [];
+      byToken.set(h.token, arr);
+    }
+    arr.push(h);
+  }
+  const tokenInfo = new Map(LEGACY_TOKENS.map((t) => [t.token, t]));
+
+  process.stdout.write(
+    `  ⚠ 发现 ${hits.length} 处可能需迁移的引用（${byToken.size} 个 token）：\n\n`
+  );
+  for (const [token, list] of byToken) {
+    const info = tokenInfo.get(token);
+    const replacement =
+      info?.replacement ?? "（已彻底移除）";
+    process.stdout.write(
+      `  ${token}  →  ${replacement}  [${info?.removedIn ?? "?"}]\n`
+    );
+    for (const h of list.slice(0, 5)) {
+      process.stdout.write(`    ${h.file}:${h.line}  ${h.excerpt}\n`);
+    }
+    if (list.length > 5) {
+      process.stdout.write(`    …还有 ${list.length - 5} 处\n`);
+    }
+  }
+  process.stdout.write(
+    `\n  迁移完成后再次运行 \`omit-design upgrade --no-install\` 验证。\n`
+  );
+}
+
+async function walk(dir: string, out: string[]): Promise<void> {
+  let entries: import("fs").Dirent[];
+  try {
+    entries = await fs.readdir(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const entry of entries) {
+    const name = entry.name;
+    if (name.startsWith(".") && name !== "." && !name.startsWith("..")) {
+      // 隐藏目录除非显式白名单（这里不白名单任何）
+      if (SKIP_DIRS.has(name)) continue;
+      // 不扫描隐藏目录里的文件（.git / .vite 等）
+      if (entry.isDirectory()) continue;
+    }
+    if (entry.isDirectory()) {
+      if (SKIP_DIRS.has(name)) continue;
+      await walk(path.join(dir, name), out);
+    } else if (entry.isFile()) {
+      if (SCAN_EXTS.has(path.extname(name).toLowerCase())) {
+        out.push(path.join(dir, name));
+      }
+    }
+  }
+}
+
+function escapeRegex(s: string): string {
+  return s.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+}
 
 async function fetchLatest(pkg: string): Promise<string | null> {
   try {

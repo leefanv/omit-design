@@ -5,6 +5,24 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4-cli] - 2026-05-08
+
+CLI patch release. Extends `upgrade` with a project-wide legacy-API scanner.
+
+### Added
+
+- **@omit-design/cli** — `omit-design upgrade` now scans the project's source
+  files (`.css` / `.scss` / `.tsx` / `.ts` / `.jsx` / `.js` / `.html` / `.vue` /
+  `.svelte` / `.astro`) for class names and APIs removed in past releases
+  (e.g. `.shell-device-screen`, `.shell-right-panel__tabs`,
+  `.shell-studio__layout`) and prints a grouped migration report with file +
+  line refs and the suggested replacement. Pass `--no-migrate` to skip.
+
+### Fixed
+
+- **@omit-design/cli** — `--no-install` flag is now honored (citty negation
+  semantics: defined as a positive `install` flag with default `true`).
+
 ## [0.1.3-cli] - 2026-05-08
 
 CLI patch release. Adds one new command, no breaking changes.

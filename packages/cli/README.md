@@ -19,7 +19,7 @@ npx @omit-design/cli init my-app
 | `omit-design lint` | Run the three hard rules (`no-design-literal` / `no-non-whitelist-import` / `require-pattern-header`). |
 | `omit-design skills update` | Sync the cli's built-in `.claude/skills/` into the current project's `.claude/skills/`. |
 | `omit-design new-page <pattern> <path>` | Scaffold a design page from a preset-mobile pattern template. |
-| `omit-design upgrade` | Bump all `@omit-design/*` deps to npm latest, install, and link the CHANGELOG. |
+| `omit-design upgrade` | Bump all `@omit-design/*` deps to npm latest, install, scan project for removed-class references, and link the CHANGELOG. |
 
 ## Quick start
 
@@ -60,12 +60,18 @@ omit-design new-page detail-view design/main/order --force
 # patterns: dashboard / detail-view / dialog-view / form-view /
 #           list-view / sheet-action / tab-view / welcome-view
 
-# upgrade (bump all @omit-design/* deps to latest)
+# upgrade (bump all @omit-design/* deps + scan project for legacy refs)
 omit-design upgrade
 omit-design upgrade --dry-run                # preview only
 omit-design upgrade --check                  # exit 1 if any out-of-date (CI)
 omit-design upgrade --no-install             # update package.json but skip install
+omit-design upgrade --no-migrate             # skip the legacy class/API scan
 ```
+
+After upgrade the command scans your `.css` / `.tsx` / `.ts` etc. for class
+names and APIs removed in past releases (e.g. `.shell-device-screen` →
+`.shell-design-frame` after engine 0.2.0) and prints a per-file migration
+report. Pass `--no-migrate` to skip.
 
 ## License
 
