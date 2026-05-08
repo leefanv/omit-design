@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "omit-design CLI: init / dev / lint.",
   "bin": {

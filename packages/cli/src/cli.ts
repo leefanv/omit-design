@@ -4,7 +4,7 @@ import { defineCommand, runMain } from "citty";
 const main = defineCommand({
   meta: {
     name: "omit-design",
-    version: "0.1.1",
+    version: "0.1.2",
     description: [
       "AI-collaborative design composition framework — write TSX, lint with hard rules, preview locally.",
       "",

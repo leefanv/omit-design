@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/preset-mobile",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "type": "module",
   "description": "Mobile design preset for omit-design: Om* whitelist components, --om-* / --ion-* token map, Ionic 8 runtime.",
   "main": "./index.ts",
@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "@ionic/react": "^8",
-    "@omit-design/engine": "^0.1.0",
+    "@omit-design/engine": "^0.2.0",
     "ionicons": "^7 || ^8",
     "react": "^19",
     "react-router-dom": "^6"
