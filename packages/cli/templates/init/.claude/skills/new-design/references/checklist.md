@@ -5,20 +5,32 @@ The main `SKILL.md` covers the HARD-GATE and trigger conditions. This file expan
 ## 1. Read the PRD; identify 5 things
 
 - Page name + route (`/designs/<groupId>/<filename>`).
-- **Chosen pattern** (must appear in `node_modules/@omit-design/preset-mobile/PATTERNS.md`).
+- **Chosen pattern** (must be a directory under `<project>/patterns/`).
 - Key fields.
 - Key states (empty / loading / error / success).
 - Primary action (placed at the bottom / top / inline).
 
-## 2. Read the preset's PATTERNS.md
+## 2. Read the project's `patterns/`
 
-`node_modules/@omit-design/preset-mobile/PATTERNS.md` — 8 patterns; each has "Purpose", "Skeleton", "Template", and "When not to use".
+List `<project>/patterns/`. Each subdirectory `<name>/` has:
+
+- `pattern.json` — `{ "name", "whitelist": [...], "description" }`
+- `README.md` — when to use, when NOT to use
+- `template.tmpl.tsx` — the TSX skeleton to copy
+
+Cases:
+
+- **Empty `patterns/`** → tell the user: "Open the workspace's Library → Patterns and click **Import 8 starters**, or run `omit-design init` if this is a fresh project. I'll wait."
+- **No fitting pattern** for the PRD → call `add-pattern` skill. After it produces a new `<project>/patterns/<new>/`, resume from step 1 with that pattern selected.
+- **A fitting pattern exists** → continue.
 
 ## 3. Check the component whitelist
 
 Open `node_modules/@omit-design/preset-mobile/components/index.ts` and confirm every component the PRD needs is exported.
 
-If a component is missing → **stop and tell the user**. Propose either using `add-pattern` first or adding a single whitelisted component. **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
+Cross-check against the chosen pattern's `whitelist` field — your design file MUST import at least one of those (lint will reject otherwise).
+
+If a needed component is missing from preset → **stop and tell the user**. Propose either using `add-pattern` to scope around the gap or adding a single whitelisted component upstream. **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
 
 ## 4. Prepare mock data
 
@@ -29,15 +41,9 @@ If a component is missing → **stop and tell the user**. Propose either using `
 
 ## 5. Copy the template, then replace placeholders
 
-Prefer the template path:
-
-1. Read `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx`.
+1. Read `<project>/patterns/<pattern>/template.tmpl.tsx`.
 2. Copy to the target location `design/[<groupId>/]<filename>.tsx`.
 3. Replace `TODO` placeholders and example fields with business content.
-
-Fallback when the template is missing:
-- Rewrite from the "Skeleton" description in PATTERNS.md.
-- Do not invent imports or component structure out of thin air.
 
 Constraints:
 - **First line**: `// @pattern: <pattern-name>`.

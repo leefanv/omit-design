@@ -4,41 +4,49 @@
  *
  * 防止 AI 写一个挂着 `@pattern: list-view` 头注释、但没用任何列表组件的"假 list-view"。
  *
- * Config:
- *   "omit-design/require-pattern-components": ["error", {
- *     configPath: "node_modules/@omit-design/preset-mobile/patterns.config.json"
- *   }]
- *
- * 配置文件结构:`{ "patterns": { "<pattern-name>": ["OmFoo", "OmBar", ...] } }`
- *   值数组是"anyOf" — 文件 import 任意一个即可通过。
+ * 数据源:**只读项目本地 `<cwd>/patterns/`**(0.3.x 起)。
+ *   - 每个子目录是一个 pattern:`patterns/<name>/pattern.json` 含 `{ name, whitelist }`
+ *   - whitelist 是 anyOf — 文件 import 任意一个即可通过
+ *   - 0.3.x 之前 preset-mobile 包里的 patterns.config.json 已不再 ship,本规则不再 fallback
  */
 
 import fs from "node:fs";
 import path from "node:path";
 
 const HEADER_RE = /^\s*@pattern:\s*([a-z][a-z0-9-]*)\s*$/;
-
-const DEFAULT_CONFIG_PATH = "node_modules/@omit-design/preset-mobile/patterns.config.json";
+const PATTERNS_DIR = "patterns";
 
 let cachedConfig = null;
 let cachedConfigKey = null;
 
-function loadConfig(cwd, configPath) {
-  const abs = path.isAbsolute(configPath)
-    ? configPath
-    : path.resolve(cwd, configPath);
-  if (cachedConfigKey === abs && cachedConfig) return cachedConfig;
+function loadPatterns(cwd) {
+  const dir = path.resolve(cwd, PATTERNS_DIR);
+  if (cachedConfigKey === dir && cachedConfig !== null) return cachedConfig;
+  const out = {};
+  let entries;
   try {
-    const raw = fs.readFileSync(abs, "utf8");
-    const parsed = JSON.parse(raw);
-    cachedConfig = parsed?.patterns ?? null;
-    cachedConfigKey = abs;
-    return cachedConfig;
+    entries = fs.readdirSync(dir, { withFileTypes: true });
   } catch {
-    cachedConfig = null;
-    cachedConfigKey = abs;
-    return null;
+    cachedConfig = {};
+    cachedConfigKey = dir;
+    return cachedConfig;
   }
+  for (const ent of entries) {
+    if (!ent.isDirectory() || ent.name.startsWith(".")) continue;
+    const cfgPath = path.join(dir, ent.name, "pattern.json");
+    try {
+      const raw = fs.readFileSync(cfgPath, "utf8");
+      const parsed = JSON.parse(raw);
+      const name = typeof parsed?.name === "string" ? parsed.name : ent.name;
+      const whitelist = Array.isArray(parsed?.whitelist) ? parsed.whitelist : [];
+      out[name] = whitelist;
+    } catch {
+      // 损坏的 pattern.json 忽略
+    }
+  }
+  cachedConfig = out;
+  cachedConfigKey = dir;
+  return cachedConfig;
 }
 
 function isPageFile(filename) {
@@ -66,45 +74,30 @@ export default {
     },
     messages: {
       unknownPattern:
-        "`@pattern: {{name}}` 在 patterns.config.json 中未定义。已知模式:{{known}}。",
+        "`@pattern: {{name}}` 在 patterns/ 中未定义。已知模式:{{known}}。",
       missingComponent:
         "`@pattern: {{name}}` 要求至少 import 其中一个签名组件:{{required}};当前文件未 import 任何一个。",
       configMissing:
-        "未找到 patterns.config.json(查找路径:{{path}})。请确保已安装 @omit-design/preset-mobile 或在规则 option 中传 `configPath`。",
+        "未在项目根目录找到 patterns/ — 请运行 `omit-design init` 或在 Library 里 Import starters。",
     },
-    schema: [
-      {
-        type: "object",
-        properties: {
-          configPath: { type: "string" },
-        },
-        additionalProperties: false,
-      },
-    ],
+    schema: [{ type: "object", additionalProperties: false }],
   },
   create(context) {
     const filename = context.filename ?? context.getFilename();
     if (!isPageFile(filename)) return {};
 
-    const opts = context.options[0] ?? {};
-    const configPath = opts.configPath ?? DEFAULT_CONFIG_PATH;
     const cwd = context.cwd ?? process.cwd();
-    const patterns = loadConfig(cwd, configPath);
+    const patterns = loadPatterns(cwd);
 
     return {
       Program(node) {
-        if (!patterns) {
-          context.report({
-            node,
-            messageId: "configMissing",
-            data: { path: configPath },
-          });
+        if (!patterns || Object.keys(patterns).length === 0) {
+          context.report({ node, messageId: "configMissing" });
           return;
         }
 
         const sourceCode = context.sourceCode ?? context.getSourceCode();
         const patternName = readPatternHeader(sourceCode);
-        // 没头注释由 require-pattern-header 规则报,这里直接放行
         if (!patternName) return;
 
         const required = patterns[patternName];

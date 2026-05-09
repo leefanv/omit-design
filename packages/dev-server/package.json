@@ -1,0 +1,44 @@
+{
+  "name": "@omit-design/dev-server",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "omit-design Vite plugin: exposes /__omit/* file-IO endpoints so the engine shell can read/write skills, patterns, and PRDs from the browser.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "tsc -p tsconfig.json"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leefanv/omit-design.git",
+    "directory": "packages/dev-server"
+  },
+  "homepage": "https://github.com/leefanv/omit-design/tree/main/packages/dev-server#readme",
+  "bugs": "https://github.com/leefanv/omit-design/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "vite": ">=6"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "typescript": "^5.7",
+    "vite": "^6"
+  }
+}

@@ -1,36 +1,57 @@
 ---
 name: add-pattern
-description: Add a new design pattern to omit-design's preset-mobile (or modify an existing one) — register in PATTERNS.md, write an example design page, ship a template.tmpl.tsx skeleton. Use when the user says "add a wizard pattern" or new-design hits a missing pattern. Note this lives in @omit-design/preset-mobile, which is in node_modules — adding a pattern to your installed copy is local-only; upstream contributions go to the omit-design repo.
+description: Create a new project-local design pattern under `<project>/patterns/<name>/` — pattern.json (name + whitelist), template.tmpl.tsx (skeleton for new-design to copy), README.md (when to use). Use when the user says "add an approval-queue pattern" or when new-design hits a PRD that doesn't fit any existing pattern. Patterns are project-local — edits land in this repo, get git-tracked, and are picked up automatically by ESLint and the Library UI.
 ---
 
-# add-pattern — add or modify a design pattern
+# add-pattern — create a project-local design pattern
 
 ## When to trigger
 
-- The user proactively says "add an X pattern".
-- During `new-design` you discover preset-mobile's PATTERNS.md does not have a fitting pattern.
+- The user proactively asks to add a new pattern.
+- During `new-design`, after scanning `<project>/patterns/`, you decide nothing fits the PRD's page archetype.
 
-## Platform conventions
+## Output location
 
-When a new pattern lands, you **should** also write a `templates/<pattern>.tmpl.tsx` template for `new-design` to copy.
+All files land under `<project>/patterns/<name>/`:
 
-**Note**: `@omit-design/preset-mobile` is an npm package installed under `node_modules/`. Editing `node_modules/...` locally takes effect after restarting the dev server but **is not persisted**; a real pattern should be contributed via PR to the upstream omit-design repo under `packages/preset-mobile/`. This skill prefers guiding you to produce a patch + commit upstream; in emergencies you can temporarily add a private component under the project's `preset/components/` plus a custom ESLint whitelist entry.
+```
+patterns/<name>/
+├── pattern.json            # { "name", "whitelist": [...], "description" }
+├── template.tmpl.tsx       # the TSX skeleton new-design copies
+└── README.md               # when to use, when NOT to use, skeleton breakdown
+```
+
+**No registration needed elsewhere.** ESLint's `require-pattern-components` rule auto-discovers via filesystem walk; the workspace's Library UI lists everything in `patterns/`.
 
 ## Flow
 
-1. **Understand the core of the pattern**:
-   - Purpose (one sentence).
-   - Skeleton (which whitelisted Om* components, in what structure).
-   - How it differs from existing patterns.
+1. **Understand the pattern's core**:
+   - Purpose (one sentence — what user need it serves).
+   - Skeleton (which whitelisted `Om*` components, in what structure).
+   - How it differs from existing patterns in `<project>/patterns/`.
 
-2. <HARD-GATE>**Check the whitelist**: every component the pattern needs must be in `@omit-design/preset-mobile/components/index.ts`. If anything is missing, **add the Om* wrapper first** (via upstream PR) — do not start with the example. Bypassing the whitelist = rejected.</HARD-GATE>
+2. <HARD-GATE>**Verify the whitelist exists**: every component you plan to require must be exported from `@omit-design/preset-mobile/components/index.ts`. If something's missing, do NOT extend `@ionic/react` directly — propose an upstream `Om*` wrapper to the user first.</HARD-GATE>
 
-3. **Write the example file**: under `design/_patterns/<name>.tsx`, create a minimal runnable example (using mock data); the first line must be `// @pattern: <name>`.
+3. **Write `patterns/<name>/pattern.json`**:
+   ```json
+   {
+     "name": "<name>",
+     "whitelist": ["OmFoo", "OmBar"],
+     "description": "One-sentence purpose."
+   }
+   ```
+   `whitelist` is "any-of" — a design file using this pattern must import at least one entry to satisfy ESLint.
 
-4. **Write the template**: extract the reusable skeleton; mark business fields with `TODO` comments and example placeholder values. This is what the new-design skill copies.
+4. **Write `patterns/<name>/template.tmpl.tsx`**: a minimal runnable skeleton. First line must be `// @pattern: <name>`. Use `TODO` placeholders for business copy. This is what `new-design` will copy when scaffolding.
 
-5. **Update PATTERNS.md** (upstream patch):
-   - `## <name>`
-   - **Purpose** / **Skeleton** / **Template** / **When not to use**.
+5. **Write `patterns/<name>/README.md`** with sections: "When to use", "Skeleton" (component breakdown), "When NOT to use" (steer toward neighboring patterns).
 
-6. <HARD-GATE>**Do NOT immediately** apply this pattern in business design pages — first let the user review the description, example, and template in PATTERNS.md. Only after approval may `new-design` use it.</HARD-GATE>
+6. <HARD-GATE>**Do NOT immediately** apply the new pattern to a business page — first surface the three files to the user for review (path + content). Only after approval may `new-design` use it as if it were always there.</HARD-GATE>
+
+## Output to user
+
+Tell them:
+- The three files you wrote and the path
+- A one-line "when to use" summary
+- The whitelist
+- A reminder that they can fine-tune any of the four (description / whitelist / template / README) in the Library → Patterns tab of the workspace UI

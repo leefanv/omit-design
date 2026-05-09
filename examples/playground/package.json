@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ionic/react": "^8",
+    "@omit-design/dev-server": "workspace:*",
     "@omit-design/engine": "workspace:*",
     "@omit-design/preset-mobile": "workspace:*",
     "ionicons": "^7",
@@ -18,6 +19,8 @@
     "react-router-dom": "^6"
   },
   "devDependencies": {
+    "@omit-design/cli": "workspace:*",
+    "@omit-design/eslint-plugin": "workspace:*",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4",

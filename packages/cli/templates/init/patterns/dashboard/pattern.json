@@ -1,0 +1,5 @@
+{
+  "name": "dashboard",
+  "whitelist": ["OmStatCard", "OmMenuCard"],
+  "description": "Workspace / home aggregator: stat cards on top, menu grid for sub-flows."
+}

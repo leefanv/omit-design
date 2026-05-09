@@ -1,0 +1,5 @@
+{
+  "name": "list-view",
+  "whitelist": ["OmListRow", "OmCouponCard", "OmSettingRow", "OmProductCard", "OmMenuCard", "OmEmptyState"],
+  "description": "Vertically-scrolling list of homogeneous items. Each row tappable into a detail."
+}

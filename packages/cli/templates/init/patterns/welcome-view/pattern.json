@@ -1,0 +1,5 @@
+{
+  "name": "welcome-view",
+  "whitelist": ["OmButton"],
+  "description": "Launch / welcome / onboarding intro. Brand + one primary CTA. No form."
+}
