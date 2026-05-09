@@ -5,6 +5,41 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4-pillar AI-determinism upgrade] - 2026-05-09
+
+Borrows four ideas from Donchitos/Claude-Code-Game-Studios, scoped down
+for solo designers (no 49-agent overhead).
+
+### Added
+- **@omit-design/eslint-plugin** — new fourth hard rule
+  `require-pattern-components`: a file declaring `// @pattern: X` must
+  import at least one of X's signature components. Mapping ships in
+  `@omit-design/preset-mobile/patterns.config.json`.
+- **@omit-design/preset-mobile** — `patterns.config.json` ships in the
+  published tarball (added to `files` field).
+- **CLI `init`** — runs `git init` and scaffolds husky + lint-staged +
+  `.husky/pre-commit` so `omit-design lint` blocks bad commits.
+  Scaffolds `.claude/settings.json` denying AI edits to `app/`, config
+  files, and `package.json`. New `--no-git` flag to skip git init.
+- **CLI `lint`** — accepts positional file paths (used by lint-staged);
+  silently skips non-`design/*.tsx` paths.
+- **Skills** — `start` (state diagnosis → recommends one next skill) and
+  `ship-design` (single-page lint + a11y + capture). Catalog
+  reorganized into entry / make / deliver phases.
+- **Sub-agents** in `.claude/agents/` — `pattern-applier` (Sonnet,
+  drafts a page in isolated context) and `audit-reviewer` (Haiku,
+  read-only scan + report). Wired into `new-design` and `audit-design`.
+
+### Bumped
+- `@omit-design/cli` 0.1.7 → **0.2.0**
+- `@omit-design/eslint-plugin` 0.1.1 → **0.2.0**
+- `@omit-design/preset-mobile` 0.2.2 → **0.2.3**
+
+### Compatibility
+The new `require-pattern-components` rule needs preset-mobile@>=0.2.3
+to find `patterns.config.json`. Publish preset-mobile FIRST, then
+eslint-plugin, then cli.
+
 ## [0.1.7-cli] - 2026-05-09
 
 CLI patch. Translates remaining Chinese strings in `omit-design upgrade` /
