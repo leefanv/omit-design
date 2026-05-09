@@ -17,6 +17,7 @@ omit-design/
 ├── examples/
 │   └── playground/         本地预览 app — 通过 workspace 链到 packages/*
 ├── skills/                 Claude Code skills（同步到 init 脚手架）
+├── agents/                 Claude Code sub-agents（同步到 init 脚手架）
 ├── templates/init/         `omit-design init` 用的脚手架
 ├── docs/                   架构 / 发版手册 / 迁移指南
 └── scripts/                内部构建 / 同步脚本
@@ -64,14 +65,37 @@ cd /tmp/test-app && npm install && npm run dev
 用 `add-pattern` skill 或手工：
 1. 在 `packages/preset-mobile/PATTERNS.md` 加段
 2. 在 `packages/preset-mobile/templates/<name>.tmpl.tsx` 放可复制骨架
-3. 评审后再用到业务稿
+3. 在 `packages/preset-mobile/patterns.config.json` 加这个 pattern 的签名组件清单（被 `require-pattern-components` ESLint 规则消费）
+4. preset-mobile 升 patch（规则语义变了就升 minor）— 见 [docs/release.md](./docs/release.md)
+5. 评审后再用到业务稿
 
 ### 加一个 skill
 `skills/<name>/` 下放 `SKILL.md` + 可选 `references/<topic>.md`（渐进披露）。
-发版前同步到脚手架：
+
+CLI build 时自动同步到脚手架：
 ```bash
-node scripts/sync-skills.mjs
+bun --cwd packages/cli run build
+# 跑 scripts/copy-templates.mjs,镜像三处:
+#   templates/init/  → packages/cli/templates/init/
+#   skills/          → packages/cli/templates/init/.claude/skills/
+#   agents/          → packages/cli/templates/init/.claude/agents/
 ```
+
+### 加一个 sub-agent
+sub-agent 在 `agents/<name>.md`（单文件，无子目录）。每个带 YAML frontmatter（`name`、`description`，可选 `tools`、`model`）+ 系统提示词正文。在隔离 context 跑，由 skill 通过 Claude Code 的 Agent tool 调起。
+
+约定：
+- **单一职责**：`pattern-applier` 只套模板；`audit-reviewer` 只读 + 报告
+- **挑最便宜能跑通的模型**：纯机械活 → Haiku；要推理 → Sonnet。除非要重决策才上 Opus
+- **能只读就只读**：`audit-reviewer` 声明 `tools: Read, Bash, Glob, Grep` — 没 Write/Edit。比靠 prompt 自律更早抓到错误
+- **从 skill 委托，不从用户**：skill 内部"如果检测到 X 就委托"比文档让用户手动调更稳
+
+跟 skill 一起被 CLI build 同步到 init 脚手架。
+
+### 加一条 ESLint 规则
+规则在 `packages/eslint-plugin/rules/<name>.js`（是 .js — 这个包不写 TS）。导出默认对象 with `meta` + `create`。在 `packages/eslint-plugin/index.js` 注册，在 `templates/init/eslint.config.js` 默认开启，在 `packages/eslint-plugin/README.md` 加一行。eslint-plugin 升 minor（规则语义）。
+
+**如果新规则要读 `preset-mobile` 的内容**（例如配置文件或组件元数据），preset-mobile 也要升版，**且必须先 publish preset-mobile** — 否则用户先拿到带新规则的 eslint-plugin、preset-mobile 还是旧 tarball 就会 "config missing"。详见 [docs/release.md](./docs/release.md)。
 
 ## 代码风格
 

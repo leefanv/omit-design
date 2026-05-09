@@ -14,12 +14,14 @@
 - **21 个 `Om*` 组件** — `design/**/*.tsx` 的 import 白名单
 - **`--om-*` token 体系**，映射到 Ionic 8 运行时（`--ion-*`）
 - **8 个 pattern** + 对应的 `.tmpl.tsx` 模板（`omit-design new-page` 消费）
+- **`patterns.config.json`** — pattern → 签名组件映射，由 `require-pattern-components` ESLint 规则消费
 
-## 三条硬规则（由 [@omit-design/eslint-plugin](../eslint-plugin/) 强制）
+## 四条硬规则（由 [@omit-design/eslint-plugin](../eslint-plugin/) 强制）
 
 1. **Token 优先**：所有颜色、间距、字号、圆角、阴影必须走 token，**禁止字面量**（`#FF6B00`、`12px`、`16px` 等都不允许出现在业务代码里）。
 2. **组件白名单**：业务页面（`design/**`）只能 import `@omit-design/preset-mobile`，**禁止**直接 import `@ionic/react`（例外：`IonList` / `IonBackButton` / `IonIcon`，仅做排版/图标宿主）。
 3. **模式标注**：每个业务页面文件头第一行必须是 `// @pattern: <name>`，`<name>` 必须在 [PATTERNS.md](./PATTERNS.md) 里登记。
+4. **Pattern 签名组件强制**：声明的 pattern 必须真用其签名组件。`@pattern: list-view` 必须 import `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState` 至少一个；`@pattern: form-view` 必须 import `OmInput` / `OmSelect` / `OmNumpad` 至少一个；其它 pattern 同理。映射见 [`patterns.config.json`](./patterns.config.json)。
 
 ## 组件清单（21 个）
 
@@ -63,6 +65,15 @@
 npx omit-design new-page list-view design/orders/list
 # → design/orders/list.tsx 已含 list-view 骨架
 ```
+
+### 加 / 改 pattern
+
+用 `add-pattern` skill（或手工）新增 pattern 时，要同步三处：
+1. [`PATTERNS.md`](./PATTERNS.md) — pattern 意图和骨架的人类文档
+2. [`templates/<name>.tmpl.tsx`](./templates/) — 可复制骨架，`omit-design new-page` 消费
+3. [`patterns.config.json`](./patterns.config.json) — pattern 必须的签名组件清单（被 `require-pattern-components` ESLint 规则读）
+
+签名组件是"没有就不算这个 pattern"的最小集 — `list-view` 是"任一列表行 / 空态组件"；`form-view` 是"任一输入组件"。是 anyOf 关系，import 一个就过。
 
 ## Token 命名
 

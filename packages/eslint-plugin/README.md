@@ -1,11 +1,11 @@
 # @omit-design/eslint-plugin
 
-> Three hard rules for [omit-design](https://github.com/leefanv/omit-design) business pages. Where AI-collaborative design correctness gets enforced.
+> Four hard rules for [omit-design](https://github.com/leefanv/omit-design) business pages. Where AI-collaborative design correctness gets enforced.
 
 [![npm](https://img.shields.io/npm/v/@omit-design/eslint-plugin)](https://www.npmjs.com/package/@omit-design/eslint-plugin)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-These three rules are **the** enforcement boundary for AI-collaborative design composition. They keep design files predictable enough that an agent (or a human reviewer) can read, edit, and reason about them without surprises.
+These four rules are **the** enforcement boundary for AI-collaborative design composition. They keep design files predictable enough that an agent (or a human reviewer) can read, edit, and reason about them without surprises.
 
 ## Rules
 
@@ -14,6 +14,7 @@ These three rules are **the** enforcement boundary for AI-collaborative design c
 | `omit-design/no-design-literal` | Raw colors / sizes / spacing in design files | `var(--om-*)` tokens |
 | `omit-design/whitelist-ds-import` | Imports outside the design-system whitelist | `@omit-design/preset-mobile` (`Om*` components) + a few layout-only Ionic components |
 | `omit-design/require-pattern-header` | Files without a `// @pattern: <name>` first-line comment | Add the header; `<name>` must exist in `PATTERNS.md` |
+| `omit-design/require-pattern-components` | Files declaring `@pattern: X` but importing none of X's signature components | Import at least one of the pattern's signature components per `patterns.config.json` |
 
 ### Example violations
 
@@ -29,19 +30,28 @@ import { IonButton } from "@ionic/react";
 // ❌ require-pattern-header
 import { OmPage } from "@omit-design/preset-mobile";  // ← file's first line
 //   ↑ missing `// @pattern: <name>` above this line
+
+// ❌ require-pattern-components
+// @pattern: list-view
+import { OmCard, OmPage } from "@omit-design/preset-mobile";
+//       ↑ list-view requires OmListRow / OmCouponCard / OmSettingRow /
+//         OmProductCard / OmMenuCard / OmEmptyState — none imported.
 ```
 
 ```tsx
-// ✅ all three rules pass
+// ✅ all four rules pass
 // @pattern: detail-view
-import { OmHeader, OmPage } from "@omit-design/preset-mobile";
+import { OmCard, OmHeader, OmPage } from "@omit-design/preset-mobile";
+//       ↑ OmCard is the signature component for detail-view (per patterns.config.json)
 
 export default function OrderDetail() {
   return (
     <OmPage padding="none" header={<OmHeader title="Order" />}>
-      <div style={{ color: "var(--om-color-text)", padding: "var(--om-spacing-md)" }}>
-        ¥58
-      </div>
+      <OmCard>
+        <span style={{ color: "var(--om-color-text)", padding: "var(--om-spacing-md)" }}>
+          ¥58
+        </span>
+      </OmCard>
     </OmPage>
   );
 }
@@ -61,7 +71,7 @@ import omit from "@omit-design/eslint-plugin";
 
 export default [
   {
-    // The three hard rules ONLY apply to design files.
+    // The four hard rules ONLY apply to design files.
     // Don't enforce them on app shell / mock data / preset overrides.
     files: ["design/**/*.tsx"],
     plugins: { "omit-design": omit },
@@ -72,12 +82,13 @@ export default [
         { presets: ["@omit-design/preset-mobile"] },
       ],
       "omit-design/require-pattern-header": "error",
+      "omit-design/require-pattern-components": "error",
     },
   },
 ];
 ```
 
-Projects scaffolded by `@omit-design/cli init` already include this config.
+Projects scaffolded by `@omit-design/cli init` already include this config — and a husky pre-commit hook so the same check runs on every `git commit`.
 
 ## Configuration
 
@@ -104,7 +115,33 @@ Detects hex colors, RGB/RGBA strings, and pixel values inside JSX `style={...}` 
 
 ### `require-pattern-header`
 
-Looks for the first non-blank line. If it's not `// @pattern: <name>`, error. The plugin doesn't validate `<name>` against any registry — that's a separate runtime concern (engine logs a warning if a design file's `meta.pattern` isn't registered in the preset's `PATTERNS.md`).
+Looks for the first non-blank line. If it's not `// @pattern: <name>`, error. The plugin doesn't validate `<name>` against any registry — that's the next rule's job.
+
+### `require-pattern-components`
+
+Reads the `@pattern: X` header, then loads `patterns.config.json` (defaults to `node_modules/@omit-design/preset-mobile/patterns.config.json`) to get X's "signature components" — the components without which the file cannot meaningfully be that pattern. Errors if the file imports none of them.
+
+```js
+{
+  configPath: "node_modules/@omit-design/preset-mobile/patterns.config.json",  // default
+}
+```
+
+The config file shape:
+
+```json
+{
+  "patterns": {
+    "list-view": ["OmListRow", "OmCouponCard", "OmSettingRow", "OmProductCard", "OmMenuCard", "OmEmptyState"],
+    "form-view": ["OmInput", "OmSelect", "OmNumpad"],
+    "...": "..."
+  }
+}
+```
+
+Stops AI from declaring `@pattern: list-view` and writing a single `OmCard`. Custom presets can ship their own `patterns.config.json` and point the rule at it.
+
+If the file's pattern name isn't in the config → reports `unknownPattern` (caller likely typo'd the pattern name). If the config file isn't found → reports `configMissing` (preset-mobile likely outdated; bump it).
 
 ## Why hard rules?
 

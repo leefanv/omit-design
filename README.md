@@ -60,17 +60,24 @@ npx omit-design upgrade   # bumps deps + scans your project for removed-class re
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │                       AI agent / human author                      │
+│                  (main conversation = "director")                  │
 └────────────────────────────────────────────────────────────────────┘
-        │                        │                          │
-        ▼                        ▼                          ▼
-┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐
-│  .claude/skills/  │  │  ESLint hard rules │  │  Pattern templates │
-│  (natural lang.)  │  │  (deterministic)   │  │   (copy-paste)     │
-└───────────────────┘  └───────────────────┘  └───────────────────┘
-        ▼                        ▼                          ▼
+        │              │              │                  │
+        ▼              ▼              ▼                  ▼
+┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌────────────────┐
+│ .claude/    │ │ ESLint      │ │ Pattern     │ │ .claude/agents/│
+│  skills/    │ │  4 hard     │ │  templates  │ │  pattern-      │
+│ (natural    │ │  rules      │ │ (copy-      │ │   applier      │
+│  language)  │ │ (deter-     │ │  paste)     │ │  audit-        │
+│             │ │  ministic)  │ │             │ │   reviewer     │
+└─────────────┘ └─────────────┘ └─────────────┘ └────────────────┘
+        │              │              │                  │
+        └──────────────┴──────┬───────┴──────────────────┘
+                              ▼
         ┌────────────────────────────────────────────────────┐
         │           design/<group>/<file>.tsx                │
         │    (real React page — runs in dev + prod)          │
+        │           ↑ husky pre-commit gate                  │
         └────────────────────────────────────────────────────┘
                                  │
                                  ▼
@@ -90,7 +97,7 @@ See [docs/architecture.md](./docs/architecture.md) for module-level detail and d
 
 | Package | Version | What |
 |---|---|---|
-| [`@omit-design/cli`](./packages/cli/) | [![npm](https://img.shields.io/npm/v/@omit-design/cli?label=)](https://www.npmjs.com/package/@omit-design/cli) | CLI — `init` / `dev` / `lint` / `new-page` / `skills update` / `upgrade` |
+| [`@omit-design/cli`](./packages/cli/) | [![npm](https://img.shields.io/npm/v/@omit-design/cli?label=)](https://www.npmjs.com/package/@omit-design/cli) | CLI — `init` (with husky + git + agents) / `dev` / `lint` / `new-page` / `skills update` / `upgrade` |
 | [`@omit-design/engine`](./packages/engine/) | [![npm](https://img.shields.io/npm/v/@omit-design/engine?label=)](https://www.npmjs.com/package/@omit-design/engine) | Runtime — registry, discovery, inspect, theme-editor, capture, canvas shell |
 | [`@omit-design/eslint-plugin`](./packages/eslint-plugin/) | [![npm](https://img.shields.io/npm/v/@omit-design/eslint-plugin?label=)](https://www.npmjs.com/package/@omit-design/eslint-plugin) | The four hard rules |
 | [`@omit-design/preset-mobile`](./packages/preset-mobile/) | [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile?label=)](https://www.npmjs.com/package/@omit-design/preset-mobile) | Mobile preset: 21 `Om*` components + tokens + 8 patterns + templates |

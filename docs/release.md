@@ -10,9 +10,12 @@ Maintainer-only. There is no automated release workflow — `npm publish` is int
 | Engine class names removed / peer dep widened | `engine` minor + `preset-mobile` minor (lockstep) + add `LEGACY_TOKENS` entries to `cli/upgrade` |
 | `Om*` component added / removed | `preset-mobile` minor |
 | Token defaults changed | `preset-mobile` patch |
+| Pattern added / removed (PATTERNS.md + template + patterns.config.json) | `preset-mobile` minor (or patch if just adding signature components to an existing pattern) |
 | ESLint rule semantics changed | `eslint-plugin` minor |
 | ESLint rule new option / fixer | `eslint-plugin` patch |
+| New ESLint rule that reads from `preset-mobile` | `eslint-plugin` minor + `preset-mobile` patch (must add the consumed file to `preset-mobile/package.json#files` and publish preset-mobile FIRST — see "Cross-package config dependencies" below) |
 | CLI new command / template change | `cli` patch (rebuild dist before publish) |
+| CLI init scaffold change (skills / agents / settings.json / husky hook) | `cli` minor — users on `^X.Y` will pick up new scaffold features on `init` |
 | Figma plugin behavior changed | `figma-plugin` patch (zip rebuilt automatically by `prepublishOnly`) |
 
 Pre-1.0, **breaking changes go in minor**, not major. Once we hit 1.0 this changes to standard SemVer.
@@ -117,15 +120,42 @@ unzip -l packages/figma-plugin/omit-web-to-figma.zip
 
 ### 7. Publish (in this order)
 
-Order matters: `engine` first (its peer is referenced by `preset-mobile`), then `preset-mobile`, then `cli` (templates pin both).
+Order matters. Each downstream package may pull from its upstream tarball at install-time, so upstream must be live first.
+
+1. **`engine`** — its peer is referenced by `preset-mobile`.
+2. **`preset-mobile`** — depends on engine (peer); also ships config files (`patterns.config.json`) read by `eslint-plugin` rules.
+3. **`eslint-plugin`** — rules may read files shipped by `preset-mobile` (e.g. `patterns.config.json`). If you skip this order, users picking up a new eslint-plugin against an old preset-mobile tarball will hit `configMissing`.
+4. **`cli`** — its template pins all of the above as `^X.Y`.
+5. **`figma-plugin`** — independent.
 
 ```bash
 cd packages/engine && npm publish --access public
 cd ../preset-mobile && npm publish --access public
-cd ../cli && npm publish --access public           # only when CLI changed
 cd ../eslint-plugin && npm publish --access public # only when rules changed
+cd ../cli && npm publish --access public           # only when CLI changed
 cd ../figma-plugin && npm publish --access public  # only when plugin changed
 ```
+
+Or use the workspace flag from repo root (npm 7+):
+
+```bash
+npm publish --workspace=@omit-design/engine
+npm publish --workspace=@omit-design/preset-mobile
+npm publish --workspace=@omit-design/eslint-plugin
+npm publish --workspace=@omit-design/cli
+```
+
+### Cross-package config dependencies
+
+`eslint-plugin` reads `node_modules/@omit-design/preset-mobile/<file>` at lint-time for any rule that needs preset config (today: `require-pattern-components` reads `patterns.config.json`).
+
+When adding a new rule like that:
+
+1. Add the consumed file to `preset-mobile/package.json#files` (otherwise it won't be in the tarball).
+2. Bump `preset-mobile` patch.
+3. **Publish `preset-mobile` first**, then `eslint-plugin`.
+
+Symptom of getting it wrong: users running `omit-design lint` see `未找到 patterns.config.json` (configMissing). Fix-forward by publishing the missing preset-mobile patch.
 
 ### 8. Verify
 
