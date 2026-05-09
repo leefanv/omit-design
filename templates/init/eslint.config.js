@@ -9,7 +9,7 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    // 三条硬规则只对 design/**/*.tsx 生效;app/ mock/ preset/ 不约束
+    // 硬规则只对 design/**/*.tsx 生效;app/ mock/ preset/ 不约束
     files: ["design/**/*.tsx"],
     plugins: { "omit-design": omitDesign },
     rules: {
@@ -19,6 +19,7 @@ export default [
         { presets: ["@omit-design/preset-mobile"] },
       ],
       "omit-design/require-pattern-header": "error",
+      "omit-design/require-pattern-components": "error",
     },
   },
   {

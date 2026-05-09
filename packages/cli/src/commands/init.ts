@@ -1,5 +1,6 @@
 import { defineCommand } from "citty";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import fs from "fs-extra";
 
@@ -17,6 +18,11 @@ export default defineCommand({
     force: {
       type: "boolean",
       description: "Overwrite the target directory if it already exists.",
+      default: false,
+    },
+    "no-git": {
+      type: "boolean",
+      description: "Skip auto `git init` (the pre-commit hook needs git).",
       default: false,
     },
   },
@@ -54,16 +60,29 @@ export default defineCommand({
     // 渲染 .tmpl 文件:替换占位符 + 重命名
     await renderTemplates(targetDir, { projectName: args.name });
 
+    // 初始化 git 仓库,这样 husky pre-commit hook 在 npm install 时能装上
+    let gitInited = false;
+    if (!args["no-git"]) {
+      const result = spawnSync("git", ["init", "--quiet"], {
+        cwd: targetDir,
+        stdio: "ignore",
+      });
+      gitInited = result.status === 0;
+    }
+
     process.stdout.write(
       [
         `✓ Created ${args.name}/`,
+        gitInited ? `✓ git initialized (pre-commit hook will install on npm install)` : ``,
         ``,
         `Next steps:`,
         `  cd ${args.name}`,
         `  npm install`,
         `  npm run dev`,
         ``,
-      ].join("\n")
+      ]
+        .filter((l) => l !== null)
+        .join("\n")
     );
   },
 });

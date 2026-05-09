@@ -30,6 +30,10 @@ The severity tiers, emoji markers, and summary block format used by this skill m
 
 ## Flow
 
+**Step 0 — delegate the scan to `audit-reviewer` if available.** If `.claude/agents/audit-reviewer.md` exists, invoke that sub-agent first to do the raw `omit-design lint --json` collection + a11y scan + per-file aggregation in an isolated context. It returns a structured markdown report. Treat its report as the input to step 3 below (skip steps 1–2). This keeps lint output out of the main conversation.
+
+If `audit-reviewer` is not installed, run inline:
+
 1. Run `npm run lint` to obtain structured machine output.
 2. Read the output and aggregate by file: collapse multiple violations in the same file into a single section.
 3. For each section, add a **human diagnosis**: why it happened, the recommended fix, whether it requires adding an Om* wrapper / adding a token / splitting a pattern.

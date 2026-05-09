@@ -1,0 +1,13 @@
+{
+  "$schema": "./patterns.schema.json",
+  "patterns": {
+    "list-view": ["OmListRow", "OmCouponCard", "OmSettingRow", "OmProductCard", "OmMenuCard", "OmEmptyState"],
+    "detail-view": ["OmCard"],
+    "form-view": ["OmInput", "OmSelect", "OmNumpad"],
+    "sheet-action": ["OmSheet"],
+    "dialog-view": ["OmDialog"],
+    "welcome-view": ["OmButton"],
+    "dashboard": ["OmStatCard", "OmMenuCard"],
+    "tab-view": ["OmTabBar"]
+  }
+}

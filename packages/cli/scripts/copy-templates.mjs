@@ -31,3 +31,12 @@ if (fs.existsSync(skillsSrc)) {
   fs.copySync(skillsSrc, skillsDst);
   console.log(`✓ synced skills → ${path.relative(repoRoot, skillsDst)}`);
 }
+
+// And the lightweight sub-agents into .claude/agents/
+const agentsSrc = path.join(repoRoot, "agents");
+const agentsDst = path.join(dst, ".claude", "agents");
+if (fs.existsSync(agentsSrc)) {
+  fs.removeSync(agentsDst);
+  fs.copySync(agentsSrc, agentsDst);
+  console.log(`✓ synced agents → ${path.relative(repoRoot, agentsDst)}`);
+}
