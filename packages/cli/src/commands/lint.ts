@@ -52,10 +52,37 @@ export default defineCommand({
     const cwd = process.cwd();
     const eslintBin = path.join(cwd, "node_modules", ".bin", "eslint");
 
-    const child = spawnSync(eslintBin, ["--format", "json", args.glob], {
-      cwd,
-      encoding: "utf8",
-    });
+    // Collect positional file paths passed by lint-staged
+    // (e.g. `omit-design lint design/foo.tsx design/bar.tsx`).
+    // Skip the `lint` subcommand itself plus any flag-shaped tokens.
+    const positional = process.argv
+      .slice(2)
+      .filter((tok) => tok !== "lint" && !tok.startsWith("-"));
+    const explicitFiles = positional.filter(
+      (f) => /(^|\/)design\//.test(f) && f.endsWith(".tsx")
+    );
+    const usedExplicit = positional.length > 0;
+
+    // Pre-commit ran but nothing in design/ → silent pass.
+    if (usedExplicit && explicitFiles.length === 0) {
+      process.stdout.write(
+        `✓ no design/*.tsx changes — compliance check skipped\n`
+      );
+      process.exit(0);
+      return;
+    }
+
+    const targets =
+      explicitFiles.length > 0 ? explicitFiles : [args.glob];
+
+    const child = spawnSync(
+      eslintBin,
+      ["--format", "json", ...targets],
+      {
+        cwd,
+        encoding: "utf8",
+      }
+    );
 
     let results: ESLintResult[];
     try {

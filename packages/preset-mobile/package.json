@@ -26,6 +26,7 @@
     "preset.manifest.ts",
     "catalog.tsx",
     "PATTERNS.md",
+    "patterns.config.json",
     "README.md"
   ],
   "license": "MIT",

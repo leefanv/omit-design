@@ -1,8 +1,8 @@
 {
   "name": "@omit-design/cli",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "type": "module",
-  "description": "omit-design CLI: init / dev / lint.",
+  "description": "omit-design CLI: init / dev / lint / new-page / skills / upgrade. Init scaffolds husky pre-commit + .claude/settings.json domain bounds.",
   "bin": {
     "omit-design": "./dist/cli.js"
   },
