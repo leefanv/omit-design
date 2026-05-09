@@ -10,6 +10,7 @@
 
 /* 画布模式 — 详情页：header 透明悬浮 + 画布占满，整体不滚动 */
 .shell-studio--canvas {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -17,14 +18,20 @@
   font-family: "Poppins", system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
 }
 .shell-studio--canvas .shell-studio__header {
-  position: relative;
-  flex-shrink: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   background: transparent;
   border-bottom: none;
   backdrop-filter: none;
-  padding: 12px 86px;
+  padding: 24px 16px;
   gap: 6px;
   z-index: 30;
+  pointer-events: none;
+}
+.shell-studio--canvas .shell-studio__header > * {
+  pointer-events: auto;
 }
 .shell-studio--canvas > .canvas-root {
   flex: 1 1 auto;
@@ -109,12 +116,11 @@
   align-items: center;
   gap: 24px;
   padding: 16px 32px;
-  background: var(--shell-surface);
-  border-bottom: 1px solid var(--shell-border);
+  background: transparent;
+  border-bottom: none;
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(20px);
 }
 .shell-studio__brand {
   display: flex;

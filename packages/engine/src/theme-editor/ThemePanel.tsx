@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import { X } from "lucide-react";
 import { useThemeStore, type ThemeBaseline } from "./store";
 import { useProjects, useProjectByHref } from "../registry";
 import "./theme-panel.css";
@@ -67,7 +68,7 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
       <aside className={`theme-panel theme-panel--${variant}`}>
         <header className="theme-panel__header">
           <h3>Theme Editor</h3>
-          {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close">×</button>}
+          {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close"><X size={14} aria-hidden /></button>}
         </header>
         <div className="theme-panel__loading">Loading {preset.displayName} theme…</div>
       </aside>
@@ -82,7 +83,7 @@ export function ThemePanel({ variant = "embedded", onClose }: ThemePanelProps) {
     <aside className={`theme-panel theme-panel--${variant}`}>
       <header className="theme-panel__header">
         <h3>Theme Editor · {preset.displayName}</h3>
-        {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close">×</button>}
+        {onClose && <button className="theme-panel__close" onClick={onClose} aria-label="Close"><X size={14} aria-hidden /></button>}
       </header>
 
       <div className="theme-panel__status">

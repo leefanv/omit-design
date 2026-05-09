@@ -14,6 +14,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Check,
+  ChevronRight,
+  LayoutGrid,
+  Palette,
+  Puzzle,
+  Ruler,
+} from "lucide-react";
 import { useProject, useProjects } from "../registry";
 import type { CatalogGroup, CatalogItem } from "../registry";
 import { useThemeStore, type ThemeBaseline } from "../theme-editor/store";
@@ -98,9 +107,9 @@ export function ThemeEditorPage() {
       {/* ── Header ── */}
       <header className="ted-header">
         <Link to={`/workspace/${resolved.id}`} className="ted-header__back">
-          ← {resolved.icon} {resolved.name}
+          <ArrowLeft size={14} aria-hidden /> {resolved.icon} {resolved.name}
         </Link>
-        <span className="ted-header__sep">›</span>
+        <ChevronRight size={14} className="ted-header__sep" aria-hidden />
         <span className="ted-header__title">Theme Editor</span>
         <span className="ted-header__preset">{preset.displayName}</span>
         <span className={`ted-header__status-pill ${statusClass}`}>{statusLabel}</span>
@@ -117,7 +126,7 @@ export function ThemeEditorPage() {
             disabled={!hasUnpublished}
             title="Download variables.css → overwrite project/<id>/preset/theme/variables.css and git commit"
           >
-            ✓ Publish
+            <Check size={14} aria-hidden /> Publish
           </button>
         </div>
       </header>
@@ -131,7 +140,7 @@ export function ThemeEditorPage() {
               className={`ted-group-btn ${!activeGroupId ? "ted-group-btn--active" : ""}`}
               onClick={() => setActiveGroupId(null)}
             >
-              📋 All components
+              <LayoutGrid size={14} aria-hidden /> All components
             </button>
             {catalog.map((g) => (
               <div key={g.id}>
@@ -161,7 +170,7 @@ export function ThemeEditorPage() {
         <main className="ted-canvas">
           {catalog.length === 0 ? (
             <div className="ted-empty">
-              <div className="ted-empty__icon">🧩</div>
+              <div className="ted-empty__icon"><Puzzle size={32} aria-hidden /></div>
               <div>This project has no component catalog configured</div>
               <div style={{ fontSize: 12 }}>Add a `catalog` field in project.config.ts</div>
             </div>
@@ -188,13 +197,13 @@ export function ThemeEditorPage() {
               className={`ted-tokens__tab ${tokenTab === "colors" ? "ted-tokens__tab--active" : ""}`}
               onClick={() => setTokenTab("colors")}
             >
-              🎨 Colors
+              <Palette size={14} aria-hidden /> Colors
             </button>
             <button
               className={`ted-tokens__tab ${tokenTab === "spacing" ? "ted-tokens__tab--active" : ""}`}
               onClick={() => setTokenTab("spacing")}
             >
-              📐 Spacing
+              <Ruler size={14} aria-hidden /> Spacing
             </button>
           </div>
 

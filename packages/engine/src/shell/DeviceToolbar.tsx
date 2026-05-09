@@ -1,4 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type KeyboardEvent } from "react";
+import { RotateCw } from "lucide-react";
 import type { PresetManifest } from "../preset";
 
 export interface Viewport {
@@ -119,7 +120,7 @@ export function DeviceToolbar({ viewport, onChange, preset }: Props) {
         aria-label="Rotate orientation"
         title="Rotate orientation"
       >
-        ⤾
+        <RotateCw size={14} aria-hidden />
       </button>
     </div>
   );

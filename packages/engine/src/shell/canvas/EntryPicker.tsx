@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronRight, Pin, PinOff, Search, X } from "lucide-react";
 import type { DesignEntry, DesignGroup } from "../../registry";
 import { useCanvasStore } from "./canvasStore";
 
@@ -145,7 +146,7 @@ export function EntryPicker({ groups, q, setQ }: Props) {
             title={pinned ? "Float" : "Pin"}
             aria-label={pinned ? "Float" : "Pin"}
           >
-            {pinned ? "📌" : "📍"}
+            {pinned ? <Pin size={14} aria-hidden /> : <PinOff size={14} aria-hidden />}
           </button>
           {!pinned && (
             <button
@@ -155,14 +156,14 @@ export function EntryPicker({ groups, q, setQ }: Props) {
               title="Close"
               aria-label="Close"
             >
-              ×
+              <X size={14} aria-hidden />
             </button>
           )}
         </div>
       </div>
 
       <div className="canvas-picker__search">
-        <span className="canvas-picker__search-icon" aria-hidden>🔍</span>
+        <Search size={14} className="canvas-picker__search-icon" aria-hidden />
         <input
           type="search"
           value={q}
@@ -176,7 +177,7 @@ export function EntryPicker({ groups, q, setQ }: Props) {
             onClick={() => setQ("")}
             aria-label="Clear search"
           >
-            ×
+            <X size={12} aria-hidden />
           </button>
         )}
         <kbd className="canvas-picker__count">{visibleTotal}/{total}</kbd>
@@ -198,12 +199,11 @@ export function EntryPicker({ groups, q, setQ }: Props) {
                 aria-expanded={isOpen}
                 data-active={groupHasSelected || undefined}
               >
-                <span
+                <ChevronRight
+                  size={12}
                   className={`canvas-picker__caret ${isOpen ? "canvas-picker__caret--open" : ""}`}
                   aria-hidden
-                >
-                  ▸
-                </span>
+                />
                 {g.icon && <span className="canvas-picker__group-icon">{g.icon}</span>}
                 <span className="canvas-picker__group-label">{g.label}</span>
                 <span className="canvas-picker__group-count">{g.entries.length}</span>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { X } from "lucide-react";
 import { useInspectStore, type InspectMode } from "../inspect/store";
 import { InspectInspector } from "../inspect/InspectInspector";
 import { ThemePanel } from "../theme-editor/ThemePanel";
@@ -48,7 +49,7 @@ export function RightPanel() {
           aria-label="Close panel"
           title="Close panel"
         >
-          ×
+          <X size={14} aria-hidden />
         </button>
       </header>
       <div className="shell-right-panel__content">

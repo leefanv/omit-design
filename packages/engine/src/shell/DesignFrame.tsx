@@ -1,5 +1,14 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
+import {
+  Accessibility,
+  Hand,
+  MousePointer2,
+  Palette,
+  Ruler,
+  SquareDashed,
+  type LucideIcon,
+} from "lucide-react";
 import { InspectOverlay } from "../inspect/InspectOverlay";
 import { useProjects, useProjectByHref } from "../registry";
 import type { PresetManifest } from "../preset";
@@ -65,13 +74,13 @@ const IS_EMBED =
   typeof window !== "undefined" &&
   new URLSearchParams(window.location.search).get("embed") === "1";
 
-const DESIGN_TOOLS: { id: CanvasTool; icon: string; label: string; shortcut: string }[] = [
-  { id: "move", icon: "↖", label: "Select", shortcut: "V" },
-  { id: "hand", icon: "✋", label: "Pan", shortcut: "H" },
-  { id: "inspect", icon: "📐", label: "Inspect", shortcut: "I" },
-  { id: "measure", icon: "📏", label: "Measure", shortcut: "M" },
-  { id: "a11y", icon: "♿", label: "A11y", shortcut: "A" },
-  { id: "theme", icon: "🎨", label: "Theme", shortcut: "T" },
+const DESIGN_TOOLS: { id: CanvasTool; icon: LucideIcon; label: string; shortcut: string }[] = [
+  { id: "move", icon: MousePointer2, label: "Select", shortcut: "V" },
+  { id: "hand", icon: Hand, label: "Pan", shortcut: "H" },
+  { id: "inspect", icon: SquareDashed, label: "Inspect", shortcut: "I" },
+  { id: "measure", icon: Ruler, label: "Measure", shortcut: "M" },
+  { id: "a11y", icon: Accessibility, label: "A11y", shortcut: "A" },
+  { id: "theme", icon: Palette, label: "Theme", shortcut: "T" },
 ];
 
 /**

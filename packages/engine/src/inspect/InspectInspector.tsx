@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { SquareDashed, X } from "lucide-react";
 import { useInspectStore, type InspectTarget } from "./store";
 import { codegenWeb } from "./codegen/web";
 import { codegenCompose } from "./codegen/compose";
@@ -33,7 +34,7 @@ export function InspectInspector() {
 
       {!selected && mode !== "a11y" && (
         <div className="inspect-empty">
-          <div className="inspect-empty__icon">📐</div>
+          <div className="inspect-empty__icon"><SquareDashed size={32} aria-hidden /></div>
           <p>No element selected</p>
           <p className="muted">Click an element on the canvas, or use the arrow keys to navigate.</p>
         </div>
@@ -44,7 +45,7 @@ export function InspectInspector() {
           <div className="inspect-section inspect-section--head">
             <div className="inspect-component">
               <span className="inspect-component__name">{selected.component}</span>
-              <button className="inspect-clear" onClick={() => setSelected(null)} title="Clear selection">×</button>
+              <button className="inspect-clear" onClick={() => setSelected(null)} title="Clear selection" aria-label="Clear selection"><X size={14} aria-hidden /></button>
             </div>
             <div className="shell-segment">
               <button
