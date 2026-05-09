@@ -1,0 +1,5 @@
+{
+  "name": "form-view",
+  "whitelist": ["OmInput", "OmSelect", "OmNumpad"],
+  "description": "Create or edit a single record via a form."
+}

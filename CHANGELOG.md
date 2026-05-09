@@ -5,6 +5,32 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-09
+
+Productize Skills / Patterns / PRDs into the workspace UI; relocate patterns from preset-mobile into project-local `patterns/`; AI takes over pattern creation from PRDs.
+
+### Added
+- **`@omit-design/dev-server`** — new package. Vite plugin exposing `/__omit/*` HTTP endpoints (skills/patterns/PRDs CRUD, starter import) so the engine shell can read/write project files from the browser. Path-traversal guarded; dev-only.
+- **`@omit-design/engine`** — `LibraryPage` (full-screen `/workspace/:id/library`) with three tabs:
+  - **Skills** — edit `.claude/skills/<name>/SKILL.md` markdown + frontmatter (CodeMirror 6).
+  - **Patterns** — single flat list of project-local patterns. Each pattern: description / whitelist (chip-pick from preset components) / Notes / Advanced TSX template (collapsed by default). Empty state has a one-click "Import 8 starters" button.
+  - **PRDs** — manage `prds/<slug>.md` files; "Copy Claude prompt" button assembles a one-shot `new-design` invocation onto the clipboard.
+- **`omit-design init --no-starters`** — opt out of copying the 8 starter patterns; project starts with empty `patterns/`.
+
+### Changed (BREAKING)
+- **`@omit-design/preset-mobile`** — no longer ships pattern definitions:
+  - Removed `patterns.config.json`, `templates/*.tmpl.tsx` from the published package.
+  - `PATTERNS.md` now points at the project-local model.
+  - The package keeps its job as components + tokens + Ionic runtime.
+- **`@omit-design/eslint-plugin`** — `require-pattern-components` rule rewritten to read **only** `<projectRoot>/patterns/*/pattern.json`. No longer falls back to preset-mobile. Empty `patterns/` reports `configMissing` with guidance.
+- **`@omit-design/cli`**:
+  - `init` ships the 8 starter patterns into `<project>/patterns/` (each as `pattern.json` + `template.tmpl.tsx` + `README.md`).
+  - `init` template: `app/main.tsx` is now a `.tmpl` — project id, name, and groups are derived from the project name and the filesystem (no more hardcoded `"app"` / single-group config).
+- **`new-design` skill / `add-pattern` skill / `pattern-applier` agent** — all rewritten to read patterns from `<project>/patterns/` and write new patterns there (was: preset-mobile `node_modules`).
+
+### Removed
+- `@omit-design/preset-mobile/patterns.config.json`, `@omit-design/preset-mobile/templates/`. Use the workspace's Library → Patterns or `omit-design init` to bootstrap project-local patterns instead.
+
 ## [0.2.x patch sweep] - 2026-05-09
 
 Branding refresh + docs sync follow-up to the 4-pillar release.

@@ -1,6 +1,6 @@
 ---
 name: new-design
-description: Generate a new design page in an omit-design project (under design/) from a PRD or "add a page" request. Picks a pattern from preset-mobile, copies its template, fills in fields, registers via auto-discovery. Use when the user wants to scaffold a new design page.
+description: Generate a new design page (under design/) from a PRD. Picks a pattern from <project>/patterns/, copies its template, fills in fields, registers via auto-discovery. If no existing pattern fits the PRD's archetype, calls add-pattern to create one first. Use when the user wants to scaffold a new design page.
 ---
 
 # new-design — generate a design page from a PRD
@@ -13,21 +13,24 @@ description: Generate a new design page in an omit-design project (under design/
 ## Decision tree (stop here — confirm pattern + whitelist before going further)
 
 <HARD-GATE>
-**Before writing the first line of business code**, you must confirm two things:
+**Before writing the first line of business code**, confirm two things:
 
-1. **The PRD specifies a pattern**, and that pattern name appears in `node_modules/@omit-design/preset-mobile/PATTERNS.md` (the 8 patterns: list-view / detail-view / form-view / sheet-action / dialog-view / welcome-view / dashboard / tab-view).
-   If the PRD doesn't specify one → **stop**, ask the user or recommend one. **Do NOT** pick on your own initiative.
+1. **A matching pattern exists in `<project>/patterns/`**.
+   Each subdirectory `<project>/patterns/<name>/` has `pattern.json` (with `whitelist`) and `README.md` (with "when to use"). Read the READMEs to choose.
+   - If `patterns/` is empty → tell the user to run "Import 8 starters" in the workspace's Library → Patterns tab, or run `omit-design init` if this is a fresh project.
+   - If no existing pattern fits → call `add-pattern` (it will create `patterns/<new-name>/{pattern.json, template.tmpl.tsx, README.md}`); only after that file lands do you proceed here.
+   - **Do NOT** pick a pattern on your own initiative without surfacing the choice to the user first.
 
-2. **All components the PRD needs are on the whitelist** (the 21 Om* components in `@omit-design/preset-mobile`).
-   If a component is missing → **stop** and tell the user; propose either using `add-pattern` first or adding a single whitelisted component.
+2. **All components the PRD needs are exported from `@omit-design/preset-mobile`** (the `Om*` whitelist).
+   If a component is missing → stop and tell the user; either use `add-pattern` to scope around the gap or propose adding the missing `Om*` upstream.
    **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
 </HARD-GATE>
 
 ## Execution flow
 
-See [references/checklist.md](references/checklist.md) for the full 7-step checklist (read PRD / read PATTERNS / check whitelist / prepare mock / **copy template** / self-check / verify).
+See [references/checklist.md](references/checklist.md) for the full 7-step checklist (read PRD / read patterns/ / check whitelist / prepare mock / **copy template** / self-check / verify).
 
-**The core point**: step 5, "write the page," really means "**copy `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` and replace placeholders**" — not write from scratch. Only when the template is missing do you fall back to rewriting from the "skeleton" description in PATTERNS.md; never invent imports or component structure out of thin air.
+**The core point**: step 5, "write the page," really means "**copy `<project>/patterns/<chosen>/template.tmpl.tsx` and replace placeholders**" — not write from scratch.
 
 ## Delegate the mechanical work (when `pattern-applier` agent is present)
 
@@ -42,14 +45,15 @@ If `pattern-applier` is not installed, fall back to doing steps 5–7 inline.
 When done, tell the user:
 
 - The new file path.
-- The chosen pattern and why (and whether a template was reused).
+- The chosen pattern and why (and whether `add-pattern` had to create it just now).
 - Where the mock data lives.
 - The access URL (`/designs/<group>/<file>`).
 
 ## Counter-examples
 
-- The user didn't specify a pattern → you picked one without telling them.
+- The user didn't specify a pattern, you found nothing fitting in `patterns/`, you wrote the design anyway with a guess header.
 - A component isn't on the whitelist → you imported it directly from `@ionic/react`.
+- `patterns/` was empty and you proceeded without prompting the user to import starters or create a new pattern.
 - Writing `<div style={{ padding: 16 }}>`.
 - Stuffing mock data into `design/` instead of `mock/`.
-- A template exists but you wrote the skeleton from scratch anyway.
+- A template exists in `<project>/patterns/<chosen>/template.tmpl.tsx` but you wrote the skeleton from scratch anyway.

@@ -25,6 +25,12 @@ export default defineCommand({
       description: "Skip auto `git init` (the pre-commit hook needs git).",
       default: false,
     },
+    starters: {
+      type: "boolean",
+      description:
+        "Copy the 8 starter patterns into patterns/. Disable with --no-starters to start with an empty patterns/ — let add-pattern create them on demand.",
+      default: true,
+    },
   },
   async run({ args }) {
     const targetDir = path.resolve(process.cwd(), args.name);
@@ -55,7 +61,24 @@ export default defineCommand({
     }
 
     process.stdout.write(`→ creating ${path.relative(process.cwd(), targetDir)}/ ...\n`);
-    await fs.copy(templateDir, targetDir, { overwrite: true });
+    const skipStarters = args.starters === false;
+    await fs.copy(templateDir, targetDir, {
+      overwrite: true,
+      filter: skipStarters
+        ? (src) => {
+            // 跳过 templates/init/patterns/<starter>/ 下的所有文件，但保留 patterns/ 目录
+            const rel = path.relative(templateDir, src);
+            const parts = rel.split(path.sep);
+            return !(parts[0] === "patterns" && parts.length > 1);
+          }
+        : undefined,
+    });
+
+    // --no-starters 模式确保 patterns/ 目录存在（filter 只跳了里面的内容）
+    if (skipStarters) {
+      await fs.ensureDir(path.join(targetDir, "patterns"));
+      await fs.writeFile(path.join(targetDir, "patterns", ".gitkeep"), "");
+    }
 
     // 渲染 .tmpl 文件:替换占位符 + 重命名
     await renderTemplates(targetDir, { projectName: args.name });

@@ -13,14 +13,27 @@ const designModules = import.meta.glob<DesignModule>(
   { eager: true }
 );
 
+// 从文件路径自动派生 group。design/<group>/<file>.tsx 的第一段作 group id；
+// 顶层文件（design/<file>.tsx）归到 main。
+const groupSet = new Set<string>(["main"]);
+for (const fp of Object.keys(designModules)) {
+  const rel = fp.replace(/^\/?design\//, "");
+  const parts = rel.split("/");
+  if (parts.length > 1) groupSet.add(parts[0]);
+}
+const groups = Array.from(groupSet).map((id) => ({
+  id,
+  label: id === "main" ? "主页" : id,
+}));
+
 const source = globDiscovery({
   project: {
-    id: "app",
-    name: "App",
+    id: "{{PROJECT_NAME}}",
+    name: "{{PROJECT_NAME}}",
     description: "omit-design 项目",
     icon: "🧩",
     preset: presetMobileManifest,
-    groups: [{ id: "main", label: "主页" }],
+    groups,
   },
   modules: designModules,
 });

@@ -1,0 +1,5 @@
+{
+  "name": "detail-view",
+  "whitelist": ["OmCard"],
+  "description": "Single-record detail page reached from a list, usually with one primary action."
+}

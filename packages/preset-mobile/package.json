@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/preset-mobile",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "type": "module",
   "description": "Mobile design preset for omit-design: Om* whitelist components, --om-* / --ion-* token map, Ionic 8 runtime.",
   "main": "./index.ts",
@@ -13,20 +13,16 @@
     "./components": "./components/index.ts",
     "./tokens": "./tokens/index.ts",
     "./preset.manifest": "./preset.manifest.ts",
-    "./theme/variables.css": "./theme/variables.css",
-    "./templates/*": "./templates/*",
-    "./PATTERNS.md": "./PATTERNS.md"
+    "./theme/variables.css": "./theme/variables.css"
   },
   "files": [
     "index.ts",
     "components",
     "tokens",
     "theme",
-    "templates",
     "preset.manifest.ts",
     "catalog.tsx",
     "PATTERNS.md",
-    "patterns.config.json",
     "README.md"
   ],
   "license": "MIT",
@@ -42,7 +38,7 @@
   },
   "peerDependencies": {
     "@ionic/react": "^8",
-    "@omit-design/engine": "^0.2.0",
+    "@omit-design/engine": "^0.3.0",
     "ionicons": "^7 || ^8",
     "react": "^19",
     "react-router-dom": "^6"

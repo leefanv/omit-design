@@ -5,6 +5,7 @@ import {
   ProjectsHome,
   ProjectDetail,
   ThemeEditorPage,
+  LibraryPage,
 } from "@omit-design/engine/shell";
 import { useProjects } from "@omit-design/engine/registry";
 
@@ -52,6 +53,10 @@ export default function App() {
       <Route
         path="/workspace/:projectId/theme-editor"
         element={<ThemeEditorPage />}
+      />
+      <Route
+        path="/workspace/:projectId/library"
+        element={<LibraryPage />}
       />
       <Route path="/designs/*" element={<DesignsRoot />} />
     </Routes>

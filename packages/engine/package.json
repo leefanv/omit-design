@@ -1,6 +1,6 @@
 {
   "name": "@omit-design/engine",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "type": "module",
   "description": "omit-design runtime: registry, glob discovery, inspect overlay, theme editor, capture, shell. Pure UI library — no router boot, no module-level side effects.",
   "exports": {
@@ -34,6 +34,12 @@
     "access": "public"
   },
   "dependencies": {
+    "@codemirror/commands": "^6",
+    "@codemirror/lang-javascript": "^6",
+    "@codemirror/lang-markdown": "^6",
+    "@codemirror/language": "^6",
+    "@codemirror/state": "^6",
+    "@codemirror/view": "^6",
     "html-to-image": "^1.11",
     "zustand": "^5"
   },

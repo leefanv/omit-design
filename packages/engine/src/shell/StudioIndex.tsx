@@ -202,6 +202,14 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
             <span aria-hidden>⚙</span>
           </Link>
           <Link
+            to={`/workspace/${project.id}/library`}
+            className="shell-pill shell-pill--icon"
+            title="Library: Skills · Patterns · PRDs"
+            aria-label="Library"
+          >
+            <span aria-hidden>📚</span>
+          </Link>
+          <Link
             to={`/workspace/${project.id}/theme-editor`}
             className="shell-pill shell-pill--icon"
             title="Open full-screen Theme Editor"
