@@ -5,6 +5,47 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.x patch sweep] - 2026-05-09
+
+Branding refresh + docs sync follow-up to the 4-pillar release.
+
+### Added
+- **@omit-design/engine** — official omit logo + wordmark inline SVGs
+  in the studio shell (`StudioIndex`), replacing the placeholder
+  rotated-purple-diamond + "omit design" text block.
+
+### Changed
+- **CLI scaffold favicon** — projects scaffolded by `omit-design init`
+  now ship the official black/white omit favicon instead of the
+  placeholder blue "o" mark.
+- **All package READMEs** — synced with the 4-pillar release: 4 hard
+  rules instead of 3, husky pre-commit hook documentation, sub-agents,
+  Skill catalog (3 phases entry / make / deliver). Both EN and CN
+  versions where applicable.
+- **CONTRIBUTING.md / CONTRIBUTING.zh-CN.md** — added "A sub-agent" and
+  "A new ESLint rule" sections; fixed stale `scripts/sync-skills.mjs`
+  reference (real sync is `bun --cwd packages/cli run build`).
+- **docs/architecture.md** — Three-layer → Four-layer constraint table
+  with sub-agents row; new "Init scaffolding (since 0.2.0)" section
+  documenting the auto-installed git / husky / settings / agents.
+- **docs/release.md** — bump table + publish order updated; added
+  "Cross-package config dependencies" section explaining when an
+  ESLint rule reads from preset-mobile config.
+- **CLI `--version` output** — was stuck at 0.1.7 due to `cli.ts` not
+  being kept in sync with `package.json`; now reports 0.2.1.
+
+### Fixed
+- **CLI scaffold pinned cli at `^0.1`** — projects scaffolded since
+  cli 0.2.0 had `"@omit-design/cli": "^0.1"` in their devDependencies,
+  meaning `npm install` would fetch the old 0.1.x cli alongside the
+  newly-scaffolded project. Bumped to `^0.2`.
+
+### Bumped
+- `@omit-design/engine` 0.2.2 → **0.2.3**
+- `@omit-design/preset-mobile` 0.2.3 → **0.2.4**
+- `@omit-design/eslint-plugin` 0.2.0 → **0.2.1**
+- `@omit-design/cli` 0.2.0 → **0.2.1**
+
 ## [4-pillar AI-determinism upgrade] - 2026-05-09
 
 Borrows four ideas from Donchitos/Claude-Code-Game-Studios, scoped down
