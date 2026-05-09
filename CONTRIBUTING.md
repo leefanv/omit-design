@@ -17,6 +17,7 @@ omit-design/
 ├── examples/
 │   └── playground/         Local preview app — workspace-linked to packages/*
 ├── skills/                 Claude Code skills (synced into init scaffold)
+├── agents/                 Claude Code sub-agents (synced into init scaffold)
 ├── templates/init/         Scaffold for `omit-design init`
 ├── docs/                   Architecture / release notes / migration guides
 └── scripts/                Internal build / sync scripts
@@ -64,15 +65,37 @@ cd /tmp/test-app && npm install && npm run dev
 Use the `add-pattern` skill (or do it manually):
 1. Add a section to `packages/preset-mobile/PATTERNS.md`
 2. Add a copy-paste skeleton at `packages/preset-mobile/templates/<name>.tmpl.tsx`
-3. Don't apply to business pages until reviewed
+3. Add the pattern's signature components to `packages/preset-mobile/patterns.config.json` (read by the `require-pattern-components` ESLint rule)
+4. Bump preset-mobile patch (or minor if rule semantics changed) — see [docs/release.md](./docs/release.md)
+5. Don't apply to business pages until reviewed
 
 ### A skill
 Skills live in `skills/<name>/`. Each one ships a `SKILL.md` with frontmatter + optional `references/<topic>.md` for progressive disclosure.
 
-Sync skills into the init scaffold before publishing CLI:
+Skills are synced into the init scaffold automatically by the CLI's build step:
 ```bash
-node scripts/sync-skills.mjs
+bun --cwd packages/cli run build
+# runs scripts/copy-templates.mjs which mirrors:
+#   templates/init/  → packages/cli/templates/init/
+#   skills/          → packages/cli/templates/init/.claude/skills/
+#   agents/          → packages/cli/templates/init/.claude/agents/
 ```
+
+### A sub-agent
+Sub-agents live in `agents/<name>.md` (single file, no subdirectory). Each ships YAML frontmatter (`name`, `description`, optional `tools`, optional `model`) + a system-prompt body. They run in isolated context, invoked by skills via Claude Code's Agent tool.
+
+Conventions:
+- **Single responsibility per agent.** `pattern-applier` only applies templates; `audit-reviewer` only reads + reports.
+- **Pick the cheapest model that works.** Mechanical work → Haiku; reasoning → Sonnet. Avoid Opus unless decision-heavy.
+- **Read-only when possible.** `audit-reviewer` declares `tools: Read, Bash, Glob, Grep` — no Write/Edit. Catches mistakes earlier than just trusting the prompt.
+- **Wire from a skill, not from the user.** A skill that "delegates to X if available" is more robust than docs that ask the user to invoke X manually.
+
+Synced into init scaffold by the same CLI build step as skills.
+
+### A new ESLint rule
+Rules live at `packages/eslint-plugin/rules/<name>.js` (yes, .js — no TS in this package). Each exports a default with `meta` + `create`. Register in `packages/eslint-plugin/index.js`. Add to default scaffold's `templates/init/eslint.config.js`. Add a row to `packages/eslint-plugin/README.md`. Bump `eslint-plugin` minor (rule semantics).
+
+If the rule reads from `preset-mobile` (e.g. a config file or component metadata), bump preset-mobile too and **publish preset-mobile FIRST** — otherwise users picking up the new rule with an old preset-mobile tarball will hit "config missing" errors. See [docs/release.md](./docs/release.md).
 
 ## Code style
 

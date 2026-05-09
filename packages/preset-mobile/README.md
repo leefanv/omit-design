@@ -14,12 +14,14 @@
 - **21 `Om*` components** — the import whitelist for `design/**/*.tsx`
 - **`--om-*` token system** mapped to Ionic 8 runtime (`--ion-*`)
 - **8 patterns** with copy-paste `.tmpl.tsx` skeletons (consumed by `omit-design new-page`)
+- **`patterns.config.json`** — pattern → signature components map, consumed by the `require-pattern-components` ESLint rule
 
-## Three hard rules (enforced by [@omit-design/eslint-plugin](../eslint-plugin/))
+## Four hard rules (enforced by [@omit-design/eslint-plugin](../eslint-plugin/))
 
 1. **Tokens only.** All colors / spacing / font sizes / radii / shadows must go through tokens. Raw literals (`#FF6B00`, `12px`, `16px`, etc.) are forbidden in business code.
 2. **Whitelist imports.** Business pages (under `design/**`) can only import from `@omit-design/preset-mobile`. Direct `@ionic/react` imports are forbidden — exceptions: `IonList`, `IonBackButton`, `IonIcon` (layout / icon hosts only).
 3. **Pattern header.** Every business page must start with `// @pattern: <name>`, where `<name>` is registered in [PATTERNS.md](./PATTERNS.md).
+4. **Pattern-scoped components.** The declared pattern must actually use one of its signature components. `@pattern: list-view` requires `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState`; `@pattern: form-view` requires `OmInput` / `OmSelect` / `OmNumpad`; etc. Mapping in [`patterns.config.json`](./patterns.config.json).
 
 ## Components (21)
 
@@ -62,6 +64,15 @@ Generate a new page from a pattern:
 npx omit-design new-page list-view design/orders/list
 # → design/orders/list.tsx with the list-view skeleton
 ```
+
+### Adding / customizing patterns
+
+When adding a pattern via the `add-pattern` skill (or by hand), update three places:
+1. [`PATTERNS.md`](./PATTERNS.md) — human documentation of the pattern's intent and skeleton.
+2. [`templates/<name>.tmpl.tsx`](./templates/) — copy-paste skeleton consumed by `omit-design new-page`.
+3. [`patterns.config.json`](./patterns.config.json) — list of signature components the pattern requires (read by the `require-pattern-components` ESLint rule).
+
+The signature components are the bare minimum without which a file cannot meaningfully be that pattern. For `list-view` it's "any list-row / empty-state component"; for `form-view` it's "any input component". Lists are "anyOf" — importing one is enough.
 
 ## Token naming
 

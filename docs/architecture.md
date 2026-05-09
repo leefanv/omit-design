@@ -14,8 +14,9 @@ How omit-design's pieces fit together. For new contributors and people writing c
                                     ▼
        ┌─────────────────────────┐     ┌─────────────────────────────┐
        │ @omit-design/           │     │ @omit-design/               │
-       │   eslint-plugin         │     │   preset-mobile             │
-       │   (3 hard rules)        │     │   (Om* + tokens + patterns) │
+       │   eslint-plugin         │◄────│   preset-mobile             │
+       │   (4 hard rules)        │     │   (Om* + tokens + patterns  │
+       │                         │     │    + patterns.config.json)  │
        └─────────────────────────┘     └────────────┬────────────────┘
                                                     │ peerDependency (type-only)
                                                     ▼
@@ -39,17 +40,39 @@ How omit-design's pieces fit together. For new contributors and people writing c
                                         └─────────────────────────┘
 ```
 
-There are no runtime cycles. The only inter-package dependency at runtime is the type-only one from `preset-mobile` to `engine` (catalog and preset manifest types).
+There are no runtime cycles. The only inter-package dependency at runtime is the type-only one from `preset-mobile` to `engine` (catalog and preset manifest types). `eslint-plugin` reads `preset-mobile/patterns.config.json` at lint-time (file path lookup, not module import), so when adding a rule that depends on it, **publish preset-mobile first**.
 
-## Three-layer AI constraint
+## Four-layer AI constraint
 
 | Layer | What it constrains | How |
 |---|---|---|
-| **Skills** | Process / decisions | Natural-language `<HARD-GATE>` markers + references for progressive disclosure. Loaded by Claude Code automatically when triggers match. |
-| **ESLint** | Code shape | Three deterministic rules: no design literals, whitelist imports, mandatory pattern header. `npm run lint` fails CI when violated. |
+| **Skills** | Process / decisions | Natural-language `<HARD-GATE>` markers + references for progressive disclosure. Catalog organized into entry / make / deliver phases. Loaded by Claude Code automatically when triggers match. |
+| **ESLint** | Code shape | Four deterministic rules: no design literals, whitelist imports, mandatory pattern header, pattern-scoped component requirements (declared `@pattern: X` must import one of X's signature components per `preset-mobile/patterns.config.json`). `npm run lint` fails CI when violated, and the husky pre-commit hook runs the same check on every staged file. |
 | **Templates** | Starting structure | Per-pattern `.tmpl.tsx` skeletons. Agent copies a template and replaces placeholders rather than inventing structure. |
+| **Sub-agents** (optional) | Context isolation | `.claude/agents/pattern-applier.md` (Sonnet) and `audit-reviewer.md` (Haiku) run heavy work — template-application and full-repo lint+a11y scan respectively — in their own context. Main conversation stays focused on user dialogue. Skills detect their presence and delegate; if absent, the skills do the work inline. |
 
 Together these turn AI design output from "please don't break the conventions" into a deterministic gate.
+
+## Init scaffolding (since 0.2.0)
+
+`omit-design init <name>` produces a project that's self-defending without the user wiring anything:
+
+```
+<name>/
+├── .git/                          ← `git init` runs automatically (gated by --no-git)
+├── .husky/
+│   └── pre-commit                 ← `npx lint-staged` (installed via husky `prepare` script)
+├── .claude/
+│   ├── settings.json              ← deny rules: AI cannot Edit/Write app/, eslint.config.js,
+│   │                                vite.config.ts, tsconfig.json, .husky/, package.json
+│   ├── skills/                    ← entry / make / deliver skills (synced from /skills)
+│   └── agents/                    ← pattern-applier.md, audit-reviewer.md (synced from /agents)
+├── design/welcome.tsx             ← starter page
+├── eslint.config.js               ← all 4 hard rules wired up
+└── package.json                   ← husky + lint-staged in devDeps; lint-staged config inline
+```
+
+The deny list is intentional friction: when AI hits it, the permission prompt usually means a real skill (e.g. `add-pattern`) should be handling the change instead of editing the file directly. For solo designers we ship a single profile (no strict/lean modes) — keeps decisions out of the way.
 
 ## Engine modules
 
@@ -126,18 +149,24 @@ omit-design/
 ├── examples/
 │   └── playground/          Local preview app — workspaces-linked to packages/*
 ├── skills/                  Claude Code skills (synced to init scaffold)
+├── agents/                  Claude Code sub-agents (synced to init scaffold)
 ├── templates/init/          Source of truth for the init scaffold
 ├── docs/                    Public docs (you're here)
 └── scripts/                 Build / sync helpers
 ```
 
-`scripts/sync-skills.mjs` mirrors `skills/` into `packages/cli/templates/init/.claude/skills/` so the published CLI carries the latest skill versions.
+`packages/cli/scripts/copy-templates.mjs` (run by `bun --cwd packages/cli run build`) copies three sources into `packages/cli/templates/init/`:
+- `templates/init/` → the scaffold base (vite config, sample design, husky hook, settings.json)
+- `skills/` → `.claude/skills/`
+- `agents/` → `.claude/agents/`
+
+So the published CLI tarball always carries the latest skills + agents.
 
 ## Versioning policy
 
 - **engine + preset-mobile** lockstep on minor (when one changes class names or peer constraints, the other follows).
 - **cli** versions independently; bumps when its own source or its bundled templates change.
-- **eslint-plugin** versions independently; bumps when rule semantics change.
+- **eslint-plugin** versions independently; bumps when rule semantics change. **When a new rule reads from `preset-mobile` (e.g. `require-pattern-components` reads `patterns.config.json`), bump preset-mobile too and publish it FIRST** — otherwise users picking up the new rule will hit "config missing" errors against the old preset-mobile tarball.
 - **figma-plugin** versions independently; bumps when plugin code changes.
 
 Pre-1.0: minor bumps may include breaking changes; patch bumps don't. Once we hit 1.0, full SemVer.
