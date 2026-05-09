@@ -1,6 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  ArrowLeft,
+  ChevronDown,
+  Hand,
+  Layers,
+  Library,
+  MessageSquare,
+  MousePointer2,
+  Palette,
+  Ruler,
+  Settings,
+  SquareDashed,
+  Accessibility,
+  type LucideIcon,
+} from "lucide-react";
+import {
   useProjects,
   useProjectGroups,
   useProject,
@@ -14,6 +29,21 @@ import { EntryPicker } from "./canvas/EntryPicker";
 import { ToolRail } from "./canvas/ToolRail";
 import { useCanvasStore, getPanelOpen, type CanvasTool } from "./canvas/canvasStore";
 import { RightPanel } from "./RightPanel";
+
+// ─────────────────────────────────────────────
+// Figma 官方品牌 logo（5 色）— 用于 Export to Figma 按钮
+// ─────────────────────────────────────────────
+function FigmaLogo() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 38 57" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0Z" fill="#1ABCFE" />
+      <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z" fill="#0ACF83" />
+      <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" fill="#FF7262" />
+      <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z" fill="#F24E1E" />
+      <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z" fill="#A259FF" />
+    </svg>
+  );
+}
 
 // ─────────────────────────────────────────────
 // ProjectsHome — /workspace（Figma 风格项目列表）
@@ -101,13 +131,13 @@ function ProjectCard({ project }: { project: DiscoveredProject }) {
 // 单页画布 + 左侧分组/页面选择
 // ─────────────────────────────────────────────
 
-const PROJECT_TOOLS: { id: CanvasTool; icon: string; label: string; shortcut: string }[] = [
-  { id: "move", icon: "↖", label: "Select", shortcut: "V" },
-  { id: "hand", icon: "✋", label: "Pan canvas", shortcut: "H" },
-  { id: "inspect", icon: "📐", label: "Inspect", shortcut: "I" },
-  { id: "measure", icon: "📏", label: "Measure", shortcut: "M" },
-  { id: "a11y", icon: "♿", label: "A11y", shortcut: "A" },
-  { id: "comment", icon: "💬", label: "Comment", shortcut: "C" },
+const PROJECT_TOOLS: { id: CanvasTool; icon: LucideIcon; label: string; shortcut: string }[] = [
+  { id: "move", icon: MousePointer2, label: "Select", shortcut: "V" },
+  { id: "hand", icon: Hand, label: "Pan canvas", shortcut: "H" },
+  { id: "inspect", icon: SquareDashed, label: "Inspect", shortcut: "I" },
+  { id: "measure", icon: Ruler, label: "Measure", shortcut: "M" },
+  { id: "a11y", icon: Accessibility, label: "A11y", shortcut: "A" },
+  { id: "comment", icon: MessageSquare, label: "Comment", shortcut: "C" },
 ];
 
 export function ProjectDetail() {
@@ -120,7 +150,9 @@ export function ProjectDetail() {
         <div className="shell-studio__empty">
           Project not found: "{projectId}"
           <br />
-          <Link to="/workspace">← Back to Workspace</Link>
+          <Link to="/workspace">
+            <ArrowLeft size={14} aria-hidden /> Back to Workspace
+          </Link>
         </div>
       </div>
     );
@@ -169,8 +201,8 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
     <div className="shell-studio shell-studio--canvas">
       <header className="shell-studio__header">
         <div className="shell-studio__header-left">
-          <Link to="/workspace" className="shell-pill shell-pill--icon" title="Back to project list">
-            <span aria-hidden>←</span>
+          <Link to="/workspace" className="shell-pill shell-pill--icon" title="Back to project list" aria-label="Back to project list">
+            <ArrowLeft size={16} aria-hidden />
           </Link>
           {!pickerPinned && (
             <button
@@ -180,13 +212,13 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
               onClick={toggleEntryPickerOpen}
               title="Switch page"
             >
-              <span aria-hidden>≡</span> Pages
+              <Layers size={14} aria-hidden /> Pages
             </button>
           )}
           <div className="shell-pill shell-pill--combobox" title={project.description}>
             <span className="shell-pill__icon-bubble" aria-hidden>{project.icon}</span>
             <span className="shell-pill__text">{project.name}</span>
-            <span className="shell-pill__caret" aria-hidden>▾</span>
+            <ChevronDown size={14} className="shell-pill__caret" aria-hidden />
           </div>
         </div>
 
@@ -199,7 +231,7 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
             title="Project Settings: access / members / delete"
             aria-label="Project Settings"
           >
-            <span aria-hidden>⚙</span>
+            <Settings size={16} aria-hidden />
           </Link>
           <Link
             to={`/workspace/${project.id}/library`}
@@ -207,7 +239,7 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
             title="Library: Skills · Patterns · PRDs"
             aria-label="Library"
           >
-            <span aria-hidden>📚</span>
+            <Library size={16} aria-hidden />
           </Link>
           <Link
             to={`/workspace/${project.id}/theme-editor`}
@@ -215,14 +247,14 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
             title="Open full-screen Theme Editor"
             aria-label="Theme Editor"
           >
-            <span aria-hidden>🎨</span>
+            <Palette size={16} aria-hidden />
           </Link>
           <button
             type="button"
             className="shell-pill shell-pill--text"
             onClick={() => setExportOpen(true)}
           >
-            <span aria-hidden>↗</span> Export to Figma
+            <FigmaLogo /> Export to Figma
           </button>
         </div>
       </header>

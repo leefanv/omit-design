@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Check } from "lucide-react";
 import { useLibraryStore } from "../libraryStore";
 import { CodeEditor } from "../MarkdownEditor";
 import type { PrdSummary } from "../api";
@@ -153,7 +154,7 @@ export function PrdsPanel() {
                   disabled={dirty}
                   title={dirty ? "Save first" : "Copy a Claude Code prompt to your clipboard"}
                 >
-                  {copied ? "✓ Copied" : "Copy Claude prompt"}
+                  {copied ? (<><Check size={14} aria-hidden /> Copied</>) : "Copy Claude prompt"}
                 </button>
                 <button
                   className="lib-btn lib-btn--danger"

@@ -145,13 +145,18 @@
 }
 .copy-btn {
   margin-top: 8px;
-  background: var(--shell-accent);
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: #1f2937;
+  border: 1px solid #e5e7eb;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.copy-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
 }
 
 .inline-toggle {

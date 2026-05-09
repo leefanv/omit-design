@@ -9,6 +9,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, ChevronRight, X } from "lucide-react";
 import { useProject, useProjects } from "../registry";
 import { useLibraryStore } from "./libraryStore";
 import { SkillsPanel } from "./panels/SkillsPanel";
@@ -54,9 +55,9 @@ export function LibraryPage() {
     <div className="lib-page">
       <header className="lib-header">
         <Link to={`/workspace/${resolved.id}`} className="lib-header__back">
-          ← {resolved.icon} {resolved.name}
+          <ArrowLeft size={14} aria-hidden /> {resolved.icon} {resolved.name}
         </Link>
-        <span className="lib-header__sep">›</span>
+        <ChevronRight size={14} className="lib-header__sep" aria-hidden />
         <span className="lib-header__title">Library</span>
         <nav className="lib-header__tabs">
           <TabButton id="skills" active={tab} onClick={setTab} count={index?.skills.length ?? 0}>
@@ -81,7 +82,7 @@ export function LibraryPage() {
       {error && (
         <div className="lib-error">
           {error}
-          <button onClick={() => useLibraryStore.setState({ error: null })}>×</button>
+          <button onClick={() => useLibraryStore.setState({ error: null })} aria-label="Dismiss error"><X size={14} aria-hidden /></button>
         </div>
       )}
     </div>

@@ -1,4 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  AlertTriangle,
+  ArrowUpRight,
+  Check,
+  Download,
+  Ruler,
+  X,
+} from "lucide-react";
 import type { DiscoveredProject } from "../registry";
 import { captureTree } from "./index";
 import type { CapturePayload } from "./index";
@@ -213,7 +221,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
           aria-label="Close"
           onClick={onClose}
         >
-          ×
+          <X size={16} aria-hidden />
         </button>
       </header>
 
@@ -280,15 +288,15 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               disabled={busy}
               title="Export the preset's token baseline — importable by Figma Variables / Tokens Studio plugins"
             >
-              📐 Tokens.json
+              <Ruler size={14} aria-hidden /> Tokens.json
             </button>
           </div>
 
           {progress && <div className="export-dialog__progress">{progress}</div>}
-          {error && <div className="export-dialog__error">⚠ {error}</div>}
+          {error && <div className="export-dialog__error"><AlertTriangle size={14} aria-hidden /> {error}</div>}
           {lastResult && !error && !progress && (
             <div className="export-dialog__success">
-              ✓ Downloaded <code>{lastResult.filename}</code> ({lastResult.count} designs){lastResult.suffix}
+              <Check size={14} aria-hidden /> Downloaded <code>{lastResult.filename}</code> ({lastResult.count} designs){lastResult.suffix}
             </div>
           )}
         </section>
@@ -304,7 +312,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               href={pluginZipUrl}
               download={PLUGIN_ZIP_FILENAME}
             >
-              ↓ Download plugin .zip
+              <Download size={14} aria-hidden /> Download plugin .zip
             </a>
             <a
               className="export-dialog__btn export-dialog__btn--ghost"
@@ -312,7 +320,7 @@ export function ExportFigmaDialog({ project, onClose }: ExportFigmaDialogProps) 
               target="_blank"
               rel="noreferrer"
             >
-              View source on GitHub ↗
+              View source on GitHub <ArrowUpRight size={14} aria-hidden />
             </a>
           </div>
           <ol className="export-dialog__steps">

@@ -5,6 +5,31 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [engine 0.3.1] - 2026-05-09
+
+Workspace chrome icon system + dot-grid canvas.
+
+### Added
+- **@omit-design/engine** — `lucide-react` integrated as a runtime
+  dependency. All workspace UI chrome icons (tool rail, header pills,
+  sidebar / picker / right-panel close buttons, theme editor, export
+  dialog, overview kbd hints) replaced with lucide glyphs. Project /
+  group / catalog `icon` fields remain user data and are untouched.
+  "Export to Figma" pill uses the official 5-color Figma logo.
+- **@omit-design/engine** — dot-grid background pattern on the canvas
+  surface (`.canvas-root` + `.shell-design-stage__canvas`).
+
+### Changed
+- **@omit-design/engine** — canvas-mode header restructured: now
+  `position: absolute` and transparent so the canvas + dot pattern
+  fill the page edge-to-edge; pills float on top. Side panels
+  (EntryPicker pinned/floating, RightPanel) gain `top: 84px` to clear
+  the floating header. `.shell-studio__header` (workspace home) bg
+  color and bottom border removed.
+- **@omit-design/engine** — `.copy-btn` (Inspect panel Copy / Download
+  / @1x–@3x export buttons) restyled from accent-purple to
+  white-with-gray-border, dark gray text.
+
 ## [0.3.0] - 2026-05-09
 
 Productize Skills / Patterns / PRDs into the workspace UI; relocate patterns from preset-mobile into project-local `patterns/`; AI takes over pattern creation from PRDs.

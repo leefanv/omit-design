@@ -1,3 +1,4 @@
+import { Minus, Plus } from "lucide-react";
 import { useCanvasStore, ZOOM_MAX, ZOOM_MIN } from "./canvasStore";
 
 interface Props {
@@ -24,7 +25,7 @@ export function CanvasHUD({ bbox, viewport, onFit }: Props) {
         disabled={zoom <= ZOOM_MIN + 0.001}
         aria-label="Zoom out"
       >
-        −
+        <Minus size={14} aria-hidden />
       </button>
       <span className="canvas-hud__pct" aria-live="polite">{pct}%</span>
       <button
@@ -34,7 +35,7 @@ export function CanvasHUD({ bbox, viewport, onFit }: Props) {
         disabled={zoom >= ZOOM_MAX - 0.001}
         aria-label="Zoom in"
       >
-        +
+        <Plus size={14} aria-hidden />
       </button>
       <span className="canvas-hud__sep" aria-hidden />
       <button

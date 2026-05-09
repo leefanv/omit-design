@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProjects, useProjectByHref, useProjectGroups } from "../registry";
 
 const STORAGE_KEY = "omit-engine-sidebar";
@@ -84,8 +85,8 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
   if (collapsed) {
     return (
       <aside className="shell-sidebar shell-sidebar--collapsed">
-        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Expand sidebar" data-no-inspect>
-          ›
+        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Expand sidebar" aria-label="Expand sidebar" data-no-inspect>
+          <ChevronRight size={16} aria-hidden />
         </button>
       </aside>
     );
@@ -98,8 +99,8 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
           <span className="shell-sidebar__logo">{project.icon ?? "◆"}</span>
           {project.name}
         </NavLink>
-        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Collapse sidebar">
-          ‹
+        <button className="shell-sidebar__collapse-btn" onClick={onToggleCollapsed} title="Collapse sidebar" aria-label="Collapse sidebar">
+          <ChevronLeft size={16} aria-hidden />
         </button>
       </header>
 
@@ -118,7 +119,12 @@ export function Sidebar({ collapsed, onToggleCollapsed }: SidebarProps) {
                 onClick={() => toggleGroup(g.id)}
                 aria-expanded={isOpen}
               >
-                <span className={`shell-sidebar__caret ${isOpen ? "shell-sidebar__caret--open" : ""}`}>▸</span>
+                <ChevronRight
+                  size={12}
+                  className={`shell-sidebar__caret ${isOpen ? "shell-sidebar__caret--open" : ""}`}
+                  aria-hidden
+                />
+
                 {g.icon && <span className="shell-sidebar__group-icon">{g.icon}</span>}
                 <span className="shell-sidebar__group-label">{g.label}</span>
                 <span className="shell-sidebar__group-count">{g.entries.length}</span>
