@@ -126,19 +126,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--shell-accent-gradient);
-  color: #fff;
-  border-radius: var(--shell-radius-lg);
-  font-size: 14px;
-  transform: rotate(45deg);
+  width: 16px;
+  height: 16px;
+}
+.shell-studio__logo svg {
+  display: block;
 }
 .shell-studio__header h1 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.2px;
+  display: inline-flex;
+  align-items: center;
+}
+.shell-studio__wordmark svg {
+  display: block;
 }
 .shell-studio__tag {
   font-size: 12px;
