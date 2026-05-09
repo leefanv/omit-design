@@ -30,7 +30,7 @@ export default defineCommand({
         const entries = await fs.readdir(targetDir);
         if (entries.length > 0) {
           process.stderr.write(
-            `✗ ${args.name} 已存在且非空。加 --force 覆盖,或换个名字。\n`
+            `✗ ${args.name} exists and is not empty. use --force to overwrite, or pick a different name.\n`
           );
           process.exit(1);
         }
@@ -43,12 +43,12 @@ export default defineCommand({
 
     if (!(await fs.pathExists(templateDir))) {
       process.stderr.write(
-        `✗ 内置脚手架 templates/init 未找到(应位于 ${templateDir})。请检查 @omit-design/cli 安装是否完整。\n`
+        `✗ built-in templates/init directory not found (expected at ${templateDir}). check @omit-design/cli installation.\n`
       );
       process.exit(1);
     }
 
-    process.stdout.write(`→ 创建 ${path.relative(process.cwd(), targetDir)}/ ...\n`);
+    process.stdout.write(`→ creating ${path.relative(process.cwd(), targetDir)}/ ...\n`);
     await fs.copy(templateDir, targetDir, { overwrite: true });
 
     // 渲染 .tmpl 文件:替换占位符 + 重命名
@@ -56,9 +56,9 @@ export default defineCommand({
 
     process.stdout.write(
       [
-        `✓ 已创建 ${args.name}/`,
+        `✓ Created ${args.name}/`,
         ``,
-        `下一步:`,
+        `Next steps:`,
         `  cd ${args.name}`,
         `  npm install`,
         `  npm run dev`,

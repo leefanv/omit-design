@@ -36,7 +36,7 @@ export default defineCommand({
 
     if (!(await fs.pathExists(templatesDir))) {
       process.stderr.write(
-        `✗ 找不到 ${path.relative(cwd, templatesDir)}/。请先 npm install 或在 omit-design 项目根目录运行。\n`
+        `✗ ${path.relative(cwd, templatesDir)}/ not found. run npm install first, or run from an omit-design project root.\n`
       );
       process.exit(1);
     }
@@ -49,7 +49,7 @@ export default defineCommand({
         .sort()
         .join("\n");
       process.stderr.write(
-        `✗ 未知 pattern: ${args.pattern}\n\n可用 pattern:\n${available}\n`
+        `✗ unknown pattern: ${args.pattern}\n\navailable patterns:\n${available}\n`
       );
       process.exit(1);
     }
@@ -59,7 +59,7 @@ export default defineCommand({
 
     if ((await fs.pathExists(targetPath)) && !args.force) {
       process.stderr.write(
-        `✗ ${targetRel} 已存在。加 --force 覆盖,或换个路径。\n`
+        `✗ ${targetRel} already exists. use --force to overwrite, or pick a different path.\n`
       );
       process.exit(1);
     }
@@ -69,18 +69,18 @@ export default defineCommand({
 
     if (!targetRel.startsWith("design/") && !targetRel.startsWith("design\\")) {
       process.stdout.write(
-        `⚠ ${targetRel} 不在 design/ 下,dev server 不会自动发现该稿。\n`
+        `⚠ warning: path is not under design/ — dev server will not auto-discover ${targetRel}.\n`
       );
     }
 
     process.stdout.write(
       [
-        `✓ 已创建 ${targetRel}(pattern: ${args.pattern})`,
+        `✓ Created ${targetRel} (pattern: ${args.pattern})`,
         ``,
-        `下一步:`,
-        `  1. 改 meta.name / description`,
-        `  2. 替换 TODO 占位(导入数据 / 调整文案 / 修 IonBackButton.defaultHref)`,
-        `  3. 启动 dev server: npm run dev`,
+        `Next steps:`,
+        `  1. update meta.name / description`,
+        `  2. replace TODO placeholders (wire up data / refine copy / fix IonBackButton.defaultHref)`,
+        `  3. start dev server: npm run dev`,
         ``,
       ].join("\n")
     );

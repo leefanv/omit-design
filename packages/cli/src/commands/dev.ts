@@ -30,7 +30,7 @@ export default defineCommand({
 
     child.on("close", (code) => process.exit(code ?? 0));
     child.on("error", (err) => {
-      process.stderr.write(`✗ vite 启动失败:${err.message}\n`);
+      process.stderr.write(`✗ failed to start vite: ${err.message}\n`);
       process.exit(1);
     });
   },

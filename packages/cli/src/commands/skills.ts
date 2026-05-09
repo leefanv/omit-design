@@ -35,7 +35,7 @@ const update = defineCommand({
 
     if (!(await fs.pathExists(sourceDir))) {
       process.stderr.write(
-        `✗ 内置 skills 目录未找到(应位于 ${sourceDir})。请检查 @omit-design/cli 安装是否完整。\n`
+        `✗ built-in skills directory not found (expected at ${sourceDir}). check @omit-design/cli installation.\n`
       );
       process.exit(1);
     }
@@ -60,21 +60,21 @@ const update = defineCommand({
     const same = plan.filter((p) => p.status === "same");
 
     const targetRel = path.relative(process.cwd(), targetDir) || ".claude/skills";
-    process.stdout.write(`目标:${targetRel}\n`);
+    process.stdout.write(`target: ${targetRel}\n`);
     process.stdout.write(
-      `计划:+${added.length} 新增 · ~${updated.length} 更新 · =${same.length} 一致\n\n`
+      `plan: +${added.length} added · ~${updated.length} updated · =${same.length} unchanged\n\n`
     );
 
     for (const p of added) process.stdout.write(`  + ${p.rel}\n`);
     for (const p of updated) process.stdout.write(`  ~ ${p.rel}\n`);
 
     if (added.length === 0 && updated.length === 0) {
-      process.stdout.write(`\n✓ 已是最新版本。\n`);
+      process.stdout.write(`\n✓ already up to date\n`);
       return;
     }
 
     if (args["dry-run"]) {
-      process.stdout.write(`\n(--dry-run)未写入。去掉 --dry-run 即可应用。\n`);
+      process.stdout.write(`\n(--dry-run) not written. remove --dry-run to apply.\n`);
       return;
     }
 
@@ -86,7 +86,7 @@ const update = defineCommand({
     }
 
     process.stdout.write(
-      `\n✓ skills 已同步(${added.length + updated.length} 个文件)。\n`
+      `\n✓ sync complete (${added.length + updated.length} file(s))\n`
     );
   },
 });

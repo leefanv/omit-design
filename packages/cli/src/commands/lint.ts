@@ -10,11 +10,11 @@ const SEVERITY: Record<string, string> = {
 
 const HINT: Record<string, string> = {
   "omit-design/require-pattern-header":
-    "第一行加 `// @pattern: <name>`(name 须存在于 @omit-design/preset-mobile/PATTERNS.md)",
+    "add `// @pattern: <name>` on the first line (name must exist in @omit-design/preset-mobile/PATTERNS.md)",
   "omit-design/whitelist-ds-import":
-    "改用 @omit-design/preset-mobile / 白名单 Ionic 容器(IonList / IonBackButton / IonIcon)",
+    "use @omit-design/preset-mobile / whitelisted Ionic containers (IonList / IonBackButton / IonIcon)",
   "omit-design/no-design-literal":
-    "走 token:var(--om-*) / var(--ion-*),或通过 Om* 组件 props",
+    "use tokens: var(--om-*) / var(--ion-*), or pass Om* component props",
 };
 
 interface ESLintMessage {
@@ -61,7 +61,7 @@ export default defineCommand({
     try {
       results = JSON.parse(child.stdout) as ESLintResult[];
     } catch {
-      process.stderr.write(child.stderr || "ESLint 输出解析失败\n");
+      process.stderr.write(child.stderr || "failed to parse ESLint output\n");
       process.stderr.write(child.stdout || "");
       process.exit(2);
       return;
@@ -96,11 +96,11 @@ function renderMarkdown(results: ESLintResult[], cwd: string): void {
   const okFiles = totalFiles - filesWithIssues.length;
 
   if (filesWithIssues.length === 0) {
-    process.stdout.write(`✓ 合规检查通过(${totalFiles} 个文件,0 违规)\n`);
+    process.stdout.write(`✓ compliance check passed (${totalFiles} files, 0 violations)\n`);
     return;
   }
 
-  process.stdout.write(`# omit-design 合规检查\n\n`);
+  process.stdout.write(`# omit-design compliance check\n\n`);
 
   const tally = { red: 0, yellow: 0, green: 0 };
 
@@ -130,8 +130,8 @@ function renderMarkdown(results: ESLintResult[], cwd: string): void {
   }
 
   process.stdout.write(`---\n\n`);
-  process.stdout.write(`**合规**: ${okFiles}/${totalFiles} 文件\n`);
+  process.stdout.write(`**Compliant**: ${okFiles}/${totalFiles} files\n`);
   process.stdout.write(
-    `**违规**: 🔴 ${tally.red} · 🟡 ${tally.yellow} · 🟢 ${tally.green}\n`
+    `**Violations**: 🔴 ${tally.red} · 🟡 ${tally.yellow} · 🟢 ${tally.green}\n`
   );
 }

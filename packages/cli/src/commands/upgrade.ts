@@ -31,27 +31,27 @@ type Pm = "bun" | "pnpm" | "yarn" | "npm";
 export default defineCommand({
   meta: {
     name: "upgrade",
-    description: "把项目里 @omit-design/* 依赖升级到 npm 最新版（含 CHANGELOG 提示）。",
+    description: "Upgrade @omit-design/* deps to the latest npm versions (with CHANGELOG hints).",
   },
   args: {
     "dry-run": {
       type: "boolean",
-      description: "只打印计划，不改 package.json、不装包。",
+      description: "Print the plan only; don't modify package.json or install.",
       default: false,
     },
     check: {
       type: "boolean",
-      description: "只检查是否有可升级的版本，有则 exit 1（CI 友好）。",
+      description: "Only check for upgradable versions; exit 1 if any (CI-friendly).",
       default: false,
     },
     install: {
       type: "boolean",
-      description: "升级后自动跑 install（用 --no-install 跳过）。",
+      description: "Run install automatically after upgrade (use --no-install to skip).",
       default: true,
     },
     migrate: {
       type: "boolean",
-      description: "扫描项目代码里残留的旧类名 / API（用 --no-migrate 跳过）。",
+      description: "Scan project code for legacy class / API references (use --no-migrate to skip).",
       default: true,
     },
   },
@@ -59,7 +59,7 @@ export default defineCommand({
     const cwd = process.cwd();
     const pkgPath = path.join(cwd, "package.json");
     if (!(await fs.pathExists(pkgPath))) {
-      process.stderr.write(`✗ 当前目录没有 package.json: ${cwd}\n`);
+      process.stderr.write(`✗ No package.json in current directory: ${cwd}\n`);
       process.exit(1);
     }
     const pkg = await fs.readJson(pkgPath);
@@ -74,12 +74,12 @@ export default defineCommand({
     }
     if (targets.length === 0) {
       process.stdout.write(
-        "✓ 当前 package.json 没有 @omit-design/* 依赖，无需升级。\n"
+        "✓ No @omit-design/* deps in current package.json — nothing to upgrade\n"
       );
       return;
     }
 
-    process.stdout.write(`发现 ${targets.length} 个 @omit-design/* 依赖，查询最新版本…\n`);
+    process.stdout.write(`Found ${targets.length} @omit-design/* dependencies, querying latest versions…\n`);
 
     const results = await Promise.all(
       targets.map(async (t) => ({ ...t, latest: await fetchLatest(t.name) }))
@@ -102,9 +102,9 @@ export default defineCommand({
     for (const p of plan) {
       const line = padRight(p.name, colW);
       if (!p.latest) {
-        process.stdout.write(`  ? ${line}  ${p.current} → (查询失败)\n`);
+        process.stdout.write(`  ? ${line}  ${p.current} → (query failed)\n`);
       } else if (stripCaret(p.current) === p.latest) {
-        process.stdout.write(`  = ${line}  ${p.current} (已是最新)\n`);
+        process.stdout.write(`  = ${line}  ${p.current} (up to date)\n`);
       } else {
         process.stdout.write(`  ↑ ${line}  ${p.current} → ${p.nextRange}\n`);
       }
@@ -113,24 +113,24 @@ export default defineCommand({
 
     if (failed.length > 0) {
       process.stderr.write(
-        `⚠ ${failed.length} 个包查询失败，跳过升级。检查网络或 npm 注册表。\n`
+        `⚠ ${failed.length} package(s) query failed, skipping upgrade. Check network or npm registry.\n`
       );
     }
 
     if (upgradable.length === 0) {
-      process.stdout.write(`✓ 所有 @omit-design/* 已是最新（${fresh.length} 个）。\n`);
+      process.stdout.write(`✓ All @omit-design/* deps are up to date (${fresh.length}).\n`);
       return;
     }
 
     if (args.check) {
       process.stdout.write(
-        `有 ${upgradable.length} 个包可以升级。运行 \`omit-design upgrade\` 应用。\n`
+        `${upgradable.length} package(s) can be upgraded. Run \`omit-design upgrade\` to apply.\n`
       );
       process.exit(1);
     }
 
     if (args["dry-run"]) {
-      process.stdout.write(`(--dry-run) 未写入。去掉 --dry-run 即可应用。\n`);
+      process.stdout.write(`(--dry-run) not written. remove --dry-run to apply.\n`);
       return;
     }
 
@@ -143,25 +143,25 @@ export default defineCommand({
     const buf = await fs.readFile(pkgPath, "utf8");
     if (!buf.endsWith("\n")) await fs.writeFile(pkgPath, buf + "\n");
 
-    process.stdout.write(`✓ 已更新 package.json（${upgradable.length} 个范围）。\n`);
+    process.stdout.write(`✓ Updated package.json (${upgradable.length} range(s)).\n`);
 
     if (!args.install) {
-      process.stdout.write(`(--no-install) 跳过依赖安装。手动跑 install 完成升级。\n`);
+      process.stdout.write(`(--no-install) skipped install. run install yourself to finish upgrade.\n`);
       // 仍然执行迁移扫描
       if (args.migrate) await scanLegacyUsage(cwd);
       return;
     }
 
     const pm = await detectPm(cwd);
-    process.stdout.write(`检测到包管理器: ${pm} → 安装中…\n\n`);
+    process.stdout.write(`Detected package manager: ${pm} → installing…\n\n`);
 
     const code = await runInstall(pm, cwd);
     if (code !== 0) {
-      process.stderr.write(`\n✗ install 退出码 ${code}。可能需要手动处理冲突。\n`);
+      process.stderr.write(`\n✗ install exit code ${code}. may need manual conflict resolution.\n`);
       process.exit(code);
     }
 
-    process.stdout.write(`\n✓ 升级完成。\n`);
+    process.stdout.write(`\n✓ Upgrade complete.\n`);
 
     // 扫项目里残留的旧 class / API
     if (args.migrate) {
@@ -172,7 +172,7 @@ export default defineCommand({
     const engineUpgraded = upgradable.find((p) => p.name === "@omit-design/engine");
     if (engineUpgraded) {
       process.stdout.write(
-        `\n📖 engine 升级到 ${engineUpgraded.nextRange}，CHANGELOG:\n` +
+        `\n📖 engine upgraded to ${engineUpgraded.nextRange}, CHANGELOG:\n` +
           `   https://github.com/leefanv/omit-design/blob/main/CHANGELOG.md\n`
       );
     }
@@ -195,24 +195,24 @@ interface LegacyEntry {
 const LEGACY_TOKENS: LegacyEntry[] = [
   // 0.2.0 — RightPanel 三 Tab 删除
   { token: "shell-right-panel__tabs", removedIn: "engine 0.2.0", replacement: ".shell-right-panel__head" },
-  { token: "shell-right-panel__tab", removedIn: "engine 0.2.0", replacement: "（已删除，标题改为单标题）" },
-  { token: "shell-right-panel__tab-icon", removedIn: "engine 0.2.0", replacement: "（已删除）" },
-  { token: "shell-right-panel__tab-label", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  { token: "shell-right-panel__tab", removedIn: "engine 0.2.0", replacement: "(removed; collapsed into a single header)" },
+  { token: "shell-right-panel__tab-icon", removedIn: "engine 0.2.0", replacement: "(removed)" },
+  { token: "shell-right-panel__tab-label", removedIn: "engine 0.2.0", replacement: "(removed)" },
   // 0.2.0 — DesignFrame 设备外壳删除
   { token: "shell-device-screen", removedIn: "engine 0.2.0", replacement: ".shell-design-frame" },
   { token: "shell-device-notch", removedIn: "engine 0.2.0", replacement: null },
   { token: "shell-device-statusbar", removedIn: "engine 0.2.0", replacement: null },
-  { token: "shell-device-content", removedIn: "engine 0.2.0", replacement: ".canvas-page-frame 或 .shell-design-frame" },
+  { token: "shell-device-content", removedIn: "engine 0.2.0", replacement: ".canvas-page-frame or .shell-design-frame" },
   { token: "DeviceStatusBar", removedIn: "engine 0.2.0", replacement: null },
   // 0.2.0 — ProjectDetail 老布局删除
   { token: "shell-studio__layout", removedIn: "engine 0.2.0", replacement: ".canvas-root" },
   { token: "shell-studio__toc", removedIn: "engine 0.2.0", replacement: ".canvas-picker" },
   { token: "shell-studio__main", removedIn: "engine 0.2.0", replacement: ".canvas-viewport" },
   { token: "shell-studio__group", removedIn: "engine 0.2.0", replacement: ".canvas-picker__group" },
-  { token: "shell-studio__grid", removedIn: "engine 0.2.0", replacement: "（已删除，改为单页画布）" },
-  { token: "shell-studio__card", removedIn: "engine 0.2.0", replacement: "（已删除）" },
-  { token: "shell-studio__thumb", removedIn: "engine 0.2.0", replacement: "（已删除）" },
-  { token: "shell-studio__meta", removedIn: "engine 0.2.0", replacement: "（已删除）" },
+  { token: "shell-studio__grid", removedIn: "engine 0.2.0", replacement: "(removed; switched to single-page canvas)" },
+  { token: "shell-studio__card", removedIn: "engine 0.2.0", replacement: "(removed)" },
+  { token: "shell-studio__thumb", removedIn: "engine 0.2.0", replacement: "(removed)" },
+  { token: "shell-studio__meta", removedIn: "engine 0.2.0", replacement: "(removed)" },
 ];
 
 const SCAN_EXTS = new Set([
@@ -255,11 +255,11 @@ interface Hit {
 }
 
 async function scanLegacyUsage(root: string): Promise<void> {
-  process.stdout.write(`\n扫描项目代码里残留的旧类名 / API…\n`);
+  process.stdout.write(`\nScanning project for legacy class / API references…\n`);
   const files: string[] = [];
   await walk(root, files);
   if (files.length === 0) {
-    process.stdout.write(`  （未发现可扫描的源文件）\n`);
+    process.stdout.write(`  (no scannable source files found)\n`);
     return;
   }
 
@@ -296,7 +296,7 @@ async function scanLegacyUsage(root: string): Promise<void> {
   }
 
   if (hits.length === 0) {
-    process.stdout.write(`  ✓ 无残留。扫描了 ${files.length} 个文件。\n`);
+    process.stdout.write(`  ✓ No legacy refs found. scanned ${files.length} files.\n`);
     return;
   }
 
@@ -313,12 +313,12 @@ async function scanLegacyUsage(root: string): Promise<void> {
   const tokenInfo = new Map(LEGACY_TOKENS.map((t) => [t.token, t]));
 
   process.stdout.write(
-    `  ⚠ 发现 ${hits.length} 处可能需迁移的引用（${byToken.size} 个 token）：\n\n`
+    `  ⚠ Found ${hits.length} references that may need migration (${byToken.size} token(s)):\n\n`
   );
   for (const [token, list] of byToken) {
     const info = tokenInfo.get(token);
     const replacement =
-      info?.replacement ?? "（已彻底移除）";
+      info?.replacement ?? "(fully removed)";
     process.stdout.write(
       `  ${token}  →  ${replacement}  [${info?.removedIn ?? "?"}]\n`
     );
@@ -326,11 +326,11 @@ async function scanLegacyUsage(root: string): Promise<void> {
       process.stdout.write(`    ${h.file}:${h.line}  ${h.excerpt}\n`);
     }
     if (list.length > 5) {
-      process.stdout.write(`    …还有 ${list.length - 5} 处\n`);
+      process.stdout.write(`    …${list.length - 5} more\n`);
     }
   }
   process.stdout.write(
-    `\n  迁移完成后再次运行 \`omit-design upgrade --no-install\` 验证。\n`
+    `\n  After migrating, re-run \`omit-design upgrade --no-install\` to verify.\n`
   );
 }
 
@@ -403,7 +403,7 @@ function runInstall(pm: Pm, cwd: string): Promise<number> {
     const child = spawn(cmd, args, { cwd, stdio: "inherit", env: process.env });
     child.on("close", (code) => resolve(code ?? 0));
     child.on("error", (err) => {
-      process.stderr.write(`✗ 启动 ${cmd} 失败: ${err.message}\n`);
+      process.stderr.write(`✗ failed to start ${cmd}: ${err.message}\n`);
       resolve(1);
     });
   });

@@ -5,6 +5,13 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7-cli] - 2026-05-09
+
+CLI patch. Translates remaining Chinese strings in `omit-design upgrade` /
+`init` / `dev` / `lint` / `new-page` / `skills` runtime output and
+`--help` text. Comments inside CLI source remain Chinese (engineering
+language). Bumps cli to 0.1.7.
+
 ## [i18n English-default] - 2026-05-08
 
 All UI strings, error messages, and Claude Code skills translated to
