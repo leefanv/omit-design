@@ -33,7 +33,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173/`. Your single starter design lives at `design/welcome.tsx`. Add new pages in `design/<group>/<name>.tsx` — they're auto-discovered as `/designs/<group>/<name>`.
+Open `http://localhost:5173/` — the workspace lands on `/workspace` with your project. `design/` and `patterns/` start empty; you create both in Claude Code (see below).
 
 ## Five-minute tour
 
@@ -41,19 +41,27 @@ Open `http://localhost:5173/`. Your single starter design lives at `design/welco
 # 1. New project
 npx @omit-design/cli init cafe-pos
 cd cafe-pos && npm install
+npm run dev   # http://localhost:5173/
 
-# 2. Scaffold a page from a pattern template
-npx omit-design new-page list-view design/orders/list
+# 2. In the workspace (Library → PRDs → + New), write a PRD.
+#    Then click "Distill patterns from this PRD" and paste into Claude Code:
+#    /distill-patterns-from-prd reviews the PRD, creates matching pattern
+#    files under patterns/<id>/. You approve them.
 
-# 3. Run the design server (Vite under the hood)
-npm run dev    # http://localhost:5173/
+# 3. From the same PRD, click "Copy Claude prompt" and paste into Claude Code:
+#    /new-design copies the chosen pattern's template into design/<group>/<name>.tsx
+#    and fills the placeholders.
 
-# 4. Run the four hard rules (also runs on every git commit via husky)
-npm run lint   # blocks design literals, non-whitelist imports, missing @pattern headers
+# 4. The four hard rules run on every git commit via husky:
+npm run lint   # blocks design literals, non-whitelist imports, missing @pattern
+               # headers, files that declare a pattern but don't import any of
+               # its signature components
 
-# 5. When new omit-design versions ship, one-shot upgrade
+# 5. When new omit-design versions ship:
 npx omit-design upgrade   # bumps deps + scans your project for removed-class refs
 ```
+
+No PRD yet? Just ask Claude to make a page — `/new-design` calls `/add-pattern` in conversational mode (5 short questions) and produces a minimal pattern first.
 
 ## Architecture
 

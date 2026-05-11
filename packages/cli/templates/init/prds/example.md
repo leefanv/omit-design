@@ -1,14 +1,22 @@
 ---
 title: Example PRD
-pattern: list-view
-target: design/main/welcome.tsx
+pattern:
+target: design/<group>/<name>.tsx
 status: draft
 ---
 
 # Example PRD
 
-This is a placeholder PRD. Edit it from the workspace's **Library → PRDs** tab,
-then click "Copy Claude prompt" and paste into Claude Code to scaffold a design.
+This is a placeholder PRD. Edit it from the workspace's **Library → PRDs** tab.
+Two hand-off buttons there:
+
+- **Distill patterns from this PRD** — runs `/distill-patterns-from-prd` to
+  create matching pattern definitions under `patterns/`. Run this first.
+- **Copy Claude prompt** — wraps the PRD in a `/new-design` invocation to
+  scaffold the actual design page from an existing pattern.
+
+Both buttons just put a prompt on your clipboard — you paste it into Claude
+Code yourself.
 
 ## Goal
 

@@ -5,6 +5,34 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [cli 0.4.1] - 2026-05-11 — Quick-start fixes
+
+### Fixed
+- **Scaffold no longer ships a `design/welcome.tsx`** that referenced the
+  removed `welcome-view` pattern. Fresh projects start with truly empty
+  `design/` and `mock/` (only `.gitkeep`). `npm run lint` passes
+  immediately after `init`.
+- **`omit-design lint`** on a project with no `design/**/*.tsx` files now
+  exits 0 with `✓ no design/*.tsx files yet — nothing to lint` instead of
+  the noisy `No files matching the pattern "design/**/*.tsx" were found`
+  error from ESLint.
+- **`omit-design new-page`** now reads `<project>/patterns/<id>/template.tmpl.tsx`
+  (project-local) instead of the removed `@omit-design/preset-mobile/templates/`
+  path. If `patterns/` is empty or the requested pattern is missing, the
+  command exits with a hint pointing at `/distill-patterns-from-prd` or
+  `/add-pattern`.
+- **Scaffold CLAUDE.md / README** no longer reference removed concepts
+  (`PATTERNS.md` in preset-mobile, `patterns.config.json`, the 8 starter
+  list). Default `app/App.tsx` redirect falls back to `/workspace` when
+  `design/` is empty.
+- **Lint `require-pattern-header` HINT** no longer points at the removed
+  `@omit-design/preset-mobile/PATTERNS.md`; now references project-local
+  `patterns/` directory.
+
+### Changed
+- **README Quick start** (root EN + zh-CN) rewritten to reflect the
+  PRD → distill → new-design flow.
+
 ## [0.4.0] - 2026-05-11 — Patterns 平台化
 
 Engine 0.4.0 · CLI 0.4.0 · dev-server 0.2.0 (preset-mobile / eslint-plugin / figma-plugin unchanged).

@@ -33,25 +33,32 @@ npm install
 npm run dev
 ```
 
-打开 `http://localhost:5173/`。脚手架自带 `design/welcome.tsx`。新增页面 = `design/<group>/<name>.tsx`，自动发现，路由自动是 `/designs/<group>/<name>`。
+打开 `http://localhost:5173/`，工作台自动落在 `/workspace`。`design/` 和 `patterns/` 起步都是空的，两者都在 Claude Code 里按需生成（见下）。
 
 ```bash
 # 1. 新建项目
 npx @omit-design/cli init cafe-pos
 cd cafe-pos && npm install
+npm run dev   # http://localhost:5173/
 
-# 2. 用 pattern 模板生成新页面
-npx omit-design new-page list-view design/orders/list
+# 2. 在工作台 Library → PRDs → + New 写一段 PRD
+#    点 "Distill patterns from this PRD" → 复制 prompt → 粘到 Claude Code:
+#    /distill-patterns-from-prd 会读这份 PRD，按需在 patterns/<id>/ 下
+#    创建匹配的 pattern 文件。你审核通过。
 
-# 3. 启动设计 server（底层是 Vite）
-npm run dev    # http://localhost:5173/
+# 3. 同一份 PRD，点 "Copy Claude prompt" → 粘到 Claude Code:
+#    /new-design 把选中的 pattern 模板复制到 design/<group>/<name>.tsx，
+#    填好占位符。
 
-# 4. 跑四条硬规则（git commit 时也会自动跑，挡掉违规提交）
-npm run lint   # 拦字面量 / 非白名单 import / 缺 @pattern 头 / pattern 没用对应签名组件
+# 4. 四条硬规则在 git commit 时由 husky 自动跑：
+npm run lint   # 拦字面量 / 非白名单 import / 缺 @pattern 头 / pattern 没用其
+               # 签名组件
 
 # 5. omit-design 发布新版后，一键升级
 npx omit-design upgrade   # 升 deps + 扫项目里残留的旧类名
 ```
+
+没 PRD？直接让 Claude 做页面 —— `/new-design` 会调起 `/add-pattern` 对话模式（5 个问题）先生成最小 pattern 再继续。
 
 ## 架构总览
 

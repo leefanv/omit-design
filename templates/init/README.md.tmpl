@@ -9,18 +9,28 @@ npm install
 npm run dev          # http://localhost:5173
 ```
 
-打开 `/designs/main/welcome` 看 demo;`/workspace` 看项目目录。
+打开 `/workspace` 看项目工作台。`design/` 起步为空，第一张页面通过下面的方式生成。
 
 ## 三件事
 
 ### 加新页
 
+推荐流程（在 Claude Code 里）：
+
+1. 工作台 **Library → PRDs → + New**，写一段需求描述
+2. 点 **Distill patterns from this PRD** → 复制 prompt → 粘到 Claude Code → 跑 `/distill-patterns-from-prd`，它会在 `patterns/` 下生成 1-N 个匹配的 pattern
+3. 跑 `/new-design <PRD>`，按 pattern 模板复制出 `design/<group>/<name>.tsx`
+
+或不写 PRD，直接对 Claude 说"做一张订单详情页"，`/new-design` 会自动调起 `/add-pattern` 对话模式问 3-5 个问题再产页面。
+
+也可手工：
+
 ```
-design/orders/detail.tsx     # 第一行: // @pattern: detail-view
+design/orders/detail.tsx     # 第一行: // @pattern: <id>
                               # 自动注册路由 /designs/orders/detail
 ```
 
-或跟 Claude 说"加一张订单详情设计稿",会自动从 [PATTERNS.md](./node_modules/@omit-design/preset-mobile/PATTERNS.md) 选 pattern + 复制 template。
+（前提：`patterns/<id>/pattern.json` 存在且 `whitelist` 命中此页面 import。）
 
 ### 加 mock
 
@@ -42,11 +52,12 @@ design/orders/detail.tsx:
 npm run lint
 ```
 
-AI 友好结构化输出(rule / file:line / sample / hint)。三条硬规则:
+AI 友好结构化输出(rule / file:line / sample / hint)。四条硬规则:
 
 1. 文件头 `// @pattern: <name>`
-2. import 来源白名单
-3. 禁止颜色 / px 字面量,走 token
+2. 声明的 pattern 必须真用其签名组件（由 `patterns/<name>/pattern.json` 的 `whitelist` 强制）
+3. import 来源白名单（`@omit-design/preset-mobile` + 少量布局类 Ionic 组件）
+4. 禁止颜色 / px 字面量,走 token
 
 ## 设计哲学
 

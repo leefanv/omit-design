@@ -1,5 +1,6 @@
 import { defineCommand } from "citty";
 import { spawnSync } from "node:child_process";
+import fs from "node:fs/promises";
 import path from "node:path";
 
 const SEVERITY: Record<string, string> = {
@@ -10,12 +11,32 @@ const SEVERITY: Record<string, string> = {
 
 const HINT: Record<string, string> = {
   "omit-design/require-pattern-header":
-    "add `// @pattern: <name>` on the first line (name must exist in @omit-design/preset-mobile/PATTERNS.md)",
+    "add `// @pattern: <name>` on the first line (name must match a directory under <project>/patterns/)",
   "omit-design/whitelist-ds-import":
     "use @omit-design/preset-mobile / whitelisted Ionic containers (IonList / IonBackButton / IonIcon)",
   "omit-design/no-design-literal":
     "use tokens: var(--om-*) / var(--ion-*), or pass Om* component props",
 };
+
+async function hasDesignFiles(cwd: string): Promise<boolean> {
+  const dir = path.join(cwd, "design");
+  try {
+    const stack: string[] = [dir];
+    while (stack.length > 0) {
+      const cur = stack.pop()!;
+      const entries = await fs.readdir(cur, { withFileTypes: true });
+      for (const e of entries) {
+        if (e.name.startsWith(".")) continue;
+        const full = path.join(cur, e.name);
+        if (e.isDirectory()) stack.push(full);
+        else if (e.isFile() && e.name.endsWith(".tsx")) return true;
+      }
+    }
+  } catch {
+    // no design/ at all
+  }
+  return false;
+}
 
 interface ESLintMessage {
   ruleId: string | null;
@@ -67,6 +88,16 @@ export default defineCommand({
     if (usedExplicit && explicitFiles.length === 0) {
       process.stdout.write(
         `✓ no design/*.tsx changes — compliance check skipped\n`
+      );
+      process.exit(0);
+      return;
+    }
+
+    // Fresh project (no design/*.tsx yet) → silent pass instead of failing
+    // with "No files matching ...". Lint has nothing to enforce here.
+    if (!usedExplicit && !(await hasDesignFiles(cwd))) {
+      process.stdout.write(
+        `✓ no design/*.tsx files yet — nothing to lint\n`
       );
       process.exit(0);
       return;

@@ -26,6 +26,8 @@ setupIonicReact({ mode: "ios" });
 function DesignRoutes() {
   const projects = useProjects();
   const allEntries = projects.flatMap((p) => p.entries);
+  // 第一张 design/ 下的页面作为 /designs/ 的默认入口；空项目时把用户送回 /workspace
+  const fallback = allEntries[0]?.href.replace(/^\/designs\//, "") ?? "/workspace";
   return (
     <Routes>
       {allEntries.map((entry) => {
@@ -33,7 +35,7 @@ function DesignRoutes() {
         const relPath = entry.href.replace(/^\/designs\//, "");
         return <Route key={entry.href} path={relPath} element={<Cmp />} />;
       })}
-      <Route path="" element={<Navigate to="main/welcome" replace />} />
+      <Route path="" element={<Navigate to={fallback} replace />} />
     </Routes>
   );
 }
