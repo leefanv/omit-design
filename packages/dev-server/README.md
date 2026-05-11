@@ -52,11 +52,13 @@ All under `/__omit`. JSON in/out.
 | `PUT` | `/patterns/:id` | write all three files |
 | `DELETE` | `/patterns/:id` | rm pattern dir |
 | `GET` | `/preset/components` | list `Om*` exports from preset-mobile (for whitelist chips) |
-| `POST` | `/starters/import` | copy 8 starter patterns from `@omit-design/cli/templates/init/patterns/` into `<project>/patterns/` (skips existing unless `{ overwrite: true }`) |
 | `GET` | `/prds` | list PRDs |
 | `GET` | `/prds/:id` | read `<id>.md` |
 | `PUT` | `/prds/:id` | write `<id>.md` |
 | `DELETE` | `/prds/:id` | rm `<id>.md` |
+| `GET` | `/bootstrap` | read `.omit/bootstrap.json` (visual theme imported via `/bootstrap-from-figma` or palette swatch) |
+| `PUT` | `/bootstrap` | write `.omit/bootstrap.json` |
+| `DELETE` | `/bootstrap` | clear `.omit/bootstrap.json` |
 
 ## Safety
 

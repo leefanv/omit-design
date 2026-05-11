@@ -25,12 +25,6 @@ export default defineCommand({
       description: "Skip auto `git init` (the pre-commit hook needs git).",
       default: false,
     },
-    starters: {
-      type: "boolean",
-      description:
-        "Copy the 8 starter patterns into patterns/. Disable with --no-starters to start with an empty patterns/ — let add-pattern create them on demand.",
-      default: true,
-    },
   },
   async run({ args }) {
     const targetDir = path.resolve(process.cwd(), args.name);
@@ -61,24 +55,10 @@ export default defineCommand({
     }
 
     process.stdout.write(`→ creating ${path.relative(process.cwd(), targetDir)}/ ...\n`);
-    const skipStarters = args.starters === false;
-    await fs.copy(templateDir, targetDir, {
-      overwrite: true,
-      filter: skipStarters
-        ? (src) => {
-            // 跳过 templates/init/patterns/<starter>/ 下的所有文件，但保留 patterns/ 目录
-            const rel = path.relative(templateDir, src);
-            const parts = rel.split(path.sep);
-            return !(parts[0] === "patterns" && parts.length > 1);
-          }
-        : undefined,
-    });
-
-    // --no-starters 模式确保 patterns/ 目录存在（filter 只跳了里面的内容）
-    if (skipStarters) {
-      await fs.ensureDir(path.join(targetDir, "patterns"));
-      await fs.writeFile(path.join(targetDir, "patterns", ".gitkeep"), "");
-    }
+    // patterns/ in the template ships as just `.gitkeep` — projects start with an empty
+    // patterns/ directory. Patterns are produced on demand by /distill-patterns-from-prd
+    // (from a PRD) or /add-pattern (conversational or manual).
+    await fs.copy(templateDir, targetDir, { overwrite: true });
 
     // 渲染 .tmpl 文件:替换占位符 + 重命名
     await renderTemplates(targetDir, { projectName: args.name });
@@ -102,6 +82,15 @@ export default defineCommand({
         `  cd ${args.name}`,
         `  npm install`,
         `  npm run dev`,
+        ``,
+        `Then in Claude Code:`,
+        `  1. Open the workspace → PRDs tab → + New`,
+        `  2. Write your PRD, then click "Distill patterns from this PRD"`,
+        `  3. Paste the prompt into Claude Code — it will create matching patterns`,
+        `  4. Run /new-design to scaffold the page from those patterns`,
+        ``,
+        `No PRD yet? Just say "create a design for X" in Claude Code —`,
+        `/new-design calls /add-pattern in conversational mode first.`,
         ``,
       ]
         .filter((l) => l !== null)

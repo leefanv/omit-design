@@ -15,7 +15,7 @@ Workflow:
    - a single file path → just that file
    - a glob → that glob
 2. Run `omit-design lint --json <scope>` to collect machine-readable violations.
-3. Cross-check the lint output against `node_modules/@omit-design/preset-mobile/patterns.config.json` for any pattern-scoped component issues.
+3. Cross-check the lint output against `<project>/patterns/<id>/pattern.json` for any pattern-scoped component issues.
 4. For accessibility checks (which lint does not cover), inspect the file source for:
    - Missing `OmHeader` or equivalent landmark on top-level pages.
    - `OmButton` text shorter than 2 characters (likely icon-only without aria-label).

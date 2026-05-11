@@ -15,12 +15,9 @@ export function PatternsPanel() {
   const save = useLibraryStore((s) => s.save);
   const remove = useLibraryStore((s) => s.remove);
   const createPattern = useLibraryStore((s) => s.createPattern);
-  const importStarters = useLibraryStore((s) => s.importStarters);
 
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
-  const [importing, setImporting] = useState(false);
-  const [importMsg, setImportMsg] = useState<string | null>(null);
 
   const isPatternSelected = selected?.kind === "pattern" && envelope?.kind === "pattern";
   const detail = isPatternSelected ? (envelope.draft as PatternDetail) : null;
@@ -40,24 +37,6 @@ export function PatternsPanel() {
       ...detail,
       config: { ...detail.config, whitelist: Array.from(set).sort() },
     });
-  };
-
-  const handleImport = async () => {
-    setImporting(true);
-    setImportMsg(null);
-    try {
-      const result = await importStarters(false);
-      const parts = [];
-      if (result.imported.length > 0)
-        parts.push(`Imported ${result.imported.length}: ${result.imported.join(", ")}`);
-      if (result.skipped.length > 0)
-        parts.push(`Skipped (already present): ${result.skipped.join(", ")}`);
-      if (parts.length === 0)
-        parts.push("No starters found at @omit-design/cli/templates/init/patterns/.");
-      setImportMsg(parts.join(" · "));
-    } finally {
-      setImporting(false);
-    }
   };
 
   return (
@@ -105,14 +84,9 @@ export function PatternsPanel() {
         <div className="lib-list__scroll">
           {customs.length === 0 && (
             <div className="lib-empty">
-              <div style={{ marginBottom: 8 }}>No patterns yet.</div>
-              <button
-                className="lib-btn lib-btn--accent"
-                onClick={() => void handleImport()}
-                disabled={importing}
-              >
-                {importing ? "Importing…" : "Import 8 starters"}
-              </button>
+              No patterns yet. Patterns are created on demand — write a PRD in the
+              PRDs tab and click <strong>Distill patterns from this PRD</strong>, or
+              ask Claude to <code>/add-pattern</code> directly.
             </div>
           )}
           {customs.map((p) => (
@@ -135,12 +109,6 @@ export function PatternsPanel() {
       </aside>
 
       <main className="lib-editor">
-        {importMsg && (
-          <div className="lib-toast" onClick={() => setImportMsg(null)}>
-            {importMsg}
-          </div>
-        )}
-
         {!isPatternSelected ? (
           <div className="lib-intro">
             <h2>Patterns</h2>
@@ -151,17 +119,20 @@ export function PatternsPanel() {
               whitelist) and ships a copy-paste <strong>TSX template</strong>.
             </p>
             <p>
-              <strong>Recommended flow</strong>: write a PRD in the PRDs tab and copy the
-              Claude prompt into Claude Code. The <code>new-design</code> skill picks an
-              existing pattern; if nothing fits, it calls <code>add-pattern</code> to
-              create one for you. Patterns end up under <code>patterns/</code> in your
-              project — git-tracked, fully editable here.
+              <strong>Recommended flow</strong>: write a PRD in the PRDs tab and click{" "}
+              <strong>Distill patterns from this PRD</strong>. Claude analyzes the PRD
+              and proposes patterns; you review them here. Then run{" "}
+              <code>new-design</code> to scaffold the actual page. Patterns end up
+              under <code>patterns/</code> in your project — git-tracked, fully
+              editable here.
             </p>
             <p>
-              An empty list? Click <strong>Import 8 starters</strong> on the left to
-              pull in a tested baseline (list-view, detail-view, form-view, sheet-action,
-              dialog-view, welcome-view, dashboard, tab-view), or use{" "}
-              <strong>+ New</strong> to start one from scratch.
+              Empty list? Two paths: <strong>(1)</strong> write a PRD in the PRDs tab,
+              then <strong>Distill patterns from this PRD</strong> lets Claude analyze
+              it and propose patterns; <strong>(2)</strong> click <strong>+ New</strong>{" "}
+              above and fill in the four fields by hand. No PRD yet? Just ask Claude
+              to <code>/add-pattern</code> directly — it'll ask 3-5 questions and
+              produce a minimal pattern.
             </p>
             <p className="lib-intro__muted">
               Lint chain that consumes this: <code>require-pattern-header</code>{" "}
@@ -262,8 +233,8 @@ export function PatternsPanel() {
                   <small>
                     The skeleton <code>new-design</code> copies into{" "}
                     <code>design/</code> when scaffolding a page from this pattern.
-                    Imported starters and AI-created patterns already include working
-                    templates. Most users never need to touch this.
+                    Distilled patterns already include working templates. Most users
+                    never need to touch this.
                   </small>
                 </summary>
                 <CodeEditor

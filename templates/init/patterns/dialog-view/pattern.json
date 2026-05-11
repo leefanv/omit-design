@@ -1,5 +1,0 @@
-{
-  "name": "dialog-view",
-  "whitelist": ["OmDialog"],
-  "description": "A modal dialog state, modeled as its own design page (one URL per state)."
-}

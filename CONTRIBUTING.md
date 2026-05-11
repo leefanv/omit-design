@@ -62,12 +62,15 @@ cd /tmp/test-app && npm install && npm run dev
 4. Update root README if it's a top-level workflow command
 
 ### A pattern
-Use the `add-pattern` skill (or do it manually):
-1. Add a section to `packages/preset-mobile/PATTERNS.md`
-2. Add a copy-paste skeleton at `packages/preset-mobile/templates/<name>.tmpl.tsx`
-3. Add the pattern's signature components to `packages/preset-mobile/patterns.config.json` (read by the `require-pattern-components` ESLint rule)
-4. Bump preset-mobile patch (or minor if rule semantics changed) — see [docs/release.md](./docs/release.md)
-5. Don't apply to business pages until reviewed
+Patterns are **project-local** — they live in your project's `patterns/<id>/`, not in this repo's preset packages. Three creation paths:
+
+- **From a PRD**: workspace **PRDs tab → Distill patterns from this PRD** → paste into Claude Code, which runs `/distill-patterns-from-prd`.
+- **From conversation**: ask Claude to make a page in a project with an empty `patterns/` — `new-design` auto-invokes `/add-pattern` in conversational mode (5 fixed questions → minimal pattern).
+- **Manually**: workspace **Library → Patterns → + New**, fill the four fields.
+
+Each pattern is three files under `<project>/patterns/<id>/`: `pattern.json` (with `whitelist`), `template.tmpl.tsx` (first line `// @pattern: <id>`), `README.md` (when to use). ESLint's `require-pattern-components` rule reads `pattern.json` directly — no central registry.
+
+For changes to the **skills themselves** (e.g. tightening what `/distill-patterns-from-prd` produces), edit `skills/<name>/SKILL.md`; the CLI build syncs to `packages/cli/templates/init/.claude/skills/`.
 
 ### A skill
 Skills live in `skills/<name>/`. Each one ships a `SKILL.md` with frontmatter + optional `references/<topic>.md` for progressive disclosure.

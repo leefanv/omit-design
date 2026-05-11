@@ -1,5 +1,0 @@
-{
-  "name": "tab-view",
-  "whitelist": ["OmTabBar"],
-  "description": "A bottom-tab navigation root: brand header + body + tab bar."
-}

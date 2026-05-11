@@ -16,12 +16,6 @@ export interface PatternSummary {
   source: "custom";
 }
 
-export interface ImportStartersResult {
-  imported: string[];
-  skipped: string[];
-  source: string | null;
-}
-
 export async function listPatterns(root: string): Promise<PatternSummary[]> {
   const dir = path.join(root, "patterns");
   let entries: string[];
@@ -91,65 +85,6 @@ export async function writePattern(
 export async function deletePattern(root: string, id: string): Promise<void> {
   const dir = safeJoin(root, "pattern", id);
   await fs.rm(dir, { recursive: true, force: true });
-}
-
-/**
- * 从 @omit-design/cli 包内置的 starter 复制到项目 patterns/ 下。
- * Source: <root>/node_modules/@omit-design/cli/templates/init/patterns/
- *
- * 已存在的 pattern 默认跳过；overwrite=true 时覆盖。
- */
-export async function importStarters(
-  root: string,
-  opts: { overwrite?: boolean } = {},
-): Promise<ImportStartersResult> {
-  const sourceRoot = path.join(
-    root,
-    "node_modules",
-    "@omit-design",
-    "cli",
-    "templates",
-    "init",
-    "patterns",
-  );
-  let entries: string[];
-  try {
-    const dirents = await fs.readdir(sourceRoot, { withFileTypes: true });
-    entries = dirents.filter((d) => d.isDirectory() && !d.name.startsWith(".")).map((d) => d.name);
-  } catch {
-    return { imported: [], skipped: [], source: null };
-  }
-  const targetRoot = path.join(root, "patterns");
-  await fs.mkdir(targetRoot, { recursive: true });
-
-  const imported: string[] = [];
-  const skipped: string[] = [];
-
-  for (const name of entries) {
-    const targetDir = path.join(targetRoot, name);
-    const srcDir = path.join(sourceRoot, name);
-    if (!opts.overwrite) {
-      try {
-        await fs.access(targetDir);
-        skipped.push(name);
-        continue;
-      } catch {
-        // not present — proceed to copy
-      }
-    }
-    await fs.mkdir(targetDir, { recursive: true });
-    for (const file of ["pattern.json", "template.tmpl.tsx", "README.md"]) {
-      try {
-        const buf = await fs.readFile(path.join(srcDir, file));
-        await fs.writeFile(path.join(targetDir, file), buf);
-      } catch {
-        // 单个文件缺失不阻断别的 pattern
-      }
-    }
-    imported.push(name);
-  }
-
-  return { imported, skipped, source: sourceRoot };
 }
 
 export async function listPresetComponents(root: string): Promise<string[]> {

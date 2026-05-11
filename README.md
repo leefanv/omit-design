@@ -100,7 +100,7 @@ See [docs/architecture.md](./docs/architecture.md) for module-level detail and d
 | [`@omit-design/cli`](./packages/cli/) | [![npm](https://img.shields.io/npm/v/@omit-design/cli?label=)](https://www.npmjs.com/package/@omit-design/cli) | CLI — `init` (with husky + git + agents) / `dev` / `lint` / `new-page` / `skills update` / `upgrade` |
 | [`@omit-design/engine`](./packages/engine/) | [![npm](https://img.shields.io/npm/v/@omit-design/engine?label=)](https://www.npmjs.com/package/@omit-design/engine) | Runtime — registry, discovery, inspect, theme-editor, capture, canvas shell |
 | [`@omit-design/eslint-plugin`](./packages/eslint-plugin/) | [![npm](https://img.shields.io/npm/v/@omit-design/eslint-plugin?label=)](https://www.npmjs.com/package/@omit-design/eslint-plugin) | The four hard rules |
-| [`@omit-design/preset-mobile`](./packages/preset-mobile/) | [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile?label=)](https://www.npmjs.com/package/@omit-design/preset-mobile) | Mobile preset: 21 `Om*` components + tokens + 8 patterns + templates |
+| [`@omit-design/preset-mobile`](./packages/preset-mobile/) | [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile?label=)](https://www.npmjs.com/package/@omit-design/preset-mobile) | Mobile preset: 21 `Om*` components + design tokens |
 | [`@omit-design/figma-plugin`](./packages/figma-plugin/) | [![npm](https://img.shields.io/npm/v/@omit-design/figma-plugin?label=)](https://www.npmjs.com/package/@omit-design/figma-plugin) | Figma plugin — imports captured FigmaNode JSON as editable Frames |
 
 ## The four hard rules
@@ -110,7 +110,7 @@ Enforced by `@omit-design/eslint-plugin` on every file under `design/`:
 1. **No design literals.** Raw colors (`#FF6B00`), pixel sizes (`16px`), or spacing values are forbidden in design files. Use tokens: `var(--om-color-primary)`, `var(--om-spacing-md)`, etc.
 2. **Whitelist imports.** Design files can only import from `@omit-design/preset-mobile` (the `Om*` whitelist) plus a small set of layout-only Ionic components (`IonList` / `IonBackButton` / `IonIcon`). No reaching into framework internals.
 3. **Mandatory pattern header.** Every design file's first comment line must be `// @pattern: <name>` where `<name>` exists in [PATTERNS.md](./packages/preset-mobile/PATTERNS.md). Pattern is the unit of cataloguing — without it, AI agents can't reliably reason about which template to extend.
-4. **Pattern-scoped components.** The declared pattern must actually use at least one of its signature components — `@pattern: list-view` requires `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState`; `@pattern: form-view` requires `OmInput` / `OmSelect` / `OmNumpad`; etc. Mapping lives in [`patterns.config.json`](./packages/preset-mobile/patterns.config.json). Stops AI from declaring `@pattern: list-view` and writing a single `OmCard`.
+4. **Pattern-scoped components.** The declared pattern must actually use at least one of its signature components. Mapping lives in each pattern's `pattern.json` under `<project>/patterns/<id>/` — patterns are project-local and grown on demand by `distill-patterns-from-prd` or `add-pattern`. Stops AI from declaring `@pattern: list-view` and writing a single `OmCard`.
 
 `npm run lint` exits non-zero if any of these is violated. The husky pre-commit hook (auto-installed by `init`) runs the same check on every staged `design/**/*.tsx`, so violations cannot reach the repo silently.
 
@@ -122,8 +122,10 @@ Init ships these into `.claude/skills/` for Claude Code to load automatically:
 |---|---|---|
 | **Entry** | `start` | Open-ended request, fresh init, "what should I do next?" — diagnoses project state and recommends one concrete skill. |
 | **Entry** | `omit-design-cli` | Questions about init / dev / lint / new-page commands. |
-| **Make** | `new-design` | "Make a page for X" / a PRD is provided. |
-| **Make** | `add-pattern` | Existing 8 patterns are not enough. |
+| **Make** | `distill-patterns-from-prd` | Have a PRD and want reusable page patterns extracted from it. Runs before `new-design`. |
+| **Make** | `add-pattern` | No PRD yet — `add-pattern` conversational mode asks 3-5 questions and produces a minimal pattern. Also used to add a pattern manually. |
+| **Make** | `new-design` | "Make a page for X" / a PRD is provided. Auto-calls the above two if `patterns/` is empty. |
+| **Make** | `bootstrap-from-figma` | Have a Figma URL and want the project's visual theme (colors + spacing) seeded. Decoupled from patterns. |
 | **Deliver** | `audit-design` | Batch review across the whole repo. |
 | **Deliver** | `ship-design` | Ship one named page (lint + a11y + capture in one shot). |
 

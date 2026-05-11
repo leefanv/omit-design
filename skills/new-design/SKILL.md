@@ -15,15 +15,16 @@ description: Generate a new design page (under design/) from a PRD. Picks a patt
 <HARD-GATE>
 **Before writing the first line of business code**, confirm two things:
 
-1. **A matching pattern exists in `<project>/patterns/`**.
-   Each subdirectory `<project>/patterns/<name>/` has `pattern.json` (with `whitelist`) and `README.md` (with "when to use"). Read the READMEs to choose.
-   - If `patterns/` is empty → tell the user to run "Import 8 starters" in the workspace's Library → Patterns tab, or run `omit-design init` if this is a fresh project.
-   - If no existing pattern fits → call `add-pattern` (it will create `patterns/<new-name>/{pattern.json, template.tmpl.tsx, README.md}`); only after that file lands do you proceed here.
-   - **Do NOT** pick a pattern on your own initiative without surfacing the choice to the user first.
+1. **Find or create the matching pattern in `<project>/patterns/`**.
+   - **If `patterns/` is empty**:
+     - User provided a PRD → invoke `/distill-patterns-from-prd` first. Resume here only after files land and the user approves.
+     - No PRD → invoke `/add-pattern` in **conversational mode** (it asks 3-5 clarifying questions and produces a minimal pattern). Resume here only after the user approves.
+   - **If `patterns/` is non-empty**:
+     - Read each `<project>/patterns/<id>/README.md` and decide. If nothing fits → invoke `/add-pattern` to create one. Surface the choice to the user before proceeding.
+   - **Never** pick a pattern silently — the chosen pattern name must be confirmed in chat.
 
-2. **All components the PRD needs are exported from `@omit-design/preset-mobile`** (the `Om*` whitelist).
-   If a component is missing → stop and tell the user; either use `add-pattern` to scope around the gap or propose adding the missing `Om*` upstream.
-   **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
+2. **All required components are on the preset Om* whitelist** (exported from `@omit-design/preset-mobile`).
+   If a component is missing → stop. Either re-scope the pattern via `add-pattern`, or propose adding an upstream `Om*` wrapper. **Never** bypass the whitelist by importing visual components directly from `@ionic/react`.
 </HARD-GATE>
 
 ## Execution flow
@@ -53,7 +54,7 @@ When done, tell the user:
 
 - The user didn't specify a pattern, you found nothing fitting in `patterns/`, you wrote the design anyway with a guess header.
 - A component isn't on the whitelist → you imported it directly from `@ionic/react`.
-- `patterns/` was empty and you proceeded without prompting the user to import starters or create a new pattern.
+- `patterns/` was empty and you proceeded without first invoking `/distill-patterns-from-prd` (when PRD exists) or `/add-pattern` in conversational mode (when no PRD).
 - Writing `<div style={{ padding: 16 }}>`.
 - Stuffing mock data into `design/` instead of `mock/`.
 - A template exists in `<project>/patterns/<chosen>/template.tmpl.tsx` but you wrote the skeleton from scratch anyway.

@@ -1,0 +1,205 @@
+/* BootstrapBanner —— Library 页顶部，Figma 引导 + palette 兜底 */
+
+.boot-banner {
+  position: relative;
+  margin: 12px 16px 8px;
+  padding: 14px 16px 16px;
+  background: var(--surface-2, #fafafa);
+  border: 1px solid var(--border, #e2e2e6);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--fg, #1c1c1f);
+}
+
+.boot-banner--collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--fg-muted, #6a6a73);
+}
+
+.boot-banner__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.boot-banner__head strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.boot-banner__meta {
+  color: var(--fg-muted, #6a6a73);
+  font-size: 12px;
+}
+
+.boot-banner__close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--fg-muted, #6a6a73);
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+.boot-banner__close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.boot-banner__row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.boot-banner__url {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--border, #e2e2e6);
+  border-radius: 6px;
+  background: var(--surface, #fff);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.boot-banner__url:focus {
+  border-color: var(--accent, #0d8ce9);
+}
+
+.boot-banner__hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--fg-muted, #6a6a73);
+  line-height: 1.5;
+}
+.boot-banner__hint code {
+  background: var(--surface, #fff);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.boot-banner__divider {
+  margin: 14px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fg-muted, #6a6a73);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.boot-banner__divider::before,
+.boot-banner__divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border, #e2e2e6);
+}
+
+.boot-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.boot-palette {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e2e2e6);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 0.1s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+  font: inherit;
+  color: inherit;
+}
+.boot-palette:hover {
+  border-color: var(--accent, #0d8ce9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.boot-palette__swatches {
+  display: flex;
+  gap: 0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  height: 28px;
+}
+.boot-palette__swatch {
+  flex: 1;
+  display: block;
+}
+
+.boot-palette__name {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+.boot-palette__desc {
+  font-size: 11px;
+  color: var(--fg-muted, #6a6a73);
+  line-height: 1.4;
+}
+
+.boot-banner__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.boot-banner__swatches {
+  display: flex;
+  gap: 4px;
+}
+.boot-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.boot-banner__counts {
+  font-size: 12px;
+  color: var(--fg-muted, #6a6a73);
+}
+
+.boot-banner__notes {
+  font-size: 12px;
+  padding: 8px 10px;
+  background: var(--surface, #fff);
+  border-radius: 6px;
+  border: 1px solid var(--border, #e2e2e6);
+  color: var(--fg-muted, #6a6a73);
+  white-space: pre-wrap;
+}
+
+.boot-banner__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.boot-banner__toast {
+  position: absolute;
+  right: 16px;
+  bottom: -28px;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: var(--fg, #1c1c1f);
+  color: #fff;
+  border-radius: 4px;
+}

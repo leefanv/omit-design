@@ -1,6 +1,6 @@
 # @omit-design/preset-mobile
 
-> [omit-design](https://github.com/leefanv/omit-design) 的默认移动端 preset：`Om*` 组件白名单 + `--om-*` token 体系 + Ionic 8 运行时 + 8 个开箱即用 pattern 与对应模板。
+> [omit-design](https://github.com/leefanv/omit-design) 的默认移动端 preset：`Om*` 组件白名单 + `--om-*` token 体系 + Ionic 8 运行时。
 
 [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile)](https://www.npmjs.com/package/@omit-design/preset-mobile)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
@@ -13,15 +13,16 @@
 
 - **21 个 `Om*` 组件** — `design/**/*.tsx` 的 import 白名单
 - **`--om-*` token 体系**，映射到 Ionic 8 运行时（`--ion-*`）
-- **8 个 pattern** + 对应的 `.tmpl.tsx` 模板（`omit-design new-page` 消费）
-- **`patterns.config.json`** — pattern → 签名组件映射，由 `require-pattern-components` ESLint 规则消费
+- **语义色清单 + 主题 baseline** —— 由工作台 theme-editor 消费
+
+Patterns 是 **项目本地** 资产，落在 `<project>/patterns/`。按需由 `/distill-patterns-from-prd` 或 `/add-pattern` 产生 —— 详见 [PATTERNS.md](./PATTERNS.md)。
 
 ## 四条硬规则（由 [@omit-design/eslint-plugin](../eslint-plugin/) 强制）
 
 1. **Token 优先**：所有颜色、间距、字号、圆角、阴影必须走 token，**禁止字面量**（`#FF6B00`、`12px`、`16px` 等都不允许出现在业务代码里）。
 2. **组件白名单**：业务页面（`design/**`）只能 import `@omit-design/preset-mobile`，**禁止**直接 import `@ionic/react`（例外：`IonList` / `IonBackButton` / `IonIcon`，仅做排版/图标宿主）。
 3. **模式标注**：每个业务页面文件头第一行必须是 `// @pattern: <name>`，`<name>` 必须在 [PATTERNS.md](./PATTERNS.md) 里登记。
-4. **Pattern 签名组件强制**：声明的 pattern 必须真用其签名组件。`@pattern: list-view` 必须 import `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState` 至少一个；`@pattern: form-view` 必须 import `OmInput` / `OmSelect` / `OmNumpad` 至少一个；其它 pattern 同理。映射见 [`patterns.config.json`](./patterns.config.json)。
+4. **Pattern 签名组件强制**：声明的 pattern 必须真用其签名组件。每个 pattern 的白名单来自 `<project>/patterns/<id>/pattern.json` —— patterns 是项目本地资产，不再随 preset 发布。
 
 ## 组件清单（21 个）
 
@@ -42,38 +43,19 @@
 
 完整列表：[components/index.ts](./components/index.ts)。
 
-## Patterns（8 个）
+## Patterns
 
-每个 pattern 自带：
-- [PATTERNS.md](./PATTERNS.md) 里一段文档
-- 一份可复制的 `.tmpl.tsx` 模板
+Patterns 是 **项目本地** 资产 —— 落在 `<project>/patterns/`，不再随 preset-mobile 发布。新项目 `patterns/` 起步为空。
 
-| Pattern | 适用场景 |
+三条创建路径：
+
+| 路径 | 触发方式 |
 |---|---|
-| `dashboard` | 统计卡 + 入口磁贴（咖啡店 POS 首页、admin 总览） |
-| `list-view` | 带筛选 / 搜索的纵向列表 |
-| `detail-view` | 单条记录详情（订单、商品、会员） |
-| `form-view` | 输入密集的编辑 / 创建表单 |
-| `dialog-view` | 标题 + 内容 + 操作按钮的模态 |
-| `sheet-action` | 底部弹起的快捷操作 |
-| `tab-view` | 顶部分段切换 |
-| `welcome-view` | 首启 / 引导页 |
+| **`/distill-patterns-from-prd`** | 有 PRD。skill 先扫现有 patterns 看能否复用，再为缺口写新 pattern。用工作台 PRDs tab 的 **Distill patterns from this PRD** 按钮 |
+| **`/add-pattern`** 对话模式 | 无 PRD。`new-design` 在 `patterns/` 为空时自动调起：5 个固定问题 → 一个最小 pattern |
+| 手工 | 工作台 **Library → Patterns → + New**，自己填 4 个字段 |
 
-从 pattern 生成新页面：
-
-```bash
-npx omit-design new-page list-view design/orders/list
-# → design/orders/list.tsx 已含 list-view 骨架
-```
-
-### 加 / 改 pattern
-
-用 `add-pattern` skill（或手工）新增 pattern 时，要同步三处：
-1. [`PATTERNS.md`](./PATTERNS.md) — pattern 意图和骨架的人类文档
-2. [`templates/<name>.tmpl.tsx`](./templates/) — 可复制骨架，`omit-design new-page` 消费
-3. [`patterns.config.json`](./patterns.config.json) — pattern 必须的签名组件清单（被 `require-pattern-components` ESLint 规则读）
-
-签名组件是"没有就不算这个 pattern"的最小集 — `list-view` 是"任一列表行 / 空态组件"；`form-view` 是"任一输入组件"。是 anyOf 关系，import 一个就过。
+文件结构与编辑语义见 [PATTERNS.md](./PATTERNS.md)。
 
 ## Token 命名
 

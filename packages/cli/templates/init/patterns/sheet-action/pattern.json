@@ -1,5 +1,0 @@
-{
-  "name": "sheet-action",
-  "whitelist": ["OmSheet"],
-  "description": "Bottom-sheet action menu or detail drawer. Each sheet state is its own design page."
-}

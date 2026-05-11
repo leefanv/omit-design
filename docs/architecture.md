@@ -15,8 +15,8 @@ How omit-design's pieces fit together. For new contributors and people writing c
        ┌─────────────────────────┐     ┌─────────────────────────────┐
        │ @omit-design/           │     │ @omit-design/               │
        │   eslint-plugin         │◄────│   preset-mobile             │
-       │   (4 hard rules)        │     │   (Om* + tokens + patterns  │
-       │                         │     │    + patterns.config.json)  │
+       │   (4 hard rules)        │     │   (Om* components + tokens) │
+       │                         │     │                             │
        └─────────────────────────┘     └────────────┬────────────────┘
                                                     │ peerDependency (type-only)
                                                     ▼
@@ -40,15 +40,17 @@ How omit-design's pieces fit together. For new contributors and people writing c
                                         └─────────────────────────┘
 ```
 
-There are no runtime cycles. The only inter-package dependency at runtime is the type-only one from `preset-mobile` to `engine` (catalog and preset manifest types). `eslint-plugin` reads `preset-mobile/patterns.config.json` at lint-time (file path lookup, not module import), so when adding a rule that depends on it, **publish preset-mobile first**.
+There are no runtime cycles. The only inter-package dependency at runtime is the type-only one from `preset-mobile` to `engine` (catalog and preset manifest types).
+
+Patterns are **project-local** — they live in the consuming project's `patterns/<id>/`, not in any package. `eslint-plugin`'s `require-pattern-components` rule reads `<cwd>/patterns/<id>/pattern.json` at lint-time, so projects can ship arbitrary pattern catalogs without bumping any `@omit-design/*` package.
 
 ## Four-layer AI constraint
 
 | Layer | What it constrains | How |
 |---|---|---|
 | **Skills** | Process / decisions | Natural-language `<HARD-GATE>` markers + references for progressive disclosure. Catalog organized into entry / make / deliver phases. Loaded by Claude Code automatically when triggers match. |
-| **ESLint** | Code shape | Four deterministic rules: no design literals, whitelist imports, mandatory pattern header, pattern-scoped component requirements (declared `@pattern: X` must import one of X's signature components per `preset-mobile/patterns.config.json`). `npm run lint` fails CI when violated, and the husky pre-commit hook runs the same check on every staged file. |
-| **Templates** | Starting structure | Per-pattern `.tmpl.tsx` skeletons. Agent copies a template and replaces placeholders rather than inventing structure. |
+| **ESLint** | Code shape | Four deterministic rules: no design literals, whitelist imports, mandatory pattern header, pattern-scoped component requirements (declared `@pattern: X` must import one of X's signature components per `<project>/patterns/X/pattern.json`'s `whitelist`). `npm run lint` fails CI when violated, and the husky pre-commit hook runs the same check on every staged file. |
+| **Templates** | Starting structure | Per-pattern `template.tmpl.tsx` skeletons under `<project>/patterns/<id>/`. `new-design` copies the template and replaces placeholders rather than inventing structure. |
 | **Sub-agents** (optional) | Context isolation | `.claude/agents/pattern-applier.md` (Sonnet) and `audit-reviewer.md` (Haiku) run heavy work — template-application and full-repo lint+a11y scan respectively — in their own context. Main conversation stays focused on user dialogue. Skills detect their presence and delegate; if absent, the skills do the work inline. |
 
 Together these turn AI design output from "please don't break the conventions" into a deterministic gate.
@@ -166,7 +168,7 @@ So the published CLI tarball always carries the latest skills + agents.
 
 - **engine + preset-mobile** lockstep on minor (when one changes class names or peer constraints, the other follows).
 - **cli** versions independently; bumps when its own source or its bundled templates change.
-- **eslint-plugin** versions independently; bumps when rule semantics change. **When a new rule reads from `preset-mobile` (e.g. `require-pattern-components` reads `patterns.config.json`), bump preset-mobile too and publish it FIRST** — otherwise users picking up the new rule will hit "config missing" errors against the old preset-mobile tarball.
+- **eslint-plugin** versions independently; bumps when rule semantics change. `require-pattern-components` reads `<cwd>/patterns/<id>/pattern.json` at lint-time, so rule changes don't require a `preset-mobile` bump.
 - **figma-plugin** versions independently; bumps when plugin code changes.
 
 Pre-1.0: minor bumps may include breaking changes; patch bumps don't. Once we hit 1.0, full SemVer.

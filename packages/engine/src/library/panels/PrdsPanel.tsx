@@ -19,6 +19,7 @@ export function PrdsPanel() {
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
   const [copied, setCopied] = useState(false);
+  const [distillCopied, setDistillCopied] = useState(false);
 
   const isPrdSelected = selected?.kind === "prd" && envelope?.kind === "prd";
   const draftValue = isPrdSelected ? (envelope.draft as string) : "";
@@ -45,6 +46,27 @@ export function PrdsPanel() {
       await navigator.clipboard.writeText(prompt);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.alert("Clipboard write blocked. Copy manually:\n\n" + prompt);
+    }
+  };
+
+  const copyDistillPrompt = async () => {
+    if (!isPrdSelected || !summary) return;
+    const body = stripFrontmatter(envelope.draft as string);
+    const prompt = [
+      `请用 distill-patterns-from-prd skill 处理这个 PRD，从中蒸馏出 reusable 的页面 pattern（不要直接生成页面）：`,
+      `PRD 来源：${summary.id}`,
+      summary.target ? `目标页面（如有）：${summary.target}` : "",
+      `────────`,
+      body.trim(),
+    ]
+      .filter(Boolean)
+      .join("\n");
+    try {
+      await navigator.clipboard.writeText(prompt);
+      setDistillCopied(true);
+      setTimeout(() => setDistillCopied(false), 2000);
     } catch {
       window.alert("Clipboard write blocked. Copy manually:\n\n" + prompt);
     }
@@ -123,14 +145,24 @@ export function PrdsPanel() {
               <code>status</code>.
             </p>
             <p>
-              When you're ready to scaffold the design, hit{" "}
-              <strong>Copy Claude prompt</strong> — it builds the message that wraps
-              your PRD in a <code>new-design</code> invocation, ready to paste into
-              Claude Code.
+              Two hand-off buttons on a selected PRD:
             </p>
+            <ul>
+              <li>
+                <strong>Distill patterns from this PRD</strong> — Claude analyzes the
+                PRD and produces project-local patterns under{" "}
+                <code>patterns/</code> (or reuses existing ones). Run this first when
+                your <code>patterns/</code> is empty.
+              </li>
+              <li>
+                <strong>Copy Claude prompt</strong> — wraps the PRD in a{" "}
+                <code>new-design</code> invocation to scaffold the actual page from
+                an existing pattern.
+              </li>
+            </ul>
             <p className="lib-intro__muted">
-              PRDs are not auto-executed. The clipboard hand-off is intentional —
-              you stay in control of when (and which) Claude session picks them up.
+              PRDs are not auto-executed. Both buttons just put a prompt on your
+              clipboard — you stay in control of which Claude session picks them up.
             </p>
           </div>
         ) : (
@@ -147,6 +179,22 @@ export function PrdsPanel() {
                   disabled={!dirty}
                 >
                   Save
+                </button>
+                <button
+                  className="lib-btn lib-btn--ghost"
+                  onClick={() => void copyDistillPrompt()}
+                  disabled={dirty}
+                  title={
+                    dirty
+                      ? "Save first"
+                      : "Distill reusable patterns from this PRD (paste into Claude Code)"
+                  }
+                >
+                  {distillCopied ? (
+                    <><Check size={14} aria-hidden /> Copied</>
+                  ) : (
+                    "Distill patterns from this PRD"
+                  )}
                 </button>
                 <button
                   className="lib-btn lib-btn--accent"

@@ -62,12 +62,15 @@ cd /tmp/test-app && npm install && npm run dev
 4. 如果是顶层工作流命令，更新 root README
 
 ### 加一个 pattern
-用 `add-pattern` skill 或手工：
-1. 在 `packages/preset-mobile/PATTERNS.md` 加段
-2. 在 `packages/preset-mobile/templates/<name>.tmpl.tsx` 放可复制骨架
-3. 在 `packages/preset-mobile/patterns.config.json` 加这个 pattern 的签名组件清单（被 `require-pattern-components` ESLint 规则消费）
-4. preset-mobile 升 patch（规则语义变了就升 minor）— 见 [docs/release.md](./docs/release.md)
-5. 评审后再用到业务稿
+Pattern 是 **项目本地** 资产 —— 落在用户项目的 `patterns/<id>/`，不再随 preset 发布。三条创建路径：
+
+- **从 PRD**：工作台 **PRDs tab → Distill patterns from this PRD** → 粘到 Claude Code 跑 `/distill-patterns-from-prd`。
+- **从对话**：在 `patterns/` 为空的项目里让 Claude 做页面 —— `new-design` 自动调起 `/add-pattern` 对话模式（5 个固定问题 → 最小 pattern）。
+- **手工**：工作台 **Library → Patterns → + New**，自己填 4 个字段。
+
+每个 pattern 三件套，落在 `<project>/patterns/<id>/`：`pattern.json`（含 `whitelist`）、`template.tmpl.tsx`（首行 `// @pattern: <id>`）、`README.md`（何时用）。ESLint `require-pattern-components` 规则直接读 `pattern.json`，没有中心注册表。
+
+要改 **skill 本身**（比如收紧 `/distill-patterns-from-prd` 产出），编辑 `skills/<name>/SKILL.md`，CLI build 会同步到 `packages/cli/templates/init/.claude/skills/`。
 
 ### 加一个 skill
 `skills/<name>/` 下放 `SKILL.md` + 可选 `references/<topic>.md`（渐进披露）。

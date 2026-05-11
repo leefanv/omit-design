@@ -20,7 +20,9 @@ List `<project>/patterns/`. Each subdirectory `<name>/` has:
 
 Cases:
 
-- **Empty `patterns/`** → tell the user: "Open the workspace's Library → Patterns and click **Import 8 starters**, or run `omit-design init` if this is a fresh project. I'll wait."
+- **Empty `patterns/`** →
+  - PRD provided → invoke `/distill-patterns-from-prd` first; resume from step 1 after the user approves the files it creates.
+  - No PRD → invoke `/add-pattern` in **conversational mode** (5 fixed questions → minimal pattern); resume from step 1 after approval.
 - **No fitting pattern** for the PRD → call `add-pattern` skill. After it produces a new `<project>/patterns/<new>/`, resume from step 1 with that pattern selected.
 - **A fitting pattern exists** → continue.
 
