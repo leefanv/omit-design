@@ -14,11 +14,11 @@ npx @omit-design/cli init my-app
 
 | | |
 |---|---|
-| `omit-design init <name>` | Scaffold a new project (Vite + React + preset-mobile + 4 ESLint hard rules + `.claude/skills/` + `.claude/agents/` + `.claude/settings.json` + husky pre-commit hook). Auto-runs `git init` (gated by `--no-git`). |
+| `omit-design init <name>` | Scaffold a new project (Vite + React + preset-mobile + 4 ESLint hard rules + `.claude/skills/` + `.claude/agents/` + `.claude/settings.json` + husky pre-commit hook). `design/` and `patterns/` ship empty — patterns are produced on demand via `/distill-patterns-from-prd` or `/add-pattern`. Auto-runs `git init` (gated by `--no-git`). |
 | `omit-design dev` | Start the local design server (Vite). |
 | `omit-design lint [files...]` | Run the four hard rules (`no-design-literal` / `whitelist-ds-import` / `require-pattern-header` / `require-pattern-components`). With no args, scans `design/**/*.tsx`. With explicit positional file paths (used by lint-staged), scans only those — non-`design/*.tsx` paths are silently skipped. |
 | `omit-design skills update` | Sync the cli's built-in `.claude/skills/` into the current project's `.claude/skills/`. |
-| `omit-design new-page <pattern> <path>` | Scaffold a design page from a preset-mobile pattern template. |
+| `omit-design new-page <pattern> <path>` | Scaffold a design page by copying a project-local pattern template (`<project>/patterns/<pattern>/template.tmpl.tsx`). If `patterns/` is empty or the pattern is missing, exits with a hint pointing at `/distill-patterns-from-prd` or `/add-pattern`. |
 | `omit-design upgrade` | Bump all `@omit-design/*` deps to npm latest, install, scan project for removed-class references, and link the CHANGELOG. |
 
 ## Quick start
@@ -30,7 +30,7 @@ npm install
 npm run dev
 ```
 
-Then open `http://localhost:5173/`. The scaffold ships a single demo design at `design/main/welcome.tsx`.
+Then open `http://localhost:5173/`. The workspace lands on `/workspace` with your project. `design/` and `patterns/` start empty — see the [main README](../../README.md) for the PRD → distill → new-design flow.
 
 ## Examples
 
@@ -57,11 +57,11 @@ omit-design skills update
 omit-design skills update --dry-run          # preview only
 omit-design skills update --target other/dir
 
-# new-page (scaffold a page from a preset-mobile pattern template)
-omit-design new-page list-view design/main/products
-omit-design new-page detail-view design/main/order --force
-# patterns: dashboard / detail-view / dialog-view / form-view /
-#           list-view / sheet-action / tab-view / welcome-view
+# new-page (copy a project-local pattern template into design/)
+# Requires patterns/<id>/template.tmpl.tsx to already exist —
+# create patterns via /distill-patterns-from-prd or /add-pattern in Claude Code.
+omit-design new-page list-view design/orders/list
+omit-design new-page detail-view design/orders/detail --force
 
 # upgrade (bump all @omit-design/* deps + scan project for legacy refs)
 omit-design upgrade
@@ -82,9 +82,9 @@ Each scaffolded project is self-defending without further wiring:
 
 - **`.husky/pre-commit`** — runs `omit-design lint` on every staged `design/**/*.tsx` via lint-staged. Installed by husky's `prepare` script on `npm install`.
 - **`.claude/settings.json`** — denies AI edits to `app/`, `eslint.config.js`, `vite.config.ts`, `tsconfig.json`, `.husky/`, `package.json`. The deny list is intentional friction; AI working on design files won't trip it.
-- **`.claude/skills/`** — 7 Claude Code skills organized as entry / make / deliver:
+- **`.claude/skills/`** — 9 Claude Code skills organized as entry / make / deliver:
   - **Entry**: `start` (state diagnosis), `omit-design-cli`
-  - **Make**: `new-design`, `add-pattern`
+  - **Make**: `distill-patterns-from-prd` (PRD → patterns), `add-pattern` (conversational or manual), `new-design` (page from pattern), `bootstrap-from-figma` (visual theme from Figma URL)
   - **Deliver**: `audit-design`, `ship-design`
   - Plus `omit-design` (philosophy + 4-layer constraint reference)
 - **`.claude/agents/`** — 2 sub-agents that take heavy work out of the main conversation:
