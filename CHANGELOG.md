@@ -5,7 +5,9 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — Patterns 平台化
+## [0.4.0] - 2026-05-11 — Patterns 平台化
+
+Engine 0.4.0 · CLI 0.4.0 · dev-server 0.2.0 (preset-mobile / eslint-plugin / figma-plugin unchanged).
 
 ### Breaking
 - **CLI**: removed the 8 starter patterns (`dashboard / detail-view / dialog-view /
