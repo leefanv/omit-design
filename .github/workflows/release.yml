@@ -46,6 +46,18 @@ jobs:
       - name: Install
         run: bun install
 
+      - name: Verify npm auth
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error::NPM_TOKEN secret is not set — add it under Settings → Secrets → Actions"
+            exit 1
+          fi
+          # npm whoami 用 ~/.npmrc 里的 token 拉用户名；token 错的话会 401/403
+          whoami=$(npm whoami)
+          echo "✓ npm authenticated as: $whoami"
+
       - name: Build all packages
         run: bun run build
 
