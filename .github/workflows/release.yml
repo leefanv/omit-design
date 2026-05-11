@@ -34,7 +34,9 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.1.0
+          # 1.1.0 不支持 `bun run --filter '*' build` 的 workspace glob 语法。
+          # 1.2+ 才稳定。
+          bun-version: "1.2.10"
 
       - uses: actions/setup-node@v4
         with:
