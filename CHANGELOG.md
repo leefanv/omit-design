@@ -5,6 +5,20 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [preset-mobile 0.4.0 + cli 0.4.2] - 2026-05-11 — Peer dep follow-up
+
+### Fixed
+- **preset-mobile bumped 0.3.0 → 0.4.0** so its `peerDependencies.@omit-design/engine`
+  range (`^0.4.0`) reaches npm. The 0.4.0 release PR (#8) updated the peer
+  locally but didn't republish preset-mobile, leaving `npx omit-design init`
+  failing with ERESOLVE because the published preset-mobile@0.3.0 still
+  declared `engine ^0.3.0`. Republishing under 0.4.0 (no source change other
+  than the peer range — breaking by SemVer) fixes the install chain.
+- **scaffold template pin** `@omit-design/preset-mobile ^0.3 → ^0.4` (in
+  `templates/init/package.json.tmpl`).
+- **cli 0.4.1 → 0.4.2** carrying the template-pin change. No source change
+  to CLI commands.
+
 ## [cli 0.4.1] - 2026-05-11 — Quick-start fixes
 
 ### Fixed
