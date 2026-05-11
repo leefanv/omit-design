@@ -18,8 +18,8 @@ If the user is open-ended ("what now?" / just init'd / unclear intent), invoke t
    - `no-design-literal`: forbids hex / px / rgb literals; use tokens instead.
    - `whitelist-ds-import`: under `design/`, you may only import `@omit-design/preset-mobile` plus the whitelisted Ionic containers.
    - `require-pattern-header`: the first line of the file must be `// @pattern: <name>`.
-   - `require-pattern-components`: the declared pattern must actually import at least one of its signature components (e.g. `@pattern: list-view` requires `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState`). Mapping lives in `node_modules/@omit-design/preset-mobile/patterns.config.json`.
-3. **Templates** — `node_modules/@omit-design/preset-mobile/templates/<pattern>.tmpl.tsx` ships copy-paste skeletons.
+   - `require-pattern-components`: the declared pattern must actually import at least one of its signature components. The whitelist for each pattern lives in `<project>/patterns/<id>/pattern.json` (patterns are project-local — see below).
+3. **Templates** — each pattern ships its own `<project>/patterns/<id>/template.tmpl.tsx` skeleton; `new-design` copies it and replaces placeholders.
 4. **Sub-agents (optional, when present in `.claude/agents/`)** — `pattern-applier` writes draft pages in an isolated context; `audit-reviewer` scans the repo and reports violations without polluting the main conversation.
 
 `npm run lint` is the single compliance command (equivalent to `omit-design lint`). It runs automatically on `git commit` (husky pre-commit hook installed by `init`), so violations cannot reach the repo silently.
@@ -30,16 +30,16 @@ If the user is open-ended ("what now?" / just init'd / unclear intent), invoke t
 |---|---|---|
 | **Entry** | [start](../start/SKILL.md) | Open-ended request, fresh init, unclear next step. |
 | **Entry** | [omit-design-cli](../omit-design-cli/SKILL.md) | Questions about init / dev / lint / new-page commands. |
-| **Make** | [new-design](../new-design/SKILL.md) | "Make a page for X" / a PRD is provided. |
-| **Make** | [add-pattern](../add-pattern/SKILL.md) | Existing 8 patterns are not enough. |
+| **Make** | [distill-patterns-from-prd](../distill-patterns-from-prd/SKILL.md) | Have a PRD and need reusable page patterns extracted from it. Runs before `new-design`. |
+| **Make** | [add-pattern](../add-pattern/SKILL.md) | No PRD yet — `add-pattern` conversational mode asks 5 fixed questions and produces a minimal pattern. Also used to add a pattern manually. |
+| **Make** | [new-design](../new-design/SKILL.md) | "Make a page for X" / a PRD is provided. Auto-calls the above two if `patterns/` is empty. |
+| **Make** | [bootstrap-from-figma](../bootstrap-from-figma/SKILL.md) | Have a Figma URL and want the project's visual theme (colors + spacing) seeded. Decoupled from patterns. |
 | **Deliver** | [audit-design](../audit-design/SKILL.md) | Batch review / "is the whole repo compliant?" |
 | **Deliver** | [ship-design](../ship-design/SKILL.md) | Ship one named page (lint + a11y + capture). |
 
-## Pattern catalog (8)
+## Patterns are project-local
 
-`list-view` `detail-view` `form-view` `sheet-action` `dialog-view` `welcome-view` `dashboard` `tab-view`
-
-For concrete skeletons and examples see `node_modules/@omit-design/preset-mobile/PATTERNS.md`. For required component mapping see `patterns.config.json` in the same directory.
+New projects start with an empty `patterns/`. Patterns grow on demand via `/distill-patterns-from-prd` (from a PRD) or `/add-pattern` (conversational or manual). Each pattern is three files under `<project>/patterns/<id>/`: `pattern.json` (with `whitelist`), `template.tmpl.tsx` (first line `// @pattern: <id>`), `README.md`. ESLint's `require-pattern-components` rule reads `pattern.json` directly — no central registry.
 
 ## Platform conventions
 

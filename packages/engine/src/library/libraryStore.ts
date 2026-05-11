@@ -10,9 +10,9 @@
 import { create } from "zustand";
 import {
   api,
+  type BootstrapPayload,
   type LibraryIndex,
   type PatternDetail,
-  type ImportStartersResult,
 } from "./api";
 
 export type Kind = "skill" | "pattern" | "prd";
@@ -39,8 +39,18 @@ interface LibraryState {
   selected: Selection | null;
   envelope: DraftEnvelope | null;
 
+  /**
+   * BootstrapBanner 流：Claude Code 用 /bootstrap-from-figma skill 把视觉主题抓取
+   * 结果 PUT 到 dev-server，落 `.omit/bootstrap.json`。bootstrap 仅承载 colors +
+   * spacing tokens；patterns 已与 Figma 解耦，统一走 /distill-patterns-from-prd
+   * 或 /add-pattern 产出。
+   */
+  bootstrap: BootstrapPayload | null;
+
   loadIndex: () => Promise<void>;
   loadPresetData: () => Promise<void>;
+  loadBootstrap: () => Promise<void>;
+  clearBootstrap: () => Promise<void>;
   select: (kind: Kind, id: string) => Promise<void>;
   clearSelection: () => void;
   updateDraft: (next: string | PatternDetail) => void;
@@ -49,7 +59,6 @@ interface LibraryState {
   createSkill: (id: string) => Promise<void>;
   createPattern: (id: string, seed?: PatternDetail) => Promise<void>;
   createPrd: (id: string) => Promise<void>;
-  importStarters: (overwrite?: boolean) => Promise<ImportStartersResult>;
 }
 
 const SKILL_STARTER = (id: string) => `---
@@ -114,6 +123,25 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
   error: null,
   selected: null,
   envelope: null,
+  bootstrap: null,
+
+  loadBootstrap: async () => {
+    try {
+      const payload = await api.readBootstrap();
+      set({ bootstrap: payload });
+    } catch (err) {
+      set({ error: (err as Error).message });
+    }
+  },
+
+  clearBootstrap: async () => {
+    try {
+      await api.clearBootstrap();
+      set({ bootstrap: null });
+    } catch (err) {
+      set({ error: (err as Error).message });
+    }
+  },
 
   loadIndex: async () => {
     set({ loading: true, error: null });
@@ -208,17 +236,5 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     await api.writePrd(id, PRD_STARTER(id));
     await get().loadIndex();
     await get().select("prd", id);
-  },
-
-  importStarters: async (overwrite = false) => {
-    try {
-      const result = await api.importStarters(overwrite);
-      await get().loadIndex();
-      return result;
-    } catch (err) {
-      const msg = (err as Error).message;
-      set({ error: msg });
-      return { imported: [], skipped: [], source: null };
-    }
   },
 }));

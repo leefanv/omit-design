@@ -15,7 +15,9 @@ import { useLibraryStore } from "./libraryStore";
 import { SkillsPanel } from "./panels/SkillsPanel";
 import { PatternsPanel } from "./panels/PatternsPanel";
 import { PrdsPanel } from "./panels/PrdsPanel";
+import { BootstrapBanner } from "./BootstrapBanner";
 import "./library.css";
+import "./bootstrap-banner.css";
 
 type Tab = "skills" | "patterns" | "prds";
 
@@ -28,6 +30,7 @@ export function LibraryPage() {
   const [tab, setTab] = useState<Tab>("skills");
   const loadIndex = useLibraryStore((s) => s.loadIndex);
   const loadPresetData = useLibraryStore((s) => s.loadPresetData);
+  const loadBootstrap = useLibraryStore((s) => s.loadBootstrap);
   const clearSelection = useLibraryStore((s) => s.clearSelection);
   const error = useLibraryStore((s) => s.error);
   const loading = useLibraryStore((s) => s.loading);
@@ -36,7 +39,8 @@ export function LibraryPage() {
   useEffect(() => {
     void loadIndex();
     void loadPresetData();
-  }, [loadIndex, loadPresetData]);
+    void loadBootstrap();
+  }, [loadIndex, loadPresetData, loadBootstrap]);
 
   // 切 tab 时清当前选中（避免把 skill draft 带到 pattern 面板里）
   useEffect(() => {
@@ -74,6 +78,7 @@ export function LibraryPage() {
         {loading && <span className="lib-pill lib-pill--info">Loading…</span>}
         {error && <span className="lib-pill lib-pill--danger" title={error}>! Error</span>}
       </header>
+      <BootstrapBanner projectId={resolved.id} />
       <div className="lib-body">
         {tab === "skills" && <SkillsPanel />}
         {tab === "patterns" && <PatternsPanel />}

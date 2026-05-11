@@ -1,14 +1,20 @@
 # Patterns are project-local
 
-Starting in 0.3.x, **patterns no longer live in `@omit-design/preset-mobile`**. They live in your project's `patterns/` directory and are owned by you.
+Patterns live in your project's `patterns/` directory and are owned by you. They are **not** shipped by `@omit-design/preset-mobile`.
 
-The recommended creation flow is:
+New projects (`omit-design init`) start with an empty `patterns/`. Patterns grow on demand:
 
-1. Write a PRD in the workspace's **Library → PRDs** tab
-2. Click "Copy Claude prompt" and paste into Claude Code
-3. The `new-design` skill picks an existing pattern, or — if nothing fits — calls `add-pattern` to create one and writes it into `<project>/patterns/<name>/`
-4. Review and tweak the new pattern in **Library → Patterns**
+1. **From a PRD** — write a PRD in the workspace's **Library → PRDs** tab → click **Distill patterns from this PRD** → paste into Claude Code. The `distill-patterns-from-prd` skill scans existing patterns for reuse, then writes new ones for the gaps into `<project>/patterns/<id>/`.
+2. **From a conversation** — when no PRD exists, just ask Claude to make a page. The `new-design` skill auto-invokes `add-pattern` in **conversational mode**: 5 short questions → one minimal pattern → review → resume.
+3. **Manually** — workspace's **Library → Patterns → + New**, fill four fields by hand.
 
-Eight starter patterns ship with `omit-design init` (`list-view`, `detail-view`, `form-view`, `sheet-action`, `dialog-view`, `welcome-view`, `dashboard`, `tab-view`). Use `init --no-starters` to opt out.
+Each pattern is three files:
 
-For the description and skeleton of each starter, read its `README.md` under your project's `patterns/<name>/`.
+```
+patterns/<id>/
+├── pattern.json         # { "name", "whitelist": ["OmFoo", ...], "description" }
+├── template.tmpl.tsx    # TSX skeleton copied by new-design (first line: // @pattern: <id>)
+└── README.md            # When to use / Skeleton / When NOT to use
+```
+
+ESLint's `require-pattern-components` rule reads `<cwd>/patterns/<id>/pattern.json` directly — no central config file.

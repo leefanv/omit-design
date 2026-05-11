@@ -9,6 +9,25 @@ description: Create a new project-local design pattern under `<project>/patterns
 
 - The user proactively asks to add a new pattern.
 - During `new-design`, after scanning `<project>/patterns/`, you decide nothing fits the PRD's page archetype.
+- Invoked by `new-design` when `patterns/` is empty and the user provided **no PRD** — enter **Conversational mode** (see below).
+
+## Conversational mode (called by new-design with no PRD)
+
+When triggered by `new-design` with no PRD source, you do not have a body to parse. Instead, **ask the user the following 5 questions in order, one per turn**, and collect short answers:
+
+1. 这个页面的核心目的是什么？（一句话）
+2. 用户在这页主要做什么动作？（看 / 选 / 填 / 提交 / 对比 / 取消……）
+3. 数据形态是单条 / 列表 / 树 / 看板 / 表单 / 嵌套？
+4. 类似的页面在 list-view / detail-view / form-view / dashboard / dialog-view 这五个标准类目里靠近哪一个？
+5. 有没有特殊约束？（手势 / 离线 / 实时刷新 / 大数据量……）
+
+Once all 5 answers are in, **enter the Flow steps below** with one constraint:
+
+- **Produce exactly ONE pattern**, kept minimal: `whitelist` ≤ 5 `Om*` components, `template.tmpl.tsx` ≤ 30 lines.
+- Skip Step 1's "compare with PRD" — instead, treat the 5 answers as the spec.
+- After Step 6 HARD-GATE passes, return to `new-design`'s main flow.
+
+This mode is **not** for `add-pattern` invoked directly by the user — when the user explicitly says "add a pattern for X", proceed with the standard Flow below (the user already knows what they want).
 
 ## Output location
 

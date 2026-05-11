@@ -27,16 +27,26 @@ export interface PrdSummary {
   status: string;
 }
 
-export interface ImportStartersResult {
-  imported: string[];
-  skipped: string[];
-  source: string | null;
-}
-
 export interface LibraryIndex {
   skills: SkillSummary[];
   patterns: PatternSummary[];
   prds: PrdSummary[];
+}
+
+export interface BootstrapPayload {
+  source: {
+    kind: "figma" | "palette" | "manual";
+    url?: string;
+    fileKey?: string;
+    nodeId?: string;
+  };
+  extractedAt: string;
+  theme: {
+    presetName: string;
+    colors: Record<string, string>;
+    spacing?: Record<string, string>;
+  };
+  notes?: string;
 }
 
 export interface PatternConfig {
@@ -98,11 +108,6 @@ export const api = {
     }),
   deletePattern: (id: string) =>
     req<{ ok: true }>(`/patterns/${encodeURIComponent(id)}`, { method: "DELETE" }),
-  importStarters: (overwrite = false) =>
-    req<ImportStartersResult>(`/starters/import`, {
-      method: "POST",
-      body: JSON.stringify({ overwrite }),
-    }),
 
   // PRDs
   listPrds: () => req<PrdSummary[]>("/prds"),
@@ -115,4 +120,14 @@ export const api = {
     }),
   deletePrd: (id: string) =>
     req<{ ok: true }>(`/prds/${encodeURIComponent(id)}`, { method: "DELETE" }),
+
+  // Bootstrap (Figma import / palette swatch landing zone)
+  readBootstrap: () =>
+    req<{ payload: BootstrapPayload | null }>("/bootstrap").then((r) => r.payload),
+  writeBootstrap: (payload: BootstrapPayload) =>
+    req<{ ok: true }>("/bootstrap", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    }),
+  clearBootstrap: () => req<{ ok: true }>("/bootstrap", { method: "DELETE" }),
 };

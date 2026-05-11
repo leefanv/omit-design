@@ -98,7 +98,7 @@ npx omit-design upgrade   # 升 deps + 扫项目里残留的旧类名
 | [`@omit-design/cli`](./packages/cli/) | [![npm](https://img.shields.io/npm/v/@omit-design/cli?label=)](https://www.npmjs.com/package/@omit-design/cli) | CLI — `init`（含 husky + git + agents）/ `dev` / `lint` / `new-page` / `skills update` / `upgrade` |
 | [`@omit-design/engine`](./packages/engine/) | [![npm](https://img.shields.io/npm/v/@omit-design/engine?label=)](https://www.npmjs.com/package/@omit-design/engine) | 运行时 — registry / discovery / inspect / theme-editor / capture / 画布 shell |
 | [`@omit-design/eslint-plugin`](./packages/eslint-plugin/) | [![npm](https://img.shields.io/npm/v/@omit-design/eslint-plugin?label=)](https://www.npmjs.com/package/@omit-design/eslint-plugin) | 四条硬规则 |
-| [`@omit-design/preset-mobile`](./packages/preset-mobile/) | [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile?label=)](https://www.npmjs.com/package/@omit-design/preset-mobile) | 移动端 preset：21 个 `Om*` 组件 + token + 8 个 pattern + 模板 |
+| [`@omit-design/preset-mobile`](./packages/preset-mobile/) | [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile?label=)](https://www.npmjs.com/package/@omit-design/preset-mobile) | 移动端 preset：21 个 `Om*` 组件 + 设计 token |
 | [`@omit-design/figma-plugin`](./packages/figma-plugin/) | [![npm](https://img.shields.io/npm/v/@omit-design/figma-plugin?label=)](https://www.npmjs.com/package/@omit-design/figma-plugin) | Figma 插件 — 把 capture 的 JSON 导成可编辑 Frame |
 
 ## 四条硬规则
@@ -108,7 +108,7 @@ npx omit-design upgrade   # 升 deps + 扫项目里残留的旧类名
 1. **禁字面量**。`#FF6B00` / `16px` / `8px` 这种原始色值或像素值不允许出现在业务设计稿里 — 必须走 token：`var(--om-color-primary)`、`var(--om-spacing-md)` 等。
 2. **白名单 import**。设计稿只能 `import` 自 `@omit-design/preset-mobile`（`Om*` 白名单），加上少数仅做排版/图标宿主的 Ionic 组件（`IonList` / `IonBackButton` / `IonIcon`）。不允许深入框架内部。
 3. **强制 pattern 头**。每个设计稿首行注释必须是 `// @pattern: <name>`，`<name>` 必须在 [PATTERNS.md](./packages/preset-mobile/PATTERNS.md) 里登记。Pattern 是设计稿编目的单位 — 没有它，AI 无法可靠地推断应该套哪个模板。
-4. **Pattern 签名组件强制**。声明的 pattern 必须真用其签名组件 — `@pattern: list-view` 必须 import `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState` 至少一个；`@pattern: form-view` 必须 import `OmInput` / `OmSelect` / `OmNumpad` 至少一个；其它 pattern 同理。映射见 [`patterns.config.json`](./packages/preset-mobile/patterns.config.json)。防止 AI 挂着 `@pattern: list-view` 头但只写一个 `OmCard` 的"假列表"。
+4. **Pattern 签名组件强制**。声明的 pattern 必须真用其签名组件。映射来自每个 pattern 的 `pattern.json`（位于 `<project>/patterns/<id>/`） — pattern 是项目本地资产，按需通过 `distill-patterns-from-prd` 或 `add-pattern` 生长出来。防止 AI 挂着 `@pattern: list-view` 头但只写一个 `OmCard` 的"假列表"。
 
 `npm run lint` 任一违反就 exit 非零。`init` 时自动安装的 husky pre-commit hook 会在每个 `git commit` 时跑同一份检查 — 违规无法静默进仓。
 
@@ -120,8 +120,10 @@ npx omit-design upgrade   # 升 deps + 扫项目里残留的旧类名
 |---|---|---|
 | **入口** | `start` | 开放性请求、刚 init 完、"接下来该做什么？" — 诊断项目状态后推荐唯一一条 skill |
 | **入口** | `omit-design-cli` | 关于 init / dev / lint / new-page 命令的问题 |
-| **制作** | `new-design` | "做一张 X 页面" / 给了 PRD |
-| **制作** | `add-pattern` | 现有 8 个 pattern 不够用 |
+| **制作** | `distill-patterns-from-prd` | 有 PRD，想从中蒸馏出 reusable 的页面 pattern。在 `new-design` 之前跑 |
+| **制作** | `add-pattern` | 没有 PRD —— 对话模式：问 3-5 个问题后产出最小 pattern。也可手动新增 |
+| **制作** | `new-design` | "做一张 X 页面" / 给了 PRD。`patterns/` 空时自动调上面两个 |
+| **制作** | `bootstrap-from-figma` | 有 Figma 链接，想抽出项目视觉主题（colors + spacing）。与 patterns 解耦 |
 | **交付** | `audit-design` | 全仓批量审查 |
 | **交付** | `ship-design` | 单页发布（lint + a11y + 截图一气呵成） |
 

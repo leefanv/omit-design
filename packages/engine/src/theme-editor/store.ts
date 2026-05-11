@@ -36,6 +36,14 @@ interface ActiveSlice {
   draft: ThemeValues;
 }
 
+/** importTheme 的结果，调用方可据此向用户报告未识别的 key */
+export interface ImportThemeResult {
+  appliedColors: string[];
+  appliedSpacing: string[];
+  unknownColors: string[];
+  unknownSpacing: string[];
+}
+
 interface ThemeState {
   /** 每个 preset 的 applied 值都持久化（`appliedByPreset[preset.name]`） */
   appliedByPreset: Record<string, ThemeValues>;
@@ -48,6 +56,14 @@ interface ThemeState {
 
   setDraftColor: (key: string, value: string) => void;
   setDraftSpacing: (key: string, value: string) => void;
+
+  /**
+   * 外部数据源（BootstrapBanner 的 Figma import / palette swatch）一次性塞入一组 token：
+   * 仅接受 baseline 中已存在的 key，未知 key 走 ImportThemeResult.unknown* 返回。
+   * 写入后立即 apply（绕过用户点 Apply 按钮，因为 import 本身就是显式动作）。
+   * 调用前必须确保 active 已 switchPreset 到目标 preset。
+   */
+  importTheme: (partial: Partial<ThemeValues>) => ImportThemeResult;
 
   /** 草稿 → applied，写入 localStorage，全局生效。 */
   apply: () => void;
@@ -189,6 +205,49 @@ export const useThemeStore = create<ThemeState>()(
           },
         });
         applyToDocument(a.baseline, snapshot);
+      },
+
+      importTheme: (partial) => {
+        const a = get().active;
+        const result: ImportThemeResult = {
+          appliedColors: [],
+          appliedSpacing: [],
+          unknownColors: [],
+          unknownSpacing: [],
+        };
+        if (!a) return result;
+        const nextDraft = cloneValues(a.draft);
+        if (partial.colors) {
+          for (const [k, v] of Object.entries(partial.colors)) {
+            if (k in a.baseline.values.colors) {
+              nextDraft.colors[k] = v;
+              result.appliedColors.push(k);
+            } else {
+              result.unknownColors.push(k);
+            }
+          }
+        }
+        if (partial.spacing) {
+          for (const [k, v] of Object.entries(partial.spacing)) {
+            if (k in a.baseline.values.spacing) {
+              nextDraft.spacing[k] = v;
+              result.appliedSpacing.push(k);
+            } else {
+              result.unknownSpacing.push(k);
+            }
+          }
+        }
+        // import 即提交 —— draft + applied 同步写入 appliedByPreset
+        const snapshot = cloneValues(nextDraft);
+        set({
+          active: { ...a, draft: nextDraft, applied: snapshot },
+          appliedByPreset: {
+            ...get().appliedByPreset,
+            [a.baseline.presetName]: snapshot,
+          },
+        });
+        applyToDocument(a.baseline, snapshot);
+        return result;
       },
 
       discardDraft: () => {

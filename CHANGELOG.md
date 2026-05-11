@@ -5,6 +5,46 @@ All notable changes to omit-design are documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] — Patterns 平台化
+
+### Breaking
+- **CLI**: removed the 8 starter patterns (`dashboard / detail-view / dialog-view /
+  form-view / list-view / sheet-action / tab-view / welcome-view`) shipped by
+  `omit-design init`. New projects start with an empty `patterns/`. Patterns are
+  now produced on demand by `/distill-patterns-from-prd` (from a PRD) or
+  `/add-pattern` (conversational or manual).
+- **CLI**: removed the `--starters` flag on `omit-design init`. Passing it now
+  fails with citty's "unknown option" error.
+- **dev-server**: removed `POST /starters/import` endpoint and the
+  `importStarters` handler.
+- **engine**: removed `Library → Patterns → Import 8 starters` button, removed
+  the `Suggested from Figma` panel in PatternsPanel, removed `suggestedPatterns`
+  / `dismissSuggestedPatterns` / `importStarters` from `useLibraryStore`.
+- **Figma bootstrap decoupled**: `bootstrap-from-figma` no longer produces
+  pattern suggestions. The `patterns` field on `BootstrapPayload` is gone.
+  Patterns and visual theme are now orthogonal concerns.
+
+### Added
+- **skill** `distill-patterns-from-prd` — reads a PRD, scans existing patterns
+  for reuse, writes new `patterns/<id>/{pattern.json, template.tmpl.tsx, README.md}`
+  only for archetypes that don't already exist. HARD-GATEs on user review;
+  does not auto-invoke `new-design`.
+- **skill** `add-pattern` conversational mode — when `patterns/` is empty and no
+  PRD exists, asks 5 fixed questions and produces a minimal pattern
+  (whitelist ≤ 5 `Om*`, template ≤ 30 lines).
+- **engine**: "Distill patterns from this PRD" button in the PRDs tab, sibling
+  to the existing "Copy Claude prompt" button.
+- **skill** `new-design` HARD-GATE: when `patterns/` is empty, auto-routes to
+  `/distill-patterns-from-prd` (with PRD) or `/add-pattern` conversational
+  (without PRD), resuming after user approval.
+
+### Migration notes for existing projects
+- Projects that already have `patterns/<starter>/` directories are unaffected —
+  the lint / ESLint / new-design flow continues to work as before. Delete or
+  keep them at your discretion.
+- Old scripts hitting `POST /__omit/starters/import` will get 404. There is no
+  replacement endpoint; use the workspace UI or run `/distill-patterns-from-prd`.
+
 ## [engine 0.3.1] - 2026-05-09
 
 Workspace chrome icon system + dot-grid canvas.

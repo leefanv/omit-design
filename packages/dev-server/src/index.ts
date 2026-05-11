@@ -28,7 +28,6 @@ import {
   writePattern,
   deletePattern,
   listPresetComponents,
-  importStarters,
 } from "./handlers/patterns.js";
 import {
   listPrds,
@@ -36,6 +35,11 @@ import {
   writePrd,
   deletePrd,
 } from "./handlers/prds.js";
+import {
+  readBootstrap,
+  writeBootstrap,
+  clearBootstrap,
+} from "./handlers/bootstrap.js";
 
 export interface OmitDevServerOptions {
   /** 项目根目录。默认 process.cwd()。 */
@@ -111,11 +115,6 @@ async function route(root: string, req: IncomingMessage, res: ServerResponse) {
   if (method === "GET" && pathname === "/preset/components") {
     return sendJson(res, 200, await listPresetComponents(root));
   }
-  if (method === "POST" && pathname === "/starters/import") {
-    const body = await readBody(req);
-    const opts = body ? (JSON.parse(body) as { overwrite?: boolean }) : {};
-    return sendJson(res, 200, await importStarters(root, opts));
-  }
   if (method === "GET" && pathname.startsWith("/patterns/")) {
     const id = decodeURIComponent(pathname.slice("/patterns/".length));
     return sendJson(res, 200, await readPattern(root, id));
@@ -155,6 +154,27 @@ async function route(root: string, req: IncomingMessage, res: ServerResponse) {
   if (method === "DELETE" && pathname.startsWith("/prds/")) {
     const id = decodeURIComponent(pathname.slice("/prds/".length));
     await deletePrd(root, id);
+    return sendJson(res, 200, { ok: true });
+  }
+
+  // ── Bootstrap ──────────────────────────────────
+  // Claude Code 的 /bootstrap-from-figma skill PUT 写入；BootstrapBanner GET 读取。
+  if (method === "GET" && pathname === "/bootstrap") {
+    return sendJson(res, 200, { payload: await readBootstrap(root) });
+  }
+  if (method === "PUT" && pathname === "/bootstrap") {
+    const body = await readBody(req);
+    let payload: unknown;
+    try {
+      payload = JSON.parse(body || "{}");
+    } catch {
+      return sendJson(res, 400, { error: "invalid JSON body" });
+    }
+    await writeBootstrap(root, payload as Parameters<typeof writeBootstrap>[1]);
+    return sendJson(res, 200, { ok: true });
+  }
+  if (method === "DELETE" && pathname === "/bootstrap") {
+    await clearBootstrap(root);
     return sendJson(res, 200, { ok: true });
   }
 

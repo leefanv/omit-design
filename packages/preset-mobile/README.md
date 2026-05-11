@@ -1,6 +1,6 @@
 # @omit-design/preset-mobile
 
-> Default mobile preset for [omit-design](https://github.com/leefanv/omit-design): `Om*` whitelist components, `--om-*` token system, Ionic 8 runtime, and 8 ready-to-use patterns with copy-paste templates.
+> Default mobile preset for [omit-design](https://github.com/leefanv/omit-design): `Om*` whitelist components, `--om-*` token system, Ionic 8 runtime.
 
 [![npm](https://img.shields.io/npm/v/@omit-design/preset-mobile)](https://www.npmjs.com/package/@omit-design/preset-mobile)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
@@ -13,15 +13,16 @@
 
 - **21 `Om*` components** — the import whitelist for `design/**/*.tsx`
 - **`--om-*` token system** mapped to Ionic 8 runtime (`--ion-*`)
-- **8 patterns** with copy-paste `.tmpl.tsx` skeletons (consumed by `omit-design new-page`)
-- **`patterns.config.json`** — pattern → signature components map, consumed by the `require-pattern-components` ESLint rule
+- **Semantic color list + theme baseline** — consumed by the workspace's theme-editor
+
+Patterns are **project-local** and live under `<project>/patterns/`. They are produced on demand by `/distill-patterns-from-prd` or `/add-pattern` — see [PATTERNS.md](./PATTERNS.md).
 
 ## Four hard rules (enforced by [@omit-design/eslint-plugin](../eslint-plugin/))
 
 1. **Tokens only.** All colors / spacing / font sizes / radii / shadows must go through tokens. Raw literals (`#FF6B00`, `12px`, `16px`, etc.) are forbidden in business code.
 2. **Whitelist imports.** Business pages (under `design/**`) can only import from `@omit-design/preset-mobile`. Direct `@ionic/react` imports are forbidden — exceptions: `IonList`, `IonBackButton`, `IonIcon` (layout / icon hosts only).
 3. **Pattern header.** Every business page must start with `// @pattern: <name>`, where `<name>` is registered in [PATTERNS.md](./PATTERNS.md).
-4. **Pattern-scoped components.** The declared pattern must actually use one of its signature components. `@pattern: list-view` requires `OmListRow` / `OmCouponCard` / `OmSettingRow` / `OmProductCard` / `OmMenuCard` / `OmEmptyState`; `@pattern: form-view` requires `OmInput` / `OmSelect` / `OmNumpad`; etc. Mapping in [`patterns.config.json`](./patterns.config.json).
+4. **Pattern-scoped components.** The declared pattern must actually use one of its signature components. The whitelist for each pattern lives in `<project>/patterns/<id>/pattern.json` — patterns are project-local, not shipped here.
 
 ## Components (21)
 
@@ -42,37 +43,19 @@ All exported from `@omit-design/preset-mobile`:
 
 Full source list: [components/index.ts](./components/index.ts).
 
-## Patterns (8)
+## Patterns
 
-Each pattern ships:
-- A documented section in [PATTERNS.md](./PATTERNS.md)
-- A copy-paste `.tmpl.tsx` template
+Patterns are **project-local** — they live in `<project>/patterns/`, not in this package. New projects start with an empty `patterns/` directory.
 
-| Pattern | Use for |
+Three creation paths:
+
+| Path | Trigger |
 |---|---|
-| `dashboard` | Stat cards + entry tiles (cafe POS home, admin overview) |
-| `list-view` | Vertical list with filter / search |
-| `detail-view` | Single record with sections (order, product, member) |
-| `form-view` | Input-heavy edit / create forms |
-| `dialog-view` | Modal with title + body + actions |
-| `sheet-action` | Bottom sheet for quick actions |
-| `tab-view` | Top-tab segmented content |
-| `welcome-view` | First-launch / onboarding |
+| **`/distill-patterns-from-prd`** | You have a PRD. The skill scans existing patterns for reuse and writes new ones for the gaps. Use the **Distill patterns from this PRD** button in the workspace PRDs tab. |
+| **`/add-pattern`** conversational | No PRD yet. `new-design` auto-invokes this when `patterns/` is empty: 5 short questions → one minimal pattern. |
+| **Manual** | Workspace **Library → Patterns → + New**, fill the four fields by hand. |
 
-Generate a new page from a pattern:
-```bash
-npx omit-design new-page list-view design/orders/list
-# → design/orders/list.tsx with the list-view skeleton
-```
-
-### Adding / customizing patterns
-
-When adding a pattern via the `add-pattern` skill (or by hand), update three places:
-1. [`PATTERNS.md`](./PATTERNS.md) — human documentation of the pattern's intent and skeleton.
-2. [`templates/<name>.tmpl.tsx`](./templates/) — copy-paste skeleton consumed by `omit-design new-page`.
-3. [`patterns.config.json`](./patterns.config.json) — list of signature components the pattern requires (read by the `require-pattern-components` ESLint rule).
-
-The signature components are the bare minimum without which a file cannot meaningfully be that pattern. For `list-view` it's "any list-row / empty-state component"; for `form-view` it's "any input component". Lists are "anyOf" — importing one is enough.
+See [PATTERNS.md](./PATTERNS.md) for file layout and editing semantics.
 
 ## Token naming
 
