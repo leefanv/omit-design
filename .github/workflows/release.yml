@@ -1,0 +1,131 @@
+name: Release
+
+# 跑在每次 main 推送之后（PR merge 即触发），扫 packages/*/package.json
+# 与 git tag `<pkg>@<version>` 比对：本地 version 高于已 tag 的最新版本即视为
+# "待发布"，自动 npm publish + git tag + GitHub release。
+#
+# 也支持手动触发（Actions 页 "Run workflow"），可选 dry_run 看一遍计划。
+#
+# 必需 secret：NPM_TOKEN（在 repo Settings → Secrets and variables → Actions）。
+# GITHUB_TOKEN 自动注入，用来 push tag + 创建 release。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print what would publish without actually doing it"
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    name: Auto-publish unreleased package versions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # push tags + create releases
+      id-token: write   # 留口子给将来 npm provenance（OIDC）
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 需要完整历史读 tag
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install
+        run: bun install
+
+      - name: Build all packages
+        run: bun run build
+
+      - name: Configure git for tag pushes
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Publish + tag unreleased versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          set -euo pipefail
+
+          if [ "${DRY_RUN:-false}" = "true" ]; then
+            echo "▸ DRY RUN — no publish / tag / release will be created"
+          fi
+
+          published=0
+          skipped=0
+
+          for dir in packages/*/; do
+            pkg=$(basename "$dir")
+            scoped=$(jq -r .name "$dir/package.json")
+            version=$(jq -r .version "$dir/package.json")
+            tag="${pkg}@${version}"
+
+            # 已 tag 则视为已发布
+            if git rev-parse "refs/tags/$tag" >/dev/null 2>&1; then
+              echo "✓ $tag already exists, skip"
+              skipped=$((skipped + 1))
+              continue
+            fi
+
+            # 双保险：查 npm registry 是否真的已有这个版本
+            npm_v=$(curl -fsSL "https://registry.npmjs.org/$scoped/$version" 2>/dev/null \
+              | jq -r '.version // empty' || true)
+            if [ -n "$npm_v" ]; then
+              echo "⚠ $tag missing locally but $scoped@$version exists on npm — tagging only"
+              if [ "${DRY_RUN:-false}" != "true" ]; then
+                git tag "$tag"
+                git push origin "$tag"
+                gh release create "$tag" \
+                  --title "$scoped $version" \
+                  --notes "Backfilled tag for previously-published version. See [CHANGELOG.md](./CHANGELOG.md)." \
+                  --target "$(git rev-parse HEAD)" 2>/dev/null || echo "  (release already existed)"
+              fi
+              published=$((published + 1))
+              continue
+            fi
+
+            echo "→ publishing $scoped@$version"
+
+            if [ "${DRY_RUN:-false}" = "true" ]; then
+              echo "  (dry-run: would run: cd $dir && npm publish --access public)"
+              published=$((published + 1))
+              continue
+            fi
+
+            (cd "$dir" && npm publish --access public)
+            git tag "$tag"
+            git push origin "$tag"
+
+            # 把 CHANGELOG 里最近一段抓出来当 release notes（找不到就给 fallback）
+            notes=$(awk '/^## /{count++} count==1{print} count==2{exit}' CHANGELOG.md 2>/dev/null \
+              | head -120 \
+              || echo "Auto-published. See [CHANGELOG.md](./CHANGELOG.md).")
+
+            gh release create "$tag" \
+              --title "$scoped $version" \
+              --notes "$notes" \
+              --target "$(git rev-parse HEAD)" 2>/dev/null || echo "  (release already existed)"
+
+            echo "✓ published + tagged + released $tag"
+            published=$((published + 1))
+          done
+
+          echo
+          echo "summary: $published published/tagged · $skipped already-released"
+
+          if [ "${DRY_RUN:-false}" = "true" ] && [ "$published" -gt 0 ]; then
+            echo "(dry run only — re-run with dry_run=false to actually publish)"
+          fi
