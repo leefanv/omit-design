@@ -17,6 +17,8 @@
   overflow: hidden;
   z-index: 25;
   animation: shell-right-panel-pop 0.18s ease-out;
+  /* drawer ↔ fullscreen 切换的尺寸过渡 */
+  transition: width 0.22s ease, right 0.22s ease, bottom 0.22s ease;
 }
 @keyframes shell-right-panel-pop {
   from {
@@ -27,6 +29,14 @@
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* /theme-editor fullscreen 模式 —— 同一张浮卡撑到 left/right/bottom 各 8px，
+   top 保持 84px 不变（让 ProjectDetail 顶栏可见） */
+.shell-right-panel--fullscreen {
+  width: calc(100% - 88px);
+  right: 8px;
+  bottom: 8px;
 }
 
 .shell-right-panel__head {

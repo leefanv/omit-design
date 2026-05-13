@@ -12,6 +12,7 @@ import {
 import { InspectOverlay } from "../inspect/InspectOverlay";
 import { useProjects, useProjectByHref } from "../registry";
 import type { PresetManifest } from "../preset";
+import { useApplyPresetTheme } from "../theme-editor/useApplyPresetTheme";
 import { Sidebar } from "./Sidebar";
 import { RightPanel } from "./RightPanel";
 import { DeviceToolbar, type Viewport } from "./DeviceToolbar";
@@ -97,6 +98,9 @@ export function DesignFrame({ children }: DesignFrameProps) {
   const allProjects = useProjects();
   const project = useProjectByHref(location.pathname)?.project ?? allProjects[0];
   const preset = project.preset;
+
+  // 把当前 preset 的 applied token 写到 :root —— 不能只指望 ThemePanel 挂载时才生效
+  useApplyPresetTheme(preset);
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
     return localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1";

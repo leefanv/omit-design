@@ -525,6 +525,28 @@
   letter-spacing: 0;
 }
 
+.shell-projects__new-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-surface);
+  color: var(--shell-text);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: background 0.12s, border-color 0.12s;
+}
+.shell-projects__new-btn:hover {
+  background: var(--shell-surface-muted);
+  border-color: var(--shell-border-hover);
+}
+
 .shell-projects__grid {
   list-style: none;
   margin: 0;

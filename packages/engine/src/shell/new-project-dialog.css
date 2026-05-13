@@ -1,0 +1,133 @@
+/* NewProjectDialog —— 首页"新建项目"弹窗 */
+
+.new-project-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 24, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+  animation: new-project-overlay-fade 0.16s ease-out;
+}
+@keyframes new-project-overlay-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.new-project-dialog {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--shell-font, system-ui, -apple-system, sans-serif);
+  color: #1a1a1a;
+  animation: new-project-dialog-pop 0.18s ease-out;
+}
+@keyframes new-project-dialog-pop {
+  from { transform: translateY(6px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.new-project-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+.new-project-dialog__head h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.new-project-dialog__close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #6b7280;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.new-project-dialog__close:hover {
+  background: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.new-project-dialog__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.new-project-dialog__lead {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #444;
+}
+.new-project-dialog__lead code,
+.new-project-dialog__hint code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  background: #f3f4f6;
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: #1f2937;
+}
+
+.new-project-dialog__code {
+  position: relative;
+  background: #0f1419;
+  color: #e6edf3;
+  border-radius: 8px;
+  padding: 14px 16px;
+  padding-right: 92px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.new-project-dialog__code pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.new-project-dialog__copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #e6edf3;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.new-project-dialog__copy-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.new-project-dialog__hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b7280;
+}

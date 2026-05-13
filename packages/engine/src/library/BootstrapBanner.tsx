@@ -17,6 +17,7 @@ import { useLibraryStore } from "./libraryStore";
 import { useProject } from "../registry";
 import { useThemeStore, type ThemeBaseline } from "../theme-editor/store";
 import { BUILT_IN_PALETTES, type BuiltInPalette } from "../theme-editor/palettes";
+import { useCanvasStore } from "../shell/canvas/canvasStore";
 import type { BootstrapPayload } from "./api";
 
 interface BootstrapBannerProps {
@@ -99,7 +100,8 @@ export function BootstrapBanner({ projectId }: BootstrapBannerProps) {
       `已应用 "${palette.name}" 主题 · ${result.appliedColors.length} 个颜色 token`,
     );
     setTimeout(() => setApplyMsg(null), 3000);
-    navigate(`/workspace/${projectId}/theme-editor`);
+    navigate(`/workspace/${projectId}`);
+    useCanvasStore.getState().setTool("theme");
   };
 
   const applyBootstrap = (payload: BootstrapPayload) => {
@@ -119,7 +121,8 @@ export function BootstrapBanner({ projectId }: BootstrapBannerProps) {
     ].filter(Boolean);
     setApplyMsg(parts.join(" · "));
     setTimeout(() => setApplyMsg(null), 3000);
-    navigate(`/workspace/${projectId}/theme-editor`);
+    navigate(`/workspace/${projectId}`);
+    useCanvasStore.getState().setTool("theme");
   };
 
   // ── 折叠态 ─────────────────────────────────────

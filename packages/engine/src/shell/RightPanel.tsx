@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useInspectStore, type InspectMode } from "../inspect/store";
 import { InspectInspector } from "../inspect/InspectInspector";
 import { ThemePanel } from "../theme-editor/ThemePanel";
+import { useThemeEditorMode } from "../theme-editor/mode-store";
 import { isInspectTool, useCanvasStore } from "./canvas/canvasStore";
 
 const PANEL_TITLE: Record<string, string> = {
@@ -21,6 +22,9 @@ export function RightPanel() {
   const setEnabled = useInspectStore((s) => s.setEnabled);
   const setMode = useInspectStore((s) => s.setMode);
   const setTool = useCanvasStore((s) => s.setTool);
+  // theme 工具 + fullscreen 模式 → 把这个抽屉扩到几乎占满画布
+  const themeEditorMode = useThemeEditorMode((s) => s.mode);
+  const isFullscreen = activeTool === "theme" && themeEditorMode === "fullscreen";
 
   // 同步：左栏选哪个 inspect 子工具 → inspect store 的 mode
   useEffect(() => {
@@ -39,7 +43,10 @@ export function RightPanel() {
   const inspectMode = isInspectTool(activeTool);
 
   return (
-    <aside className="shell-right-panel" data-no-inspect>
+    <aside
+      className={`shell-right-panel ${isFullscreen ? "shell-right-panel--fullscreen" : ""}`}
+      data-no-inspect
+    >
       <header className="shell-right-panel__head">
         <span className="shell-right-panel__head-title">{title}</span>
         <button

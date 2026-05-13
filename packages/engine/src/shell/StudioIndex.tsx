@@ -9,6 +9,7 @@ import {
   MessageSquare,
   MousePointer2,
   Palette,
+  Plus,
   Ruler,
   Settings,
   SquareDashed,
@@ -17,9 +18,11 @@ import {
 } from "lucide-react";
 import {
   useProjects,
+  useExternalProjects,
   useProjectGroups,
   useProject,
   type DiscoveredProject,
+  type ExternalProject,
 } from "../registry";
 import { ExportFigmaDialog } from "../capture/ExportFigmaDialog";
 import { DesignThumbnail } from "./DesignThumbnail";
@@ -29,6 +32,8 @@ import { EntryPicker } from "./canvas/EntryPicker";
 import { ToolRail } from "./canvas/ToolRail";
 import { useCanvasStore, getPanelOpen, type CanvasTool } from "./canvas/canvasStore";
 import { RightPanel } from "./RightPanel";
+import { useApplyPresetTheme } from "../theme-editor/useApplyPresetTheme";
+import { NewProjectDialog } from "./NewProjectDialog";
 
 // ─────────────────────────────────────────────
 // Figma 官方品牌 logo（5 色）— 用于 Export to Figma 按钮
@@ -51,6 +56,9 @@ function FigmaLogo() {
 
 export function ProjectsHome() {
   const projects = useProjects();
+  const externalProjects = useExternalProjects();
+  const [newProjectOpen, setNewProjectOpen] = useState(false);
+  const totalCount = projects.length + externalProjects.length;
   return (
     <div className="shell-studio">
       <header className="shell-studio__header">
@@ -76,7 +84,14 @@ export function ProjectsHome() {
       <div className="shell-projects">
         <h2 className="shell-projects__title">
           Projects
-          <span className="shell-projects__count">{projects.length}</span>
+          <span className="shell-projects__count">{totalCount}</span>
+          <button
+            type="button"
+            className="shell-projects__new-btn"
+            onClick={() => setNewProjectOpen(true)}
+          >
+            <Plus size={14} aria-hidden /> New project
+          </button>
         </h2>
         <ul className="shell-projects__grid">
           {projects.map((p) => (
@@ -84,9 +99,55 @@ export function ProjectsHome() {
               <ProjectCard project={p} />
             </li>
           ))}
+          {externalProjects.map((p) => (
+            <li key={`ext-${p.id}-${p.origin}`}>
+              <ExternalProjectCard project={p} />
+            </li>
+          ))}
         </ul>
       </div>
+      {newProjectOpen && (
+        <NewProjectDialog onClose={() => setNewProjectOpen(false)} />
+      )}
     </div>
+  );
+}
+
+function ExternalProjectCard({ project }: { project: ExternalProject }) {
+  const isDesktop = project.chrome === "desktop";
+  // 缩略图 iframe 指向对方 dev server 的 first design 页（embed=1 走 EmbedShell）
+  const previewSrc = project.firstEntryHref
+    ? `${project.origin}${project.firstEntryHref}?embed=1`
+    : `${project.origin}/`;
+
+  return (
+    <a
+      href={`${project.origin}/`}
+      target="_blank"
+      rel="noreferrer"
+      className="shell-project-card shell-project-card--external"
+      title={`${project.repoPath} · ${project.origin}`}
+    >
+      <div className="shell-project-card__cover">
+        <iframe
+          src={previewSrc}
+          title={`${project.name} preview`}
+          loading="lazy"
+          className={isDesktop ? "shell-project-card__iframe--desktop" : undefined}
+        />
+        <span className="shell-project-card__device-badge">
+          {isDesktop ? "Desktop" : "Mobile"} · :{project.port}
+        </span>
+      </div>
+      <div className="shell-project-card__info">
+        <span className="shell-project-card__icon">{project.icon ?? "📦"}</span>
+        <div className="shell-project-card__text">
+          <strong className="shell-project-card__name">{project.name}</strong>
+          <p className="shell-project-card__desc">{project.description ?? "External project"}</p>
+          <span className="shell-project-card__meta">{project.origin}</span>
+        </div>
+      </div>
+    </a>
   );
 }
 
@@ -137,6 +198,7 @@ const PROJECT_TOOLS: { id: CanvasTool; icon: LucideIcon; label: string; shortcut
   { id: "inspect", icon: SquareDashed, label: "Inspect", shortcut: "I" },
   { id: "measure", icon: Ruler, label: "Measure", shortcut: "M" },
   { id: "a11y", icon: Accessibility, label: "A11y", shortcut: "A" },
+  { id: "theme", icon: Palette, label: "Theme", shortcut: "T" },
   { id: "comment", icon: MessageSquare, label: "Comment", shortcut: "C" },
 ];
 
@@ -161,7 +223,10 @@ export function ProjectDetail() {
   return <ProjectDetailInner project={project} />;
 }
 
-function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
+export function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
+  // 内联渲染设计组件（SinglePageCanvas），没有 DesignFrame，需自己把 preset 主题贴到 :root
+  useApplyPresetTheme(project.preset);
+
   const groups = useProjectGroups(project.id);
   const [q, setQ] = useState("");
   const [exportOpen, setExportOpen] = useState(false);
@@ -241,14 +306,15 @@ function ProjectDetailInner({ project }: { project: DiscoveredProject }) {
           >
             <Library size={16} aria-hidden />
           </Link>
-          <Link
-            to={`/workspace/${project.id}/theme-editor`}
+          <button
+            type="button"
             className="shell-pill shell-pill--icon"
-            title="Open full-screen Theme Editor"
-            aria-label="Theme Editor"
+            onClick={() => useCanvasStore.getState().setTool("theme")}
+            title="Open Theme drawer"
+            aria-label="Theme"
           >
             <Palette size={16} aria-hidden />
-          </Link>
+          </button>
           <button
             type="button"
             className="shell-pill shell-pill--text"

@@ -101,3 +101,28 @@ export interface DiscoveredProject extends ProjectConfig {
 export interface DesignGroup extends GroupMeta {
   entries: DesignEntry[];
 }
+
+/**
+ * 跨 repo 注册表中其他正在跑（或曾经跑过）的 omit-design 项目。
+ * 数据由 dev-server 的 `~/.omit-design/projects.json` 提供，前端用 fetch 拿。
+ *
+ * 与 `DiscoveredProject` 区别：external 项目的 design 组件**不在当前 bundle**
+ * 里，所以没有 entries/groups/preset，能做的事仅限"卡片展示 + 跨端口跳转"。
+ */
+export interface ExternalProject {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  /** 对方 dev server 的 origin，如 http://localhost:5174 */
+  origin: string;
+  port?: number;
+  /** repo 绝对路径（前端仅展示用） */
+  repoPath: string;
+  /** ISO timestamp */
+  lastSeenAt: string;
+  /** 首个 design entry 的相对 href，如 /designs/main/welcome —— 用于缩略图 iframe */
+  firstEntryHref?: string;
+  /** 设备形态，决定卡片宽高 / iframe 尺寸 */
+  chrome?: "mobile" | "desktop";
+}

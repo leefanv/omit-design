@@ -40,14 +40,35 @@ import {
   writeBootstrap,
   clearBootstrap,
 } from "./handlers/bootstrap.js";
+import {
+  listProjects,
+  upsertProject,
+  type RegisteredProject,
+} from "./handlers/registry.js";
+import { discoverFirstEntryHref } from "./handlers/discover-first-entry.js";
 
 export interface OmitDevServerOptions {
   /** 项目根目录。默认 process.cwd()。 */
   root?: string;
+  /**
+   * 本 repo 的项目元信息，用于把自己写进
+   * `~/.omit-design/projects.json` 全局注册表 —— 这样任一 repo 的 workspace
+   * 都能看到同时跑的其他 omit-design 项目。
+   * 不传：跳过 self-register（旧 sample 兼容）。
+   */
+  project?: {
+    id: string;
+    name: string;
+    description?: string;
+    icon?: string;
+    /** 设备形态 —— 让 workspace UI 用对应的缩略图比例 */
+    chrome?: "mobile" | "desktop";
+  };
 }
 
 export function omitDevServer(options: OmitDevServerOptions = {}): Plugin {
   const root = path.resolve(options.root ?? process.cwd());
+  const projectMeta = options.project;
 
   return {
     name: "omit-design:dev-server",
@@ -60,6 +81,36 @@ export function omitDevServer(options: OmitDevServerOptions = {}): Plugin {
           sendJson(res, 500, { error: (err as Error).message });
         }
       });
+
+      // 自注册到全局 registry —— 等 httpServer 真正 listen 之后才知道端口
+      if (projectMeta) {
+        server.httpServer?.once("listening", () => {
+          const addr = server.httpServer?.address();
+          const port = typeof addr === "object" && addr ? addr.port : undefined;
+          discoverFirstEntryHref(root)
+            .then((firstEntryHref) => {
+              const entry: RegisteredProject = {
+                id: projectMeta.id,
+                name: projectMeta.name,
+                description: projectMeta.description,
+                icon: projectMeta.icon,
+                path: root,
+                port,
+                lastSeenAt: new Date().toISOString(),
+                firstEntryHref,
+                chrome: projectMeta.chrome,
+              };
+              return upsertProject(entry);
+            })
+            .catch((err) => {
+              // 注册失败不影响 dev server，仅打 warning
+              console.warn(
+                `[omit-dev-server] failed to register project ${projectMeta.id}:`,
+                err,
+              );
+            });
+        });
+      }
     },
   };
 }
@@ -155,6 +206,11 @@ async function route(root: string, req: IncomingMessage, res: ServerResponse) {
     const id = decodeURIComponent(pathname.slice("/prds/".length));
     await deletePrd(root, id);
     return sendJson(res, 200, { ok: true });
+  }
+
+  // ── Cross-repo registry ───────────────────────
+  if (method === "GET" && pathname === "/registry") {
+    return sendJson(res, 200, { projects: await listProjects() });
   }
 
   // ── Bootstrap ──────────────────────────────────

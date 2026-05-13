@@ -4,7 +4,6 @@ import {
   DesignFrame,
   ProjectsHome,
   ProjectDetail,
-  ThemeEditorPage,
   LibraryPage,
 } from "@omit-design/engine/shell";
 import { useProjects } from "@omit-design/engine/registry";
@@ -50,10 +49,6 @@ export default function App() {
       <Route path="/" element={<Navigate to="/workspace/playground" replace />} />
       <Route path="/workspace" element={<ProjectsHome />} />
       <Route path="/workspace/:projectId" element={<ProjectDetail />} />
-      <Route
-        path="/workspace/:projectId/theme-editor"
-        element={<ThemeEditorPage />}
-      />
       <Route
         path="/workspace/:projectId/library"
         element={<LibraryPage />}

@@ -166,22 +166,15 @@ export function DesignThumbnail({
         />
       )}
 
-      {/* fallback 模式：直接 iframe 显示（5173 sample 用） */}
+      {/* fallback 模式：直接 iframe 显示（5173 sample 用）。
+          尺寸/缩放/定位都交给 .shell-project-card__cover iframe 的 CSS（container
+          query 自适应容器宽度）—— 不要在这里设 inline width/transform 否则会盖掉。 */}
       {state.kind === "fallback-iframe" && (
         <iframe
           src={iframeSrc}
           title="design preview"
           loading="lazy"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: isDesktop ? "1280px" : "375px",
-            height: isDesktop ? "800px" : "812px",
-            border: "none",
-            transform: isDesktop ? "scale(0.25)" : "scale(0.6)",
-            transformOrigin: "top left",
-          }}
+          className={isDesktop ? "shell-project-card__iframe--desktop" : undefined}
         />
       )}
     </div>

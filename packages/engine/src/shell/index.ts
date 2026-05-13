@@ -2,7 +2,6 @@ import "./styles.css";
 
 export { DesignFrame } from "./DesignFrame";
 export { StudioIndex, ProjectsHome, ProjectDetail } from "./StudioIndex";
-export { ThemeEditorPage } from './ThemeEditorPage';
 export { LibraryPage } from '../library/LibraryPage';
 export { SinglePageCanvas } from "./canvas/SinglePageCanvas";
 export { EntryPicker } from "./canvas/EntryPicker";
