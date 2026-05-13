@@ -1,0 +1,25 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { omitDevServer } from "@omit-design/dev-server";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    // omitDevServer 暴露 /__omit/*：
+    //   - Library 页读写本仓库的 skills / patterns / PRDs
+    //   - project 元信息会被写进 ~/.omit-design/projects.json，
+    //     任一 omit-design 项目的工作区都能看到本项目卡片
+    omitDevServer({
+      project: {
+        id: "{{PROJECT_NAME}}",
+        name: "{{PROJECT_NAME}}",
+        description: "omit-design 项目",
+        icon: "🧩",
+        chrome: "mobile",
+      },
+    }),
+  ],
+  server: {
+    port: 5173,
+  },
+});
